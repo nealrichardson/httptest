@@ -1,12 +1,12 @@
-# httptest
+# httptest: Test Helpers for HTTP Requests in R
 
-[![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest)  [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
+[![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest) [![Build status](https://ci.appveyor.com/api/projects/status/egrw65593iso21cu?svg=true)](https://ci.appveyor.com/project/nealrichardson/httptest) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
 
 ## Installing
 
-If you're putting `httptest` on CRAN, it can be installed with
+<!-- If you're putting `httptest` on CRAN, it can be installed with
 
-    install.packages("httptest")
+    install.packages("httptest") -->
 
 The pre-release version of the package can be pulled from GitHub using the [devtools](https://github.com/hadley/devtools) package:
 
