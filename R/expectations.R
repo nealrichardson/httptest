@@ -51,7 +51,7 @@ expect_no_request <- function (object, ...) {
     expect_error(object, NA)
 }
 
-
+#' @importFrom testthat expect_error
 expect_mock_request <- function (object, ...) {
     ## With mock HTTP, POST/PUT/PATCH throw errors with their request info
     expect_error(object, paste0(...), fixed=TRUE)
