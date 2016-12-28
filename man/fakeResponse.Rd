@@ -2,7 +2,6 @@
 % Please edit documentation in R/response.R
 \name{fakeResponse}
 \alias{fakeDELETE}
-\alias{fakeDownload}
 \alias{fakeGET}
 \alias{fakePATCH}
 \alias{fakePOST}
@@ -22,8 +21,6 @@ fakePATCH(url, body = NULL, ...)
 fakePOST(url, body = NULL, ...)
 
 fakeDELETE(url, body = NULL, ...)
-
-fakeDownload(url, destfile, ...)
 }
 \arguments{
 \item{url}{A character URL for the request. For \code{fakeDownload}, this

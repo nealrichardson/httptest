@@ -34,13 +34,7 @@
 fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), content=NULL) {
     ## Return something that looks enough like an httr 'response'
     base.headers <- list()
-    if (is.null(content)) {
-        if (status_code != 204) {
-            ## Echo back the URL as the content
-            content <- url
-            base.headers <- list(`Content-Type`="text/plain")
-        }
-    } else {
+    if (!is.null(content)) {
         ## We have content supplied, so JSON it
         content <- toJSON(content, auto_unbox=TRUE, null="null", na="null",
             force=TRUE)
@@ -66,6 +60,7 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
 #' @rdname fakeResponse
 #' @export
 fakeGET <- function (url, query=NULL, ...) {
+    message("GET ", url)
     fakeResponse(url, content=query)
 }
 
@@ -73,21 +68,21 @@ fakeGET <- function (url, query=NULL, ...) {
 #' @export
 fakePUT <- function (url, body=NULL, ...) {
     message("PUT ", url, " ", body)
-    return(fakeResponse(url, verb="PUT", status_code=204))
+    return(fakeResponse(url, verb="PUT", status_code=204, content=body))
 }
 
 #' @rdname fakeResponse
 #' @export
 fakePATCH <- function (url, body=NULL, ...) {
     message("PATCH ", url, " ", body)
-    return(fakeResponse(url, verb="PATCH", status_code=204))
+    return(fakeResponse(url, verb="PATCH", status_code=204, content=body))
 }
 
 #' @rdname fakeResponse
 #' @export
 fakePOST <- function (url, body=NULL, ...) {
     message("POST ", url, " ", body)
-    return(fakeResponse(url, verb="POST", status_code=201, content=body))
+    return(fakeResponse(url, verb="POST", status_code=204, content=body))
 }
 
 #' @rdname fakeResponse
@@ -97,9 +92,10 @@ fakeDELETE <- function (url, body=NULL, ...) {
     return(fakeResponse(url, verb="DELETE", status_code=204))
 }
 
-#' @rdname fakeResponse
-#' @export
-fakeDownload <- function (url, destfile, ...) {
-    file.copy(url, destfile)
-    return(0)
-}
+# This goes with the mock api backend
+# #' @rdname fakeResponse
+# #' @export
+# fakeDownload <- function (url, destfile, ...) {
+#     file.copy(url, destfile)
+#     return(0)
+# }
