@@ -10,11 +10,13 @@
 #' @export
 with_fake_HTTP <- function (expr) {
     with_mock(
+        # `httr:::request_perform`=fakeRequest,
         `httr::GET`=fakeGET,
         `httr::PUT`=fakePUT,
         `httr::PATCH`=fakePATCH,
         `httr::POST`=fakePOST,
         `httr::DELETE`=fakeDELETE,
+        `httptest::request_happened`=testthat::expect_message,
         # `utils::download.file`=fakeDownload,
         eval.parent(expr)
     )

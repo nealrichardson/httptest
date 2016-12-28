@@ -34,13 +34,13 @@
 fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), content=NULL) {
     ## Return something that looks enough like an httr 'response'
     base.headers <- list()
-    if (!is.null(content)) {
-        ## We have content supplied, so JSON it
-        content <- toJSON(content, auto_unbox=TRUE, null="null", na="null",
-            force=TRUE)
-        base.headers <- list(`Content-Type`="application/json")
-    }
-    if (!is.null(content)) {
+    if (!is.null(content) && !is.raw(content)) {
+        if (!is.character(content)) {
+            ## JSON it
+            content <- toJSON(content, auto_unbox=TRUE, null="null", na="null",
+                force=TRUE)
+            base.headers <- list(`Content-Type`="application/json")
+        }
         base.headers[["content-length"]] <- nchar(content)
         content <- charToRaw(content)
     }
@@ -68,28 +68,28 @@ fakeGET <- function (url, query=NULL, ...) {
 #' @export
 fakePUT <- function (url, body=NULL, ...) {
     message("PUT ", url, " ", body)
-    return(fakeResponse(url, verb="PUT", status_code=204, content=body))
+    return(fakeResponse(url, verb="PUT", content=body))
 }
 
 #' @rdname fakeResponse
 #' @export
 fakePATCH <- function (url, body=NULL, ...) {
     message("PATCH ", url, " ", body)
-    return(fakeResponse(url, verb="PATCH", status_code=204, content=body))
+    return(fakeResponse(url, verb="PATCH", content=body))
 }
 
 #' @rdname fakeResponse
 #' @export
 fakePOST <- function (url, body=NULL, ...) {
     message("POST ", url, " ", body)
-    return(fakeResponse(url, verb="POST", status_code=204, content=body))
+    return(fakeResponse(url, verb="POST", content=body))
 }
 
 #' @rdname fakeResponse
 #' @export
 fakeDELETE <- function (url, body=NULL, ...) {
     message("DELETE ", url, " ", body)
-    return(fakeResponse(url, verb="DELETE", status_code=204))
+    return(fakeResponse(url, verb="DELETE"))
 }
 
 # This goes with the mock api backend
@@ -99,3 +99,14 @@ fakeDELETE <- function (url, body=NULL, ...) {
 #     file.copy(url, destfile)
 #     return(0)
 # }
+
+fakeRequest <- function (req, handle, refresh) {
+    out <- paste(req$method, req$url)
+    # print(str(req))
+    body <- req$options$postfields
+    if (!is.null(body)) {
+        out <- paste(out, rawToChar(body))
+    }
+    message(out)
+    return(fakeResponse(req$url, req$method, content=body))
+}

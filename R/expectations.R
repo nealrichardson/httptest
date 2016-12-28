@@ -48,12 +48,14 @@ expect_DELETE <- function (object, url) {
 #' @export
 expect_no_request <- function (object, ...) {
     ## No request means no error thrown
-    expect_error(object, NA)
+    request_happened(object, NA)
 }
 
 #' @importFrom testthat expect_error
 expect_mock_request <- function (object, ...) {
     ## With mock HTTP, POST/PUT/PATCH throw errors with their request info
     expected <- sub(" +$", "", paste0(...)) ## PUT/POST/PATCH with no body may have trailing whitespace
-    expect_error(object, expected, fixed=TRUE)
+    request_happened(object, expected, fixed=TRUE)
 }
+
+request_happened <- testthat::expect_error
