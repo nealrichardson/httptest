@@ -18,6 +18,8 @@ License: MIT + file LICENSE
 Depends:
     R (>= 3.0.0),
     testthat
+Imports:
+    jsonlite
 Suggests:
     httr
 RoxygenNote: 5.0.1
