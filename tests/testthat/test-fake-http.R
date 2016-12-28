@@ -10,9 +10,9 @@ public({
         })
         test_that("fakeGET with query", {
             expect_GET(g <- GET("http://httpbin.org/get", query=list(a=1)),
-                "http://httpbin.org/get")
-            expect_equal(content(g), list(a=1))
-            expect_identical(g$url, "http://httpbin.org/get")
+                "http://httpbin.org/get?a=1")
+            expect_null(content(g))
+            expect_identical(g$url, "http://httpbin.org/get?a=1")
         })
         test_that("fakePUT", {
             expect_PUT(p <- PUT("http://httpbin.org/get"),
@@ -21,7 +21,7 @@ public({
             expect_identical(p$url, "http://httpbin.org/get")
         })
         test_that("fakePUT with body", {
-            expect_PUT(p <- PUT("http://httpbin.org/get", body=list(b=2)),
+            expect_PUT(p <- PUT("http://httpbin.org/get", body='{"b":2}'),
                 "http://httpbin.org/get")
             expect_equal(content(p), list(b=2))
             expect_identical(p$url, "http://httpbin.org/get")
@@ -33,7 +33,7 @@ public({
             expect_identical(p$url, "http://httpbin.org/get")
         })
         test_that("fakePATCH with body", {
-            expect_PATCH(p <- PATCH("http://httpbin.org/get", body=list(b=2)),
+            expect_PATCH(p <- PATCH("http://httpbin.org/get", body='{"b":2}'),
                 "http://httpbin.org/get")
             expect_equal(content(p), list(b=2))
             expect_identical(p$url, "http://httpbin.org/get")
@@ -45,7 +45,7 @@ public({
             expect_identical(p$url, "http://httpbin.org/get")
         })
         test_that("fakePOST with body", {
-            expect_POST(p <- POST("http://httpbin.org/get", body=list(b=2)),
+            expect_POST(p <- POST("http://httpbin.org/get", body='{"b":2}'),
                 "http://httpbin.org/get")
             expect_equal(content(p), list(b=2))
             expect_identical(p$url, "http://httpbin.org/get")
