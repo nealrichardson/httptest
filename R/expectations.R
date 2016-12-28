@@ -54,6 +54,6 @@ expect_no_request <- function (object, ...) {
 #' @importFrom testthat expect_error
 expect_mock_request <- function (object, ...) {
     ## With mock HTTP, POST/PUT/PATCH throw errors with their request info
-    expected <- sub(" +$", "", paste0(...))
+    expected <- sub(" +$", "", paste0(...)) ## PUT/POST/PATCH with no body may have trailing whitespace
     expect_error(object, expected, fixed=TRUE)
 }
