@@ -35,6 +35,12 @@ public({
                 '{"test":true}')
         })
 
+        test_that("without_internet respects query params", {
+            expect_GET(GET("http://httpbin.org/get",
+                query=list(test="a phrase", two=3)),
+                "http://httpbin.org/get?test=a%20phrase&two=3")
+        })
+
         test_that("expect_no_request", {
             expect_no_request(rnorm(5))
             expect_failure(expect_no_request(GET("http://httpbin.org/get")))
