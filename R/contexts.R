@@ -5,17 +5,20 @@
 #' @export
 without_internet <- function (expr) {
     with_mock(
-        `httr::GET`=function (url, ...) halt("GET ", url),
-        `httr::PUT`=function (url, body=NULL, ...) halt("PUT ", url, " ", body),
-        `httr::PATCH`=function (url, body=NULL, ...) halt("PATCH ", url, " ", body),
-        `httr::POST`=function (url, body=NULL, ...) halt("POST ", url, " ", body),
-        `httr::DELETE`=function (url, ...) halt("DELETE ", url),
-        `utils::download.file`=function (url, ...) halt("DOWNLOAD ", url),
+        `httr:::request_perform`=stopRequest,
+        `utils::download.file`=function (url, ...) stop("DOWNLOAD ", url, call.=FALSE),
         eval.parent(expr)
     )
 }
 
-halt <- function (...) stop(..., call.=FALSE)
+stopRequest <- function (req, handle, refresh) {
+    out <- paste(req$method, req$url)
+    body <- req$options$postfields
+    if (!is.null(body)) {
+        out <- paste(out, rawToChar(body))
+    }
+    stop(out, call.=FALSE)
+}
 
 #' Make all HTTP requests return a fake 'response' object
 #'
