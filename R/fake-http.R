@@ -45,7 +45,9 @@ with_fake_HTTP <- function (expr) {
 fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), content=NULL) {
     ## Return something that looks enough like an httr 'response'
     base.headers <- list()
-    if (!is.raw(content)) {
+    if (status_code == 204) {
+        content <- NULL
+    } else if (!is.raw(content)) {
         if (!is.character(content)) {
             ## JSON it
             content <- toJSON(content, auto_unbox=TRUE, null="null", na="null",
@@ -81,14 +83,16 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
 fakeRequest <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
     body <- req$options$postfields
+    headers <- list(`Content-Type`="application/json") ## TODO: don't assume content-type
     if (length(body) == 0) {
         ## raw(0). Make it NULL instead
         body <- NULL
     }
+    status_code <- ifelse(is.null(body) && req$method != "GET", 204, 200)
     if (!is.null(body)) {
         out <- paste(out, rawToChar(body))
     }
     message(out)
     return(fakeResponse(req$url, req$method, content=body,
-        headers=list(`Content-Type`="application/json"))) ## TODO: don't assume content-type
+        status_code=status_code, headers=headers))
 }
