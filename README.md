@@ -24,7 +24,7 @@ Wherever you normally load `testthat`, load `httptest` instead. It "requires" `t
 * the DESCRIPTION file, where `testthat` is typically referenced under "Suggests"
 * tests/testthat.R, which may otherwise begin with `library(testthat)`.
 
-Then, you're ready to start using the tools that `httptest` provides.
+Then, you're ready to start using the tools that `httptest` provides. The section below outlines the package's main functions. See the test suite and help pages for usage examples.
 
 When unit-testing code that communicates with another service, you need to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct request(s) to that service; and (2) does my code correctly handle the types of responses that that service can return? The contexts and expectation functions provided by this package help you to test both sides.
 
