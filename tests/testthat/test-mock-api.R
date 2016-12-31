@@ -22,5 +22,16 @@ public({
             expect_POST(POST("api/"), "api/")
             expect_DELETE(DELETE("api/"), "api/")
         })
+        test_that("File download copies the file", {
+            f <- tempfile()
+            dl <- download.file("api.json", f)
+            expect_equal(dl, 0)
+            expect_identical(readLines(f), readLines("api.json"))
+        })
+        test_that("File download if file doesn't exist", {
+            f2 <- tempfile()
+            expect_error(dl <- download.file("NOTAFILE", f2),
+                "DOWNLOAD NOTAFILE")
+        })
     })
 })

@@ -6,10 +6,16 @@ test_that("currently_offline interacts with the mock contexts", {
 })
 
 public({
-    test_that("skip_if_disconnected", {
+    test_that("skip_if_disconnected when disconnected", {
         without_internet({
             skip_if_disconnected("This should skip")
             expect_true(FALSE)
+        })
+    })
+    test_that("skip_if_disconnected when 'connected'", {
+        with_fake_HTTP({
+            skip_if_disconnected("This should not skip")
+            expect_failure(expect_true(FALSE))
         })
     })
 })
