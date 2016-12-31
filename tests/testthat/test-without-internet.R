@@ -1,8 +1,11 @@
 context("without_internet")
 
 public({
-    test_that("without_internet throws errors on GET", {
+    test_that("Outside of without_internet, requests work", {
+        skip_if_disconnected()
         expect_error(GET("http://httpbin.org/get"), NA)
+    })
+    test_that("without_internet throws errors on GET", {
         without_internet({
             expect_error(GET("http://httpbin.org/get"),
                 "GET http://httpbin.org/get")
