@@ -7,6 +7,14 @@
 #' proceed with its response handling logic and itself be tested.
 #' @param expr Code to run inside the fake context
 #' @return The result of \code{expr}
+#' @examples
+#' with_fake_HTTP({
+#'     expect_GET(req1 <- httr::GET("http://example.com"), "http://example.com")
+#'     req1$url
+#'     expect_POST(req2 <- httr::POST("http://example.com", body='{"a":1}'),
+#'         "http://example.com")
+#'     httr::content(req2)
+#' })
 #' @export
 with_fake_HTTP <- function (expr) {
     with_mock(

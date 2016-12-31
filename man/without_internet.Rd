@@ -15,4 +15,10 @@ The result of \code{expr}
 \description{
 Make all HTTP requests raise an error
 }
+\examples{
+without_internet({
+    expect_error(httr::GET("http://httpbin.org/get"),
+        "GET http://httpbin.org/get")
+})
+}
 

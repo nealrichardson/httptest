@@ -2,6 +2,11 @@
 #' @param expr Code to run inside the mock context
 #' @return The result of \code{expr}
 #' @importFrom testthat with_mock
+#' @examples
+#' without_internet({
+#'     expect_error(httr::GET("http://httpbin.org/get"),
+#'         "GET http://httpbin.org/get")
+#' })
 #' @export
 without_internet <- function (expr) {
     with_mock(
