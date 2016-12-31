@@ -12,7 +12,8 @@
 #' @param expected.label character same as \code{label} but for \code{expected}
 #' @return Invisibly, returns \code{object} for optionally passing to other
 #' expectations.
-#' @seealso \code{\link[testthat]{expect_equal}}
+#' @seealso \code{\link[testthat]{expect_equivalent}}
+#' @importFrom testthat expect
 #' @export
 expect_json_equivalent <- function (object, expected, info=NULL,
                                     label="object", expected.label="expected") {

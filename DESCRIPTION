@@ -19,6 +19,7 @@ Depends:
     R (>= 3.0.0),
     testthat
 Imports:
-    jsonlite,
-    httr
+    digest,
+    httr,
+    jsonlite
 RoxygenNote: 5.0.1
