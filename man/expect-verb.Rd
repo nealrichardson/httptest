@@ -10,15 +10,15 @@
 \alias{expect_no_request}
 \title{Expecations for mocked HTTP requests}
 \usage{
-expect_GET(object, url, ...)
+expect_GET(object, url = "", ...)
 
-expect_POST(object, url, ...)
+expect_POST(object, url = "", ...)
 
-expect_PATCH(object, url, ...)
+expect_PATCH(object, url = "", ...)
 
-expect_PUT(object, url, ...)
+expect_PUT(object, url = "", ...)
 
-expect_DELETE(object, url)
+expect_DELETE(object, url = "")
 
 expect_no_request(object, ...)
 }
