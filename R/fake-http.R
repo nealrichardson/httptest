@@ -12,7 +12,7 @@ with_fake_HTTP <- function (expr) {
     with_mock(
         `httr:::request_perform`=fakeRequest,
         `httptest::request_happened`=testthat::expect_message,
-        # `utils::download.file`=fakeDownload,
+        `utils::download.file`=fakeDownload,
         eval.parent(expr)
     )
 }
@@ -75,10 +75,12 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
 # #' @param destfile For \code{fakeDownload}, character file path to "download"
 # #' to. \code{fakeDownload} will copy the file at \code{url} to this path.
 # #' @export
-# fakeDownload <- function (url, destfile, ...) {
-#     file.copy(url, destfile)
-#     return(0)
-# }
+
+fakeDownload <- function (url, destfile, ...) {
+    message("DOWNLOAD ", url)
+    writeLines(url, destfile)
+    return(0)
+}
 
 fakeRequest <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
