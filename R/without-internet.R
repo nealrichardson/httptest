@@ -6,7 +6,7 @@
 without_internet <- function (expr) {
     with_mock(
         `httr:::request_perform`=stopRequest,
-        `utils::download.file`=function (url, ...) stop("DOWNLOAD ", url, call.=FALSE),
+        `utils::download.file`=stopDownload,
         eval.parent(expr)
     )
 }
@@ -18,4 +18,8 @@ stopRequest <- function (req, handle, refresh) {
         out <- paste(out, rawToChar(body))
     }
     stop(out, call.=FALSE)
+}
+
+stopDownload <- function (url, ...) {
+    stop("DOWNLOAD ", url, call.=FALSE)
 }
