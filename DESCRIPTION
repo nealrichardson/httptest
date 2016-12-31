@@ -1,14 +1,20 @@
 Package: httptest
 Type: Package
-Title: Informative Title for Your Package
-Description: A longer statement about what this does. It must have at least one
-    complete sentence, and it may not begin with the name of the package or
-    "This package". Any URL must be enclosed in angle brackets. Any R packages
-    or other software you reference must be in single quotes. 'R CMD check'
-    may not report on these, but see  <https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file>.
-    Failure to obey may result in CRAN rejecting your package submission.
-Version: 0.1.0
-Date: 2016-12-21
+Title: A Test Environment for HTTP Requests
+Description: Testing code and packages that communicate with remote servers can
+    be painful. Dealing with authentication, bootstrapping server state,
+    cleaning up objects that may get created during the test run, network
+    flakiness, and other complications can make testing seem too costly to
+    bother with. But it doesn't need to be that hard. This package enables one
+    to test all of the logic on the R sides of the API in your package without
+    requiring access to the remote service. Importantly, it provides three test
+    contexts that mock the network connection in different ways, and it offers
+    additional expectations to assert that HTTP requests were--or were
+    not--made. Using these tools, one can test that code is making the intended
+    requests and that it handles the expected responses correctly, all without
+    depending on a connection to a remote API.
+Version: 1.0.0
+Date: 2016-12-31
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 Author: Neal Richardson [aut, cre]
 Maintainer: Neal Richardson <neal.p.richardson@gmail.com>
