@@ -1,6 +1,9 @@
 language: r
 cache: packages
-r: devel
+r:
+  - oldrel
+  - release
+  - devel
 r_github_packages:
   - jimhester/covr
 after_success:
