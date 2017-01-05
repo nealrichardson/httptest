@@ -15,6 +15,8 @@ public({
         })
         test_that("GET files that don't exist errors", {
             expect_GET(GET("api/NOTAFILE/"), "api/NOTAFILE/")
+            expect_GET(GET("api/NOTAFILE/", query=list(a=1)),
+                "api/NOTAFILE/?a=1")
         })
         test_that("Other verbs error too", {
             expect_PUT(PUT("api/"), "api/")
