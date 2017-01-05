@@ -32,6 +32,9 @@ with_mock_API <- function (expr) {
 }
 
 mockRequest <- function (req, handle, refresh) {
+    ## If there's a query, then req$url has been through build_url(parse_url())
+    ## so it has grown a ":///" prefix. Prune that.
+    req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(req$url)
     if (req$method == "GET" && file.exists(f)) {
         return(fakeResponse(req$url, req$method,
@@ -71,14 +74,8 @@ buildMockURL <- function (url, method="GET") {
     parts <- unlist(strsplit(url, "?", fixed=TRUE))
     f <- sub("\\/$", "", parts[1])
     if (length(parts) > 1) {
-        ## If there's a query, then req$url has been through build_url(parse_url())
-        ## so it has grown a ":///" prefix. Prune that, and append the digest
-        ## suffix
-        f <- paste0(
-            sub("^:///", "", f),
-            "-",
-            substr(digest(parts[2]), 1, 6)
-        )
+        ## Append the digest suffix
+        f <- paste0(f, "-", substr(digest(parts[2]), 1, 6))
     }
 
     ## TODO: Allow other HTTP verbs
