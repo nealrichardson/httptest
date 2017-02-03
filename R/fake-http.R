@@ -16,10 +16,11 @@
 #'     httr::content(req2)
 #' })
 #' @export
+#' @importFrom testthat expect_message
 with_fake_HTTP <- function (expr) {
     with_mock(
         `httr:::request_perform`=fakeRequest,
-        `httptest::request_happened`=testthat::expect_message,
+        `httptest::request_happened`=expect_message,
         `utils::download.file`=fakeDownload,
         eval.parent(expr)
     )
