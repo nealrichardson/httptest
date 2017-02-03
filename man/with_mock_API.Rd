@@ -35,4 +35,3 @@ by \code{\link[digest]{digest}}, and the first six characters appended to the
 file being read. For example, \code{GET("api/object1/?a=1")} reads
 "api/object1-b64371.json"
 }
-

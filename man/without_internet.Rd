@@ -21,4 +21,3 @@ without_internet({
         "GET http://httpbin.org/get")
 })
 }
-

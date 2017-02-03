@@ -38,4 +38,3 @@ These mock functions can be used to replace the 'httr' verb functions using
 the 'testthat' package's \code{\link[testthat]{with_mock}} function. See the
 test suite for this package for an illustration of how to use them.
 }
-

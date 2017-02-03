@@ -28,4 +28,3 @@ the check will pass and the following tests will run, but inside
 \seealso{
 \code{\link[testthat]{skip}}
 }
-
