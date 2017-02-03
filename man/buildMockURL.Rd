@@ -29,4 +29,3 @@ This function is exported so that other packages can construct similar mock
 behaviors or override specific requests at a higher level than
 \code{with_mock_API} mocks.
 }
-

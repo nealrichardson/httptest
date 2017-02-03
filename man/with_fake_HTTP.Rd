@@ -28,4 +28,3 @@ with_fake_HTTP({
     httr::content(req2)
 })
 }
-

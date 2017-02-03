@@ -2,11 +2,16 @@
 % Please edit documentation in R/expect-request.R
 \name{expect-verb}
 \alias{expect-verb}
-\alias{expect_DELETE}
 \alias{expect_GET}
-\alias{expect_PATCH}
 \alias{expect_POST}
 \alias{expect_PUT}
+\alias{expect_PATCH}
+\alias{expect_DELETE}
+\alias{expect_no_request}
+\alias{expect_POST}
+\alias{expect_PATCH}
+\alias{expect_PUT}
+\alias{expect_DELETE}
 \alias{expect_no_request}
 \title{Expecations for mocked HTTP requests}
 \usage{
@@ -43,4 +48,3 @@ without_internet({
     expect_no_request(rnorm(5))
 })
 }
-

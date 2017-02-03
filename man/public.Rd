@@ -18,4 +18,3 @@ It's easy to forget to document and export a new function. Wrap 'public()'
 around test blocks to assert that the functions they call
 are exported (and thus fail if you haven't documented them with @export)
 }
-
