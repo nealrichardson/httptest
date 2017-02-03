@@ -40,6 +40,7 @@ The package includes three test contexts, which you wrap around test code that w
 
 * **expect_GET**, **expect_PUT**, **expect_PATCH**, **expect_POST**, and **expect_DELETE** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_API` just proceed with their response content and don't trigger `expect_GET`, however.)
 * **expect_no_request** is the inverse of those: it asserts that no error or message from a mocked HTTP service is raised.
+* **expect_header** asserts that an HTTP request, mocked or not, contains a request header.
 * **expect_json_equivalent** doesn't directly concern HTTP, but it is useful for working with JSON APIs. It checks that two R objects would generate equivalent JSON, taking into account how JSON objects are unordered whereas R named lists are ordered.
 
 ### Other tools
