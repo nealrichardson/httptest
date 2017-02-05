@@ -35,5 +35,16 @@ public({
             expect_error(dl <- download.file("NOTAFILE", f2),
                 "DOWNLOAD NOTAFILE")
         })
+
+        test_that("mock API with http:// URL, not file path", {
+            expect_GET(GET("http://httpbin.org/get"),
+                "http://httpbin.org/get",
+                "(httpbin.org/get.json)")
+            expect_GET(GET("https://httpbin.org/get"),
+                "https://httpbin.org/get",
+                "(httpbin.org/get.json)")
+            expect_identical(content(GET("http://example.com/get")),
+                list(loaded=TRUE))
+        })
     })
 })
