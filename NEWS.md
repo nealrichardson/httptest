@@ -1,3 +1,6 @@
+### httptest 1.1.1 (under development)
+* Support full URLs, not just file paths, in `with_mock_API`
+
 ## httptest 1.1.0
 
 * `expect_header` to assert that a HTTP request has a header
