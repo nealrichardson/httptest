@@ -70,6 +70,8 @@ mockRequest <- function (req, handle, refresh) {
 #' @importFrom digest digest
 #' @export
 buildMockURL <- function (url, method="GET") {
+    ## Remove protocol
+    url <- sub("^.*?://", "", url)
     ## Handle query params
     parts <- unlist(strsplit(url, "?", fixed=TRUE))
     f <- sub("\\/$", "", parts[1])
