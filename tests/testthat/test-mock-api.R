@@ -48,3 +48,14 @@ public({
         })
     })
 })
+
+context("How others might use the package")
+test_that("Test that it works inside the test_that", {
+  with_mock_API({
+    expect_identical(content(GET("http://example.com", path = "/get", 
+                                 add_headers("Content-Type" = "application/json"),
+                                 authenticate("d", "d"))),
+                     list(loaded=TRUE))
+    
+  })
+})
