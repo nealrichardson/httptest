@@ -43,7 +43,7 @@ mockRequest <- function (req, handle, refresh) {
     if (req$method %in% c("GET", "POST") && file.exists(f)) {
       
         return(fakeResponse(req$url, req$method,
-            content=readBin(f, "raw", 4096), ## Assumes mock is under 4K
+            content=readBin(f, "raw", 4096*32), ## Assumes mock is under 128K
             status_code=200, headers=list(`Content-Type`="application/json")))
             ## TODO: don't assume content-type
     } else {
