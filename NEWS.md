@@ -1,5 +1,8 @@
-### httptest 1.1.1 (under development)
-* Support full URLs, not just file paths, in `with_mock_API`
+### httptest 1.1.3 (under development)
+* Bump mock payload max size up to 128K
+
+### httptest 1.1.2
+* Support full URLs, not just file paths, in `with_mock_API` ([#1](https://github.com/nealrichardson/httptest/issues/1))
 
 ## httptest 1.1.0
 
