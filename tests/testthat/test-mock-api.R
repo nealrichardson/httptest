@@ -18,10 +18,13 @@ public({
             expect_GET(GET("api/NOTAFILE/", query=list(a=1)),
                 "api/NOTAFILE/?a=1")
         })
+        test_that("POST method reads from correct file", {
+          b <- POST("api/object1")
+          expect_identical(content(b), list(method="POST"))
+        })
         test_that("Other verbs error too", {
             expect_PUT(PUT("api/"), "api/")
             expect_PATCH(PATCH("api/"), "api/")
-            expect_POST(POST("api/"), "api/")
             expect_DELETE(DELETE("api/"), "api/")
         })
         test_that("File download copies the file", {

@@ -13,10 +13,10 @@ with_mock_API(expr)
 The result of \code{expr}
 }
 \description{
-In this context, HTTP GET requests attempt to read from files. This allows
+In this context, HTTP GET or POST requests attempt to read from files. This allows
 test code to use API fixtures and to proceed evaluating code that expects
 HTTP requests to return meaningful responses. Other HTTP request methods, as
-well as GET requests that do not correspond to a file that exist, raise
+well as GET or POST requests that do not correspond to a file that exist, raise
 errors, like how code{\link{without_internet}} does.
 }
 \details{
@@ -33,5 +33,8 @@ a mocked \code{GET("api/")} will read a "api.json" file, while
 contains a query string, it will be popped off, hashed
 by \code{\link[digest]{digest}}, and the first six characters appended to the
 file being read. For example, \code{GET("api/object1/?a=1")} reads
-"api/object1-b64371.json"
+"api/object1-b64371.json". 
+If method other than GET is used it will be appended to the end of the end of the file name.
+For example, \code{POST("api/object1/?a=1")} reads
+"api/object1-b64371-POST.json".
 }
