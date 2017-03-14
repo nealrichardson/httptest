@@ -40,17 +40,14 @@ mockRequest <- function (req, handle, refresh) {
     ## so it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(req$url, req$method)
-    if (req$method %in% c("GET", "POST") && file.exists(f)) {
-      
+    if (file.exists(f)) {
         return(fakeResponse(req$url, req$method,
             content=readBin(f, "raw", 4096), ## Assumes mock is under 4K
             status_code=200, headers=list(`Content-Type`="application/json")))
             ## TODO: don't assume content-type
     } else {
-        if (req$method %in% c("GET", "POST")) {
-            ## For ease of debugging if a file isn't found
-            req$url <- paste0(req$url, " (", f, ")")
-        }
+        ## For ease of debugging if a file isn't found
+        req$url <- paste0(req$url, " (", f, ")")
         return(stopRequest(req))
     }
 }
