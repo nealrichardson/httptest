@@ -19,11 +19,11 @@
 #' contains a query string, it will be popped off, hashed
 #' by \code{\link[digest]{digest}}, and the first six characters appended to the
 #' file being read. For example, \code{GET("api/object1/?a=1")} reads
-#' "api/object1-b64371.json". 
+#' "api/object1-b64371.json".
 #' If method other than GET is used it will be appended to the end of the end of the file name.
 #' For example, \code{POST("api/object1/?a=1")} reads
-#' "api/object1-b64371-POST.json". 
-#' 
+#' "api/object1-b64371-POST.json".
+#'
 #' @param expr Code to run inside the fake context
 #' @return The result of \code{expr}
 #' @export
@@ -46,8 +46,9 @@ mockRequest <- function (req, handle, refresh) {
             status_code=200, headers=list(`Content-Type`="application/json")))
             ## TODO: don't assume content-type
     } else {
-        ## For ease of debugging if a file isn't found
-        req$url <- paste0(req$url, " (", f, ")")
+        ## For ease of debugging if a file isn't found, include it in the
+        ## error that gets printed.
+        req$mockfile <- f
         return(stopRequest(req))
     }
 }
@@ -81,12 +82,12 @@ buildMockURL <- function (url, method = "GET") {
         ## Append the digest suffix
         f <- paste0(f, "-", substr(digest(parts[2]), 1, 6))
     }
-    
+
     ## Append method to the file name for non GET requests
     if (method != "GET") {
       f <- paste0(f, "-", method)
     }
-    
+
     ## Add file extension
     f <- paste0(f, ".json")  ## TODO: don't assume content-type
     return(f)

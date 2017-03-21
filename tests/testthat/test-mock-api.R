@@ -28,6 +28,9 @@ public({
             expect_PUT(PUT("api/"), "api/")
             expect_PATCH(PATCH("api/"), "api/")
             expect_POST(POST("api/"), "api/")
+            expect_POST(POST("api/", body='{"arg":true}'),
+                'api/',
+                '{"arg":true}')
             expect_DELETE(DELETE("api/"), "api/")
         })
         test_that("File download copies the file", {
@@ -66,25 +69,25 @@ public({
 context("Mock URL")
 
 test_that("Path to the fake file is correct", {
-    
+
     # GET (default) method
     file <- buildMockURL("http://www.test.com/api/call")
     expect <- "www.test.com/api/call.json"
     expect_identical(file, expect, label = "Get method without query string")
-    
+
     # GET method with query in URL
     file <- buildMockURL("http://www.test.com/api/call?q=1")
     expect <- "www.test.com/api/call-a3679d.json"
     expect_identical(file, expect, label = "Get method with query string")
-    
+
     # POST method
     file <- buildMockURL("http://www.test.com/api/call", method = "POST")
     expect <- "www.test.com/api/call-POST.json"
     expect_identical(file, expect, "POST method without query string")
-    
+
     # POST method with query in URL
     file <- buildMockURL("http://www.test.com/api/call?q=1", method = "POST")
     expect <- "www.test.com/api/call-a3679d-POST.json"
     expect_identical(file, expect, "POST method with query string")
-  
+
 })

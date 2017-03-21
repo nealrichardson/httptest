@@ -22,6 +22,11 @@ stopRequest <- function (req, handle, refresh) {
     if (!is.null(body)) {
         out <- paste(out, rawToChar(body))
     }
+    if (!is.null(req$mockfile)) {
+        ## Poked in here by mockRequest for ease of debugging
+        ## Append it to the end.
+        out <- paste0(out, " (", req$mockfile, ")")
+    }
     stop(out, call.=FALSE)
 }
 
