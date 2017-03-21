@@ -18,8 +18,8 @@ without_internet <- function (expr) {
 
 stopRequest <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
-    body <- req$options$postfields
-    if (!is.null(body)) {
+    body <- requestBody(req)
+    if (length(body) > 0) {
         out <- paste(out, rawToChar(body))
     }
     if (!is.null(req$mockfile)) {

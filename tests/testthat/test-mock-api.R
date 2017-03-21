@@ -19,10 +19,26 @@ public({
                 "api/NOTAFILE/?a=1")
         })
         test_that("POST method reads from correct file", {
-          b <- POST("api/object1", body = "", content_type_json(),
+            b <- POST("api/object1")
+            expect_identical(content(b), list(method="POST"))
+            b2 <- POST("api/object1", body = "", content_type_json(),
                     add_headers(Accept = "application/json",
                                 "Content-Type" = "application/json"))
-          expect_identical(content(b), list(method="POST"))
+            expect_identical(content(b2), list(method="POST"))
+        })
+        test_that("Request body is appended to mock file path", {
+            p <- POST("api/object1", body='{"a":1}', content_type_json(),
+                    add_headers(Accept = "application/json",
+                                "Content-Type" = "application/json"))
+            expect_identical(content(p), list(content=TRUE))
+            expect_POST(POST("api/object1", body='{"b":2}', content_type_json(),
+                    add_headers(Accept = "application/json",
+                                "Content-Type" = "application/json")),
+                'api/object1 {"b":2} (api/object1-3e8d9a-POST.json)')
+        })
+        test_that("Request body and query", {
+            expect_PATCH(PATCH("api/object2?d=1", body='{"arg":45}'),
+                'api/object2?d=1 {"arg":45} (api/object2-899b0e-3d8d62-PATCH.json)')
         })
         test_that("Other verbs error too", {
             expect_PUT(PUT("api/"), "api/")
@@ -66,10 +82,7 @@ public({
     })
 })
 
-context("Mock URL")
-
-test_that("Path to the fake file is correct", {
-
+test_that("buildMockURL file path construction with character URL", {
     # GET (default) method
     file <- buildMockURL("http://www.test.com/api/call")
     expect <- "www.test.com/api/call.json"
@@ -89,5 +102,4 @@ test_that("Path to the fake file is correct", {
     file <- buildMockURL("http://www.test.com/api/call?q=1", method = "POST")
     expect <- "www.test.com/api/call-a3679d-POST.json"
     expect_identical(file, expect, "POST method with query string")
-
 })
