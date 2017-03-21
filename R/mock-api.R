@@ -1,9 +1,9 @@
 #' Serve a mock API from files
 #'
-#' In this context, HTTP GET requests attempt to read from files. This allows
+#' In this context, HTTP GET or POST requests attempt to read from files. This allows
 #' test code to use API fixtures and to proceed evaluating code that expects
 #' HTTP requests to return meaningful responses. Other HTTP request methods, as
-#' well as GET requests that do not correspond to a file that exist, raise
+#' well as GET or POST requests that do not correspond to a file that exist, raise
 #' errors, like how code{\link{without_internet}} does.
 #'
 #' File paths for API fixture files may be relative to the 'tests/testthat'
@@ -19,7 +19,11 @@
 #' contains a query string, it will be popped off, hashed
 #' by \code{\link[digest]{digest}}, and the first six characters appended to the
 #' file being read. For example, \code{GET("api/object1/?a=1")} reads
-#' "api/object1-b64371.json"
+#' "api/object1-b64371.json". 
+#' If method other than GET is used it will be appended to the end of the end of the file name.
+#' For example, \code{POST("api/object1/?a=1")} reads
+#' "api/object1-b64371-POST.json". 
+#' 
 #' @param expr Code to run inside the fake context
 #' @return The result of \code{expr}
 #' @export
@@ -35,17 +39,15 @@ mockRequest <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
     ## so it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
-    f <- buildMockURL(req$url)
-    if (req$method == "GET" && file.exists(f)) {
+    f <- buildMockURL(req$url, req$method)
+    if (file.exists(f)) {
         return(fakeResponse(req$url, req$method,
             content=readBin(f, "raw", 4096*32), ## Assumes mock is under 128K
             status_code=200, headers=list(`Content-Type`="application/json")))
             ## TODO: don't assume content-type
     } else {
-        if (req$method == "GET") {
-            ## For ease of debugging if a file isn't found
-            req$url <- paste0(req$url, " (", f, ")")
-        }
+        ## For ease of debugging if a file isn't found
+        req$url <- paste0(req$url, " (", f, ")")
         return(stopRequest(req))
     }
 }
@@ -69,7 +71,7 @@ mockRequest <- function (req, handle, refresh) {
 #' exist: existence is not a concern of this function.
 #' @importFrom digest digest
 #' @export
-buildMockURL <- function (url, method="GET") {
+buildMockURL <- function (url, method = "GET") {
     ## Remove protocol
     url <- sub("^.*?://", "", url)
     ## Handle query params
@@ -79,9 +81,12 @@ buildMockURL <- function (url, method="GET") {
         ## Append the digest suffix
         f <- paste0(f, "-", substr(digest(parts[2]), 1, 6))
     }
-
-    ## TODO: Allow other HTTP verbs
-
+    
+    ## Append method to the file name for non GET requests
+    if (method != "GET") {
+      f <- paste0(f, "-", method)
+    }
+    
     ## Add file extension
     f <- paste0(f, ".json")  ## TODO: don't assume content-type
     return(f)

@@ -18,6 +18,12 @@ public({
             expect_GET(GET("api/NOTAFILE/", query=list(a=1)),
                 "api/NOTAFILE/?a=1")
         })
+        test_that("POST method reads from correct file", {
+          b <- POST("api/object1", body = "", content_type_json(),
+                    add_headers(Accept = "application/json",
+                                "Content-Type" = "application/json"))
+          expect_identical(content(b), list(method="POST"))
+        })
         test_that("Other verbs error too", {
             expect_PUT(PUT("api/"), "api/")
             expect_PATCH(PATCH("api/"), "api/")
@@ -55,4 +61,30 @@ public({
                 list(loaded=TRUE))
         })
     })
+})
+
+context("Mock URL")
+
+test_that("Path to the fake file is correct", {
+    
+    # GET (default) method
+    file <- buildMockURL("http://www.test.com/api/call")
+    expect <- "www.test.com/api/call.json"
+    expect_identical(file, expect, label = "Get method without query string")
+    
+    # GET method with query in URL
+    file <- buildMockURL("http://www.test.com/api/call?q=1")
+    expect <- "www.test.com/api/call-a3679d.json"
+    expect_identical(file, expect, label = "Get method with query string")
+    
+    # POST method
+    file <- buildMockURL("http://www.test.com/api/call", method = "POST")
+    expect <- "www.test.com/api/call-POST.json"
+    expect_identical(file, expect, "POST method without query string")
+    
+    # POST method with query in URL
+    file <- buildMockURL("http://www.test.com/api/call?q=1", method = "POST")
+    expect <- "www.test.com/api/call-a3679d-POST.json"
+    expect_identical(file, expect, "POST method with query string")
+  
 })
