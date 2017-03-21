@@ -1,4 +1,6 @@
-### httptest 1.2.0
+### httptest 1.2.1 (under development)
+
+## httptest 1.2.0
 * Add support in `with_mock_API` for loading request fixtures for all HTTP verbs, not only GET ([#4](https://github.com/nealrichardson/httptest/pull/4)). Include request body in the mock file path hashing.
 * `buildMockURL` can accept either a 'request' object or a character URL
 * Bump mock payload max size up to 128K
