@@ -4,12 +4,13 @@
 \alias{buildMockURL}
 \title{Convert a mock "URL" to a file path}
 \usage{
-buildMockURL(url, method = "GET")
+buildMockURL(req, method = "GET")
 }
 \arguments{
-\item{url}{character "URL" to convert}
+\item{req}{A \code{request} object, or a character "URL" to convert}
 
-\item{method}{character HTTP method. Currently ignored.}
+\item{method}{character HTTP method. If \code{req} is a 'request' object,
+its request method will override this argument}
 }
 \value{
 A file path and name, with .json extension. The file may or may not

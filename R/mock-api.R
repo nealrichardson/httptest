@@ -1,27 +1,27 @@
 #' Serve a mock API from files
 #'
-#' In this context, HTTP GET or POST requests attempt to read from files. This allows
-#' test code to use API fixtures and to proceed evaluating code that expects
-#' HTTP requests to return meaningful responses. Other HTTP request methods, as
-#' well as GET or POST requests that do not correspond to a file that exist, raise
-#' errors, like how code{\link{without_internet}} does.
+#' In this context, HTTP requests attempt to load API response fixtures from
+#' files. This allows test code to proceed evaluating code that expects
+#' HTTP requests to return meaningful responses. Requests that do not have a
+#' corresponding to a fixture file raise
+#' errors, like how \code{\link{without_internet}} does.
 #'
 #' File paths for API fixture files may be relative to the 'tests/testthat'
 #' directory, i.e. relative to the .R test files themselves.
 #'
 #' Some file path matching rules: first, in order to emulate an HTTP API, in
 #' which, unlike a file system, a "directory" itself is a resource, all mock
-#' '"URLs" should end in "/", and mock files themselves should end in ".json"
-#' '(for in the current version of this package,
+#' "URLs" should end in "/", and mock files themselves should end in ".json"
+#' (for in the current version of this package,
 #' all API responses are assumed to be Content-Type: application/json). That is,
 #' a mocked \code{GET("api/")} will read a "api.json" file, while
 #' \code{GET("api/object1/")} reads "api/object1.json". If the request URL
 #' contains a query string, it will be popped off, hashed
 #' by \code{\link[digest]{digest}}, and the first six characters appended to the
 #' file being read. For example, \code{GET("api/object1/?a=1")} reads
-#' "api/object1-b64371.json".
-#' If method other than GET is used it will be appended to the end of the end of the file name.
-#' For example, \code{POST("api/object1/?a=1")} reads
+#' "api/object1-b64371.json". Request bodies are similarly hashed and appended.
+#' If method other than GET is used it will be appended to the end of the end of
+#' the file name. For example, \code{POST("api/object1/?a=1")} reads
 #' "api/object1-b64371-POST.json".
 #'
 #' @param expr Code to run inside the fake context
@@ -37,9 +37,9 @@ with_mock_API <- function (expr) {
 
 mockRequest <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
-    ## so it has grown a ":///" prefix. Prune that.
+    ## and if it's a file and not URL, it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
-    f <- buildMockURL(req$url, req$method)
+    f <- buildMockURL(req)
     if (file.exists(f)) {
         return(fakeResponse(req$url, req$method,
             content=readBin(f, "raw", 4096*32), ## Assumes mock is under 128K
@@ -66,13 +66,24 @@ mockRequest <- function (req, handle, refresh) {
 #' This function is exported so that other packages can construct similar mock
 #' behaviors or override specific requests at a higher level than
 #' \code{with_mock_API} mocks.
-#' @param url character "URL" to convert
-#' @param method character HTTP method. Currently ignored.
+#' @param req A \code{request} object, or a character "URL" to convert
+#' @param method character HTTP method. If \code{req} is a 'request' object,
+#' its request method will override this argument
 #' @return A file path and name, with .json extension. The file may or may not
 #' exist: existence is not a concern of this function.
 #' @importFrom digest digest
 #' @export
-buildMockURL <- function (url, method = "GET") {
+buildMockURL <- function (req, method="GET") {
+    if (is.character(req)) {
+        ## A URL. Old interface that this function provided, still supported.
+        url <- req
+        body <- NULL
+    } else {
+        url <- req$url
+        method <- req$method
+        body <- requestBody(req)
+    }
+
     ## Remove protocol
     url <- sub("^.*?://", "", url)
     ## Handle query params
@@ -80,7 +91,12 @@ buildMockURL <- function (url, method = "GET") {
     f <- sub("\\/$", "", parts[1])
     if (length(parts) > 1) {
         ## Append the digest suffix
-        f <- paste0(f, "-", substr(digest(parts[2]), 1, 6))
+        f <- paste0(f, "-", hash(parts[2]))
+    }
+
+    ## Handle body
+    if (length(body) > 0) {
+        f <- paste0(f, "-", hash(rawToChar(body)))
     }
 
     ## Append method to the file name for non GET requests
@@ -92,6 +108,10 @@ buildMockURL <- function (url, method = "GET") {
     f <- paste0(f, ".json")  ## TODO: don't assume content-type
     return(f)
 }
+
+requestBody <- function (req) req$options$postfields
+
+hash <- function (string, n=6) substr(digest(string), 1, n)
 
 mockDownload <- function (url, destfile, ...) {
     if (file.exists(url)) {
