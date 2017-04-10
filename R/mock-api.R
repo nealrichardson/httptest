@@ -75,7 +75,7 @@ mockRequest <- function (req, handle, refresh) {
 #' @export
 buildMockURL <- function (req, method="GET") {
     if (is.character(req)) {
-        ## A URL. Old interface that this function provided, still supported.
+        ## A URL/file download
         url <- req
         body <- NULL
     } else {
@@ -88,6 +88,7 @@ buildMockURL <- function (req, method="GET") {
     url <- sub("^.*?://", "", url)
     ## Handle query params
     parts <- unlist(strsplit(url, "?", fixed=TRUE))
+    ## Remove trailing slash
     f <- sub("\\/$", "", parts[1])
     if (length(parts) > 1) {
         ## Append the digest suffix
@@ -99,9 +100,11 @@ buildMockURL <- function (req, method="GET") {
         f <- paste0(f, "-", hash(rawToChar(body)))
     }
 
-    ## Append method to the file name for non GET requests
-    if (method != "GET") {
-      f <- paste0(f, "-", method)
+    if (method == "DOWNLOAD") {
+        return(f)
+    } else if (method != "GET") {
+        ## Append method to the file name for non GET requests
+        f <- paste0(f, "-", method)
     }
 
     ## Add file extension
@@ -114,8 +117,9 @@ requestBody <- function (req) req$options$postfields
 hash <- function (string, n=6) substr(digest(string), 1, n)
 
 mockDownload <- function (url, destfile, ...) {
-    if (file.exists(url)) {
-        file.copy(url, destfile)
+    f <- buildMockURL(url, method="DOWNLOAD")
+    if (file.exists(f)) {
+        file.copy(f, destfile)
         return(0)
     } else {
         stopDownload(url)

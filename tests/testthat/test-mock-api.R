@@ -55,6 +55,12 @@ public({
             expect_equal(dl, 0)
             expect_identical(readLines(f), readLines("api.json"))
         })
+        test_that("File download with a URL", {
+            f2 <- tempfile()
+            dl <- download.file("http://example.com/get.json", f2)
+            expect_equal(dl, 0)
+            expect_identical(readLines(f2), readLines("example.com/get.json"))
+        })
         test_that("File download if file doesn't exist", {
             f2 <- tempfile()
             expect_error(dl <- download.file("NOTAFILE", f2),
