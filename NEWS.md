@@ -1,4 +1,5 @@
 ### httptest 1.2.1 (under development)
+* `mockDownload` now processes request URLs as `mockRequest` does
 
 ## httptest 1.2.0
 * Add support in `with_mock_API` for loading request fixtures for all HTTP verbs, not only GET ([#4](https://github.com/nealrichardson/httptest/pull/4)). Include request body in the mock file path hashing.
