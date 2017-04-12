@@ -39,7 +39,7 @@ capture_requests <- function (expr, path=".") {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path) {
+start_capturing <- function (path=".") {
     ## Use "substitute" so that "path" gets inserted. Code remains quoted.
     req_tracer <- substitute({
         f <- file.path(path, buildMockURL(req))
@@ -62,6 +62,7 @@ start_capturing <- function (path) {
         print=FALSE))
     suppressMessages(trace("download.file", exit=dl_tracer, where=modifyList,
         print=FALSE))
+    invisible(path)
 }
 
 #' @rdname capture_requests
