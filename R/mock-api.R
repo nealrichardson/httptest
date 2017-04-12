@@ -41,9 +41,11 @@ mockRequest <- function (req, handle, refresh) {
     req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(req)
     if (file.exists(f)) {
-        return(fakeResponse(req$url, req$method,
+        headers <- list(`Content-Type`="application/json")
+        resp <- fakeResponse(req$url, req$method,
             content=readBin(f, "raw", 4096*32), ## Assumes mock is under 128K
-            status_code=200, headers=list(`Content-Type`="application/json")))
+            status_code=200, headers=headers)
+        return(resp)
             ## TODO: don't assume content-type
     } else {
         ## For ease of debugging if a file isn't found, include it in the
@@ -101,6 +103,7 @@ buildMockURL <- function (req, method="GET") {
     }
 
     if (method == "DOWNLOAD") {
+        ## Don't append anything further.
         return(f)
     } else if (method != "GET") {
         ## Append method to the file name for non GET requests
@@ -120,7 +123,8 @@ mockDownload <- function (url, destfile, ...) {
     f <- buildMockURL(url, method="DOWNLOAD")
     if (file.exists(f)) {
         file.copy(f, destfile)
-        return(0)
+        status <- 0
+        return(status)
     } else {
         stopDownload(url)
     }
