@@ -6,13 +6,13 @@
 #' @param object object to test
 #' @param expected expected value
 #' @param info extra information to be included in the message
-#' @param label character name by which to refer to \code{object} in the test
+#' @param label character name by which to refer to `object` in the test
 #' result. Because the tools for deparsing object names that 'testthat' uses
 #' aren't exported from that package, the default here is just "object".
-#' @param expected.label character same as \code{label} but for \code{expected}
-#' @return Invisibly, returns \code{object} for optionally passing to other
+#' @param expected.label character same as `label` but for `expected`
+#' @return Invisibly, returns `object` for optionally passing to other
 #' expectations.
-#' @seealso \code{\link[testthat]{expect_equivalent}}
+#' @seealso [testthat::expect_equivalent()]
 #' @importFrom testthat expect
 #' @export
 expect_json_equivalent <- function (object, expected, info=NULL,

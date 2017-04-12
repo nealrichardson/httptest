@@ -9,7 +9,7 @@ skip_if_disconnected(message = paste("Offline: cannot reach", url),
 }
 \arguments{
 \item{message}{character message to be printed, passed to
-\code{\link[testthat]{skip}}}
+\code{\link[testthat:skip]{testthat::skip()}}}
 
 \item{url}{character URL to ping to check for a working connection}
 }
@@ -21,10 +21,10 @@ Temporary connection trouble shouldn't fail your build.
 }
 \details{
 Note that if you call this from inside one of the mock contexts, it will
-follow the mock's behavior. That is, inside \code{\link{with_fake_HTTP}},
+follow the mock's behavior. That is, inside \code{\link[=with_fake_HTTP]{with_fake_HTTP()}},
 the check will pass and the following tests will run, but inside
-\code{\link{without_internet}}, the following tests will be skipped.
+\code{\link[=without_internet]{without_internet()}}, the following tests will be skipped.
 }
 \seealso{
-\code{\link[testthat]{skip}}
+\code{\link[testthat:skip]{testthat::skip()}}
 }

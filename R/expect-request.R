@@ -5,8 +5,8 @@
 #' @param object Code to execute that may cause an HTTP request
 #' @param url character: the URL you expect a request to be made to
 #' @param ... character segments of a request payload you expect to be included
-#' in the request body, to be joined together by \code{paste0}
-#' @return A \code{testthat} 'expectation'.
+#' in the request body, to be joined together by `paste0`
+#' @return A `testthat` 'expectation'.
 #' @examples
 #' without_internet({
 #'     expect_GET(httr::GET("http://httpbin.org/get"),

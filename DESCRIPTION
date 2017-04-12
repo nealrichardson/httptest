@@ -29,3 +29,4 @@ Imports:
     httr,
     jsonlite
 RoxygenNote: 6.0.0
+Roxygen: list(markdown = TRUE)

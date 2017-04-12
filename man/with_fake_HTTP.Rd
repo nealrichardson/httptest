@@ -14,7 +14,7 @@ The result of \code{expr}
 }
 \description{
 In this context, HTTP verb functions raise a 'message' so that test code can
-assert that the requests are made. Unlike \code{\link{without_internet}},
+assert that the requests are made. Unlike \code{\link[=without_internet]{without_internet()}},
 the HTTP functions do not error and halt execution, instead returning a
 \code{response}-class object so that code calling the HTTP functions can
 proceed with its response handling logic and itself be tested.

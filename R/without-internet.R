@@ -1,6 +1,6 @@
 #' Make all HTTP requests raise an error
 #' @param expr Code to run inside the mock context
-#' @return The result of \code{expr}
+#' @return The result of `expr`
 #' @importFrom testthat with_mock
 #' @examples
 #' without_internet({

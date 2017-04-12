@@ -17,7 +17,7 @@ In this context, HTTP requests attempt to load API response fixtures from
 files. This allows test code to proceed evaluating code that expects
 HTTP requests to return meaningful responses. Requests that do not have a
 corresponding to a fixture file raise
-errors, like how \code{\link{without_internet}} does.
+errors, like how \code{\link[=without_internet]{without_internet()}} does.
 }
 \details{
 File paths for API fixture files may be relative to the 'tests/testthat'
@@ -31,7 +31,7 @@ all API responses are assumed to be Content-Type: application/json). That is,
 a mocked \code{GET("api/")} will read a "api.json" file, while
 \code{GET("api/object1/")} reads "api/object1.json". If the request URL
 contains a query string, it will be popped off, hashed
-by \code{\link[digest]{digest}}, and the first six characters appended to the
+by \code{\link[digest:digest]{digest::digest()}}, and the first six characters appended to the
 file being read. For example, \code{GET("api/object1/?a=1")} reads
 "api/object1-b64371.json". Request bodies are similarly hashed and appended.
 If method other than GET is used it will be appended to the end of the end of
