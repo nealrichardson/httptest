@@ -8,7 +8,7 @@
 \usage{
 capture_requests(expr, path = ".")
 
-start_capturing(path)
+start_capturing(path = ".")
 
 stop_capturing()
 }
