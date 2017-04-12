@@ -4,7 +4,7 @@
 #' around test blocks to assert that the functions they call
 #' are exported (and thus fail if you haven't documented them with @export)
 #' @param ... Code to evaluate
-#' @return The result of \code{...} evaluated in the global environment (and not
+#' @return The result of `...` evaluated in the global environment (and not
 #' the package environment).
 #' @export
 public <- function (...) with(globalenv(), ...)

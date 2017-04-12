@@ -2,9 +2,15 @@
 % Please edit documentation in R/capture-requests.R
 \name{capture_requests}
 \alias{capture_requests}
+\alias{start_capturing}
+\alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
 capture_requests(expr, path = ".")
+
+start_capturing(path)
+
+stop_capturing()
 }
 \arguments{
 \item{expr}{Code to run inside the context}
@@ -16,10 +22,14 @@ directory.}
 The result of \code{expr}
 }
 \description{
-This context collects the responses from requests you make and stores them as
-mock files. This enables you to perform a series of requests against a live
-server once and then build your test suite using those mocks, running your
-tests in \code{with_mock_API}.
+\code{capture_requests} is a context that collects the responses from requests
+you make and stores them as mock files. This enables you to perform a series
+of requests against a live server once and then build your test suite using
+those mocks, running your tests in \code{\link[=with_mock_API]{with_mock_API()}}.
+}
+\details{
+\code{start_capturing} and \code{stop_capturing} allow you to turn on/off request
+recording for more convenient use in an interactive session.
 }
 \examples{
 \dontrun{
@@ -30,5 +40,13 @@ capture_requests({
         query=list(`Content-Type`="application/json"))
     utils::download.file("http://httpbin.org/gzip", tempfile())
 })
+# Or:
+start_capturing()
+GET("http://httpbin.org/get")
+GET("http://httpbin.org")
+GET("http://httpbin.org/response-headers",
+    query=list(`Content-Type`="application/json"))
+utils::download.file("http://httpbin.org/gzip", tempfile())
+stop_capturing()
 }
 }

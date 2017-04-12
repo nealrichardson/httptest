@@ -24,7 +24,7 @@ HTTP-looking mock URLs in your fixtures, and this function lets you have both
 }
 \details{
 This function also handles query parameters, as described in
-\link{with_mock_API}.
+\url{with_mock_API}.
 
 This function is exported so that other packages can construct similar mock
 behaviors or override specific requests at a higher level than

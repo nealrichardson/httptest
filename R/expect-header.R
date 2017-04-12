@@ -2,13 +2,13 @@
 #'
 #' This expectation checks that a HTTP header (and potentially header value)
 #' is present in a request. It works by inspecting the request object and
-#' raising warnings that are caught by \code{\link[testthat]{expect_warning}}.
+#' raising warnings that are caught by [testthat::expect_warning()].
 #'
-#' \code{expect_header} works both in the mock HTTP contexts and on "live" HTTP
+#' `expect_header` works both in the mock HTTP contexts and on "live" HTTP
 #' requests.
 #'
-#' @param ... Arguments passed to \code{expect_warning}
-#' @return \code{NULL}, according to \code{expect_warning}.
+#' @param ... Arguments passed to `expect_warning`
+#' @return `NULL`, according to `expect_warning`.
 #' @importFrom httr add_headers
 #' @importFrom testthat expect_warning
 #' @examples

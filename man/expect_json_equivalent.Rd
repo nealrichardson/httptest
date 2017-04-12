@@ -30,5 +30,5 @@ JSON. This test expectation loosens the equality check of two objects to
 ignore the order of elements in a named list.
 }
 \seealso{
-\code{\link[testthat]{expect_equivalent}}
+\code{\link[testthat:expect_equivalent]{testthat::expect_equivalent()}}
 }

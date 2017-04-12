@@ -4,7 +4,7 @@
 #' files. This allows test code to proceed evaluating code that expects
 #' HTTP requests to return meaningful responses. Requests that do not have a
 #' corresponding to a fixture file raise
-#' errors, like how \code{\link{without_internet}} does.
+#' errors, like how [without_internet()] does.
 #'
 #' File paths for API fixture files may be relative to the 'tests/testthat'
 #' directory, i.e. relative to the .R test files themselves.
@@ -14,18 +14,18 @@
 #' "URLs" should end in "/", and mock files themselves should end in ".json"
 #' (for in the current version of this package,
 #' all API responses are assumed to be Content-Type: application/json). That is,
-#' a mocked \code{GET("api/")} will read a "api.json" file, while
-#' \code{GET("api/object1/")} reads "api/object1.json". If the request URL
+#' a mocked `GET("api/")` will read a "api.json" file, while
+#' `GET("api/object1/")` reads "api/object1.json". If the request URL
 #' contains a query string, it will be popped off, hashed
-#' by \code{\link[digest]{digest}}, and the first six characters appended to the
-#' file being read. For example, \code{GET("api/object1/?a=1")} reads
+#' by [digest::digest()], and the first six characters appended to the
+#' file being read. For example, `GET("api/object1/?a=1")` reads
 #' "api/object1-b64371.json". Request bodies are similarly hashed and appended.
 #' If method other than GET is used it will be appended to the end of the end of
-#' the file name. For example, \code{POST("api/object1/?a=1")} reads
+#' the file name. For example, `POST("api/object1/?a=1")` reads
 #' "api/object1-b64371-POST.json".
 #'
 #' @param expr Code to run inside the fake context
-#' @return The result of \code{expr}
+#' @return The result of `expr`
 #' @export
 with_mock_API <- function (expr) {
     with_mock(
@@ -63,13 +63,13 @@ mockRequest <- function (req, handle, refresh) {
 #' "api/" and "api/object1/" exist as files.
 #'
 #' This function also handles query parameters, as described in
-#' \link{with_mock_API}.
+#' [with_mock_API]().
 #'
 #' This function is exported so that other packages can construct similar mock
 #' behaviors or override specific requests at a higher level than
-#' \code{with_mock_API} mocks.
-#' @param req A \code{request} object, or a character "URL" to convert
-#' @param method character HTTP method. If \code{req} is a 'request' object,
+#' `with_mock_API` mocks.
+#' @param req A `request` object, or a character "URL" to convert
+#' @param method character HTTP method. If `req` is a 'request' object,
 #' its request method will override this argument
 #' @return A file path and name, with .json extension. The file may or may not
 #' exist: existence is not a concern of this function.
