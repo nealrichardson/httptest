@@ -13,8 +13,8 @@ Description: Testing code and packages that communicate with remote servers can
     not--made. Using these tools, one can test that code is making the intended
     requests and that it handles the expected responses correctly, all without
     depending on a connection to a remote API.
-Version: 1.2.1
-Date: 2017-03-21
+Version: 1.3.0
+Date: 2017-04-12
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 Author: Neal Richardson [aut, cre]
 Maintainer: Neal Richardson <neal.p.richardson@gmail.com>
