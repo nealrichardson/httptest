@@ -1,5 +1,6 @@
 ## httptest 1.3.0
 * New context `capture_requests` to collect the responses from real requests and store them as mock files
+* `with_trace` convenience wrapper around `trace`/`untrace`
 * `mockDownload` now processes request URLs as `mockRequest` does
 
 ## httptest 1.2.0
