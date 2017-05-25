@@ -1,0 +1,39 @@
+#' Set an alternate directory or directories for mock API fixtures
+#'
+#' By default, `with_mock_API` will look for mocks relative to the current
+#' working directory (the test directory). If you want to look in other places,
+#' you can call `.mockPaths` to add directories to the search path. It works
+#' like [base::.libPaths()]: any directories you specify will be added to the
+#' list and searched first. The default directory will be searched last.
+#'
+#' For finer-grained control, or to completely override the default behavior
+#' of searching in the current working directory, you can set the option
+#' "httptest.mock.paths" directly.
+#' @param new Either a character vector of path(s) to add, or `NULL` to reset
+#' to the default.
+#' @return If `new` is omitted, the function returns the current search paths, a
+#' a character vector. If `new` is provided, the updated value will be returned
+#' invisibly.
+#' @examples
+#' identical(.mockPaths(), ".")
+#' .mockPaths("/var/somewhere/else")
+#' identical(.mockPaths(), c("/var/somewhere/else", "."))
+#' .mockPaths(NULL)
+#' identical(.mockPaths(), ".")
+#' @export
+.mockPaths <- function (new) {
+    current <- getOption("httptest.mock.paths", default=".")
+    if (missing(new)) {
+        ## We're calling the function to get the list of paths
+        return(current)
+    } else if (is.null(new)) {
+        ## We're calling the function to reset to the default
+        options(httptest.mock.paths=new)
+        invisible(current)
+    } else {
+        ## We're adding one or more paths
+        current <- c(new, current)
+        options(httptest.mock.paths=current)
+        invisible(current)
+    }
+}
