@@ -40,19 +40,22 @@ mockRequest <- function (req, handle, refresh) {
     ## and if it's a file and not URL, it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(req)
-    if (file.exists(f)) {
-        headers <- list(`Content-Type`="application/json")
-        resp <- fakeResponse(req$url, req$method,
-            content=readBin(f, "raw", 4096*32), ## Assumes mock is under 128K
-            status_code=200, headers=headers)
-        return(resp)
+    for (path in .mockPaths()) {
+        mockfile <- file.path(path, f)
+        if (file.exists(mockfile)) {
             ## TODO: don't assume content-type
-    } else {
-        ## For ease of debugging if a file isn't found, include it in the
-        ## error that gets printed.
-        req$mockfile <- f
-        return(stopRequest(req))
+            headers <- list(`Content-Type`="application/json")
+            resp <- fakeResponse(req$url, req$method,
+                content=readBin(mockfile, "raw", 4096*32), ## Assumes mock is under 128K
+                status_code=200, headers=headers)
+            return(resp)
+        }
     }
+    ## Else: fail.
+    ## For ease of debugging if a file isn't found, include it in the
+    ## error that gets printed.
+    req$mockfile <- f
+    return(stopRequest(req))
 }
 
 #' Convert a mock "URL" to a file path

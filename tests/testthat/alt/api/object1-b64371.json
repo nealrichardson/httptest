@@ -1,0 +1,7 @@
+// Query: a=1
+{
+    "query": {
+        "a": 1
+    },
+    "mocked": "twice"
+}
