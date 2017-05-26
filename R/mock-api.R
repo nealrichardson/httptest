@@ -40,16 +40,14 @@ mockRequest <- function (req, handle, refresh) {
     ## and if it's a file and not URL, it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(req)
-    for (path in .mockPaths()) {
-        mockfile <- file.path(path, f)
-        if (file.exists(mockfile)) {
-            ## TODO: don't assume content-type
-            headers <- list(`Content-Type`="application/json")
-            resp <- fakeResponse(req$url, req$method,
-                content=readBin(mockfile, "raw", 4096*32), ## Assumes mock is under 128K
-                status_code=200, headers=headers)
-            return(resp)
-        }
+    mockfile <- findMockFile(f)
+    if (!is.null(mockfile)) {
+        ## TODO: don't assume content-type
+        headers <- list(`Content-Type`="application/json")
+        resp <- fakeResponse(req$url, req$method,
+            content=readBin(mockfile, "raw", 4096*32), ## Assumes mock is under 128K
+            status_code=200, headers=headers)
+        return(resp)
     }
     ## Else: fail.
     ## For ease of debugging if a file isn't found, include it in the
@@ -118,13 +116,25 @@ buildMockURL <- function (req, method="GET") {
     return(f)
 }
 
+findMockFile <- function (file) {
+    ## Go through .mockPaths() to find the local mockfile location.
+    ## Return NULL if none found.
+    for (path in .mockPaths()) {
+        mockfile <- file.path(path, file)
+        if (file.exists(mockfile)) {
+            return(mockfile)
+        }
+    }
+    return(NULL)
+}
+
 requestBody <- function (req) req$options$postfields
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
 
 mockDownload <- function (url, destfile, ...) {
-    f <- buildMockURL(url, method="DOWNLOAD")
-    if (file.exists(f)) {
+    f <- findMockFile(buildMockURL(url, method="DOWNLOAD"))
+    if (!is.null(f)) {
         file.copy(f, destfile)
         status <- 0
         return(status)
