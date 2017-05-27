@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest) [![Build status](https://ci.appveyor.com/api/projects/status/egrw65593iso21cu?svg=true)](https://ci.appveyor.com/project/nealrichardson/httptest) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
 
-Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package enables one to test all of the logic on the R sides of the API in your package without requiring access to the remote service. Importantly, `httptest` provides three test **contexts** that mock the network connection in different ways, and it offers additional **expectations** to assert that HTTP requests were--or were not--made. Using these tools, one can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API.
+Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package enables one to test all of the logic on the R sides of the API in your package without requiring access to the remote service. Importantly, `httptest` provides three test **contexts** that mock the network connection in different ways, and it offers additional **expectations** to assert that HTTP requests were--or were not--made. The package also includes a context for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, one can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API.
 
 This package bridges the gap between two others: (1) [testthat](https://github.com/hadley/testthat), which provides a useful framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](https://github.com/hadley/httr), which makes working with HTTP in R easy but doesn't make it simple to test the code that uses it.
 
@@ -36,14 +36,18 @@ The package includes three test contexts, which you wrap around test code that w
 * **with_fake_HTTP** raises a "message" instead of an "error", and HTTP requests return a "response"-class object. Like `without_internet`, it allows you to assert that the correct requests were (or were not) made, but since it doesn't cause the code to exit with an error, you can test code in functions that comes after requests, provided that it doesn't expect a particular response to each request.
 * **with_mock_API** lets you provide custom fixtures as responses to requests. It maps URLs, including query parameters, to files in your test directory, and it includes the file contents in the mocked "response" object. Request methods that do not have a corresponding fixture file raise errors the same way that `without_internet` does. This context allows you to test more complex R code that makes requests and does something with the response, simulating how the API should respond to specific requests.
 
-There is a fourth context, **capture_requests**, which collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_API`. 
-
 ### Expectations
 
 * **expect_GET**, **expect_PUT**, **expect_PATCH**, **expect_POST**, and **expect_DELETE** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_API` just proceed with their response content and don't trigger `expect_GET`, however.)
 * **expect_no_request** is the inverse of those: it asserts that no error or message from a mocked HTTP service is raised.
 * **expect_header** asserts that an HTTP request, mocked or not, contains a request header.
 * **expect_json_equivalent** doesn't directly concern HTTP, but it is useful for working with JSON APIs. It checks that two R objects would generate equivalent JSON, taking into account how JSON objects are unordered whereas R named lists are ordered.
+
+### Recording requests
+
+A fourth context, **capture_requests**, collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_API`.
+
+Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
 
 ### Other tools
 
@@ -52,7 +56,7 @@ There is a fourth context, **capture_requests**, which collects the responses fr
 
 ## Contributing
 
-Suggestions and pull requests are more than welcome. This package is pulled together from the test setup code I'd written and copied around among three different packages. While the code here has been well used and hashed out over a couple of years of working with them, I have naturally focused on features that have been helpful for working with specific APIs. The concepts provided here are generally useful, but some details for working with other APIs may be missing. In particular, the initial release of the package assumes "Content-Type: application/json" in several places.
+Suggestions and pull requests are more than welcome. This package was initially pulled together from test setup code I'd written and copied around among three different packages. While the code here has been well used and hashed out over a couple of years of working with them, I have naturally focused on features that have been helpful for working with specific APIs. The concepts provided here are generally useful, but some details or conveniences for working with other APIs may be missing. In particular, the package privileges "Content-Type: application/json" in several places.
 
 ## For developers
 

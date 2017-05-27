@@ -85,6 +85,11 @@ public({
                 authenticate("d", "d"))),
                 list(loaded=TRUE))
         })
+
+        test_that("Mock GET with non-JSON", {
+            dick <- GET("http://example.com/html")
+            expect_true(grepl("Melville", content(dick, "text")))
+        })
     })
 })
 

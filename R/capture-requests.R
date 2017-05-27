@@ -11,7 +11,13 @@
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the current working
 #' directory.
-#' @return The result of `expr`
+#' @param simplify logical: if `TRUE` (default), JSON responses with status 200
+#' will be written as just the text of the response body. In all other cases,
+#' and when `simplify` is `FALSE`, the "response" object will be written out to
+#' a .R file using [base::dput()].
+#' @return `capture_requests` returns the result of `expr`. `start_capturing`
+#' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
+#' it is called for its side effects.
 #' @examples
 #' \dontrun{
 #' capture_requests({
@@ -31,25 +37,58 @@
 #' stop_capturing()
 #' }
 #' @export
-capture_requests <- function (expr, path=".") {
-    start_capturing(path)
+capture_requests <- function (expr, path=".", simplify=TRUE) {
+    start_capturing(path, simplify=simplify)
     on.exit(stop_capturing())
     eval.parent(expr)
 }
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path=".") {
+start_capturing <- function (path=".", simplify=TRUE) {
     ## Use "substitute" so that "path" gets inserted. Code remains quoted.
     req_tracer <- substitute({
         f <- file.path(path, buildMockURL(req))
         dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
-        .resp <- structure(list(content=resp$content, headers=headers),
-            class="response")
-        ## TODO: switch behavior based on request method, content type, and
-        ## option to deparse the whole response object?
-        cat(content(.resp, "text"), file=f)
-    }, list(path=path))
+        ## Put these here so they're in scope in case we're capturing mocked
+        ## responses. Pretty meta.
+        if (!exists("all_headers")) all_headers <- headers
+        if (!exists("date")) date <- Sys.time()
+
+        ## Construct the "response" here because it's not assigned to a variable
+        ## when the function returns.
+        ## One difference: omit curl handle related stuff.
+        .resp <- structure(list(url = resp$url, status_code = resp$status_code,
+            headers = headers, all_headers = all_headers,
+            content = resp$content, date = date, times = resp$times,
+            request = req), class="response")
+        ## Get the Content-Type
+        ct <- unlist(headers[tolower(names(headers)) == "content-type"])
+        is_json <- any(grepl("application/json", ct))
+        if (simplify && .resp$status_code == 200 && is_json) {
+            ## TODO: support other text content-types than JSON
+            cat(content(.resp, "text"), file=f)
+        } else {
+            ## Dump an object that can be sourced
+
+            ## If content is text, rawToChar it and dput it as charToRaw(that)
+            ## so that it loads correctly but is also readable
+            text_types <- c("application/json",
+                "application/x-www-form-urlencoded", "application/xml",
+                "text/csv", "text/html", "text/plain",
+                "text/tab-separated-values", "text/xml")
+            is_text <- length(ct) && any(unlist(strsplit(ct, "; ")) %in% text_types)
+            ## strsplit on ; because "charset" may be appended
+            if (is_text) {
+                cont <- content(.resp, "text")
+                .resp$content <- substitute(charToRaw(cont))
+            }
+
+            ## Change the file extension to .R
+            f <- sub("json$", "R", f)
+            dput(.resp, file=f)
+        }
+    }, list(path=path, simplify=simplify))
     dl_tracer <- substitute({
         if (status == 0) {
             ## Only do this if the download was successful

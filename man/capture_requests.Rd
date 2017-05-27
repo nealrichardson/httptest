@@ -6,9 +6,9 @@
 \alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
-capture_requests(expr, path = ".")
+capture_requests(expr, path = ".", simplify = TRUE)
 
-start_capturing(path = ".")
+start_capturing(path = ".", simplify = TRUE)
 
 stop_capturing()
 }
@@ -17,9 +17,16 @@ stop_capturing()
 
 \item{path}{Where to save the mock files. Default is the current working
 directory.}
+
+\item{simplify}{logical: if \code{TRUE} (default), JSON responses with status 200
+will be written as just the text of the response body. In all other cases,
+and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
+a .R file using \code{\link[base:dput]{base::dput()}}.}
 }
 \value{
-The result of \code{expr}
+\code{capture_requests} returns the result of \code{expr}. \code{start_capturing}
+invisibly returns the \code{path} it is given. \code{stop_capturing} returns nothing;
+it is called for its side effects.
 }
 \description{
 \code{capture_requests} is a context that collects the responses from requests

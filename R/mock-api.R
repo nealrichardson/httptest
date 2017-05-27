@@ -42,12 +42,18 @@ mockRequest <- function (req, handle, refresh) {
     f <- buildMockURL(req)
     mockfile <- findMockFile(f)
     if (!is.null(mockfile)) {
-        ## TODO: don't assume content-type
-        headers <- list(`Content-Type`="application/json")
-        resp <- fakeResponse(req$url, req$method,
-            content=readBin(mockfile, "raw", 4096*32), ## Assumes mock is under 128K
-            status_code=200, headers=headers)
-        return(resp)
+        if (grepl("\\.R$", mockfile)) {
+            ## It's a full "response". Source it.
+            return(source(mockfile)$value)
+        } else {
+            ## TODO: don't assume content-type
+            headers <- list(`Content-Type`="application/json")
+            cont <- readBin(mockfile, "raw", 4096*32)
+            ## Assumes mock is under 128K       ^
+            resp <- fakeResponse(req$url, req$method, content=cont,
+                status_code=200L, headers=headers)
+            return(resp)
+        }
     }
     ## Else: fail.
     ## For ease of debugging if a file isn't found, include it in the
@@ -121,6 +127,12 @@ findMockFile <- function (file) {
     ## Return NULL if none found.
     for (path in .mockPaths()) {
         mockfile <- file.path(path, file)
+        if (file.exists(mockfile)) {
+            return(mockfile)
+        }
+        ## Else, see if there is a .R file "response" with the same path
+        ## TODO: don't assume content-type
+        mockfile <- sub("\\.json$", ".R", mockfile)
         if (file.exists(mockfile)) {
             return(mockfile)
         }
