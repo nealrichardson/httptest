@@ -1,5 +1,6 @@
-## httptest 1.3.1 (under development)
-* New `.mockPaths` function, in the model of `.libPaths`, which allows you to specify alternate directories in which to search for mock API responses. 
+### httptest 1.3.1 (under development)
+* `capture_requests` now writes non-JSON-content-type and non-200-status responses as full "response" objects in .R files. `with_mock_API` now looks for .R mocks if a .json mock isn't found. This allows all requests and all responses, not just JSON content, to be mocked.
+* New `.mockPaths` function, in the model of `.libPaths`, which allows you to specify alternate directories in which to search for mock API responses.
 
 ## httptest 1.3.0
 * New context `capture_requests` to collect the responses from real requests and store them as mock files
