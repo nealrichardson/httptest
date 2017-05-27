@@ -20,6 +20,7 @@
 #' identical(.mockPaths(), c("/var/somewhere/else", "."))
 #' .mockPaths(NULL)
 #' identical(.mockPaths(), ".")
+#' @rdname mockPaths
 #' @export
 .mockPaths <- function (new) {
     current <- getOption("httptest.mock.paths", default=".")

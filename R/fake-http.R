@@ -66,7 +66,8 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
         base.headers[["content-length"]] <- nchar(content)
         content <- charToRaw(content)
     }
-
+    headers <- modifyList(base.headers, headers)
+    
     structure(list(
         url=url,
         status_code=status_code,
@@ -74,7 +75,8 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
             .Names=c("redirect", "namelookup", "connect", "pretransfer",
                     "starttransfer", "total")),
         request=list(method=verb, url=url),
-        headers=modifyList(base.headers, headers),
+        headers=headers,
+
         content=content
     ), class="response")
 }
