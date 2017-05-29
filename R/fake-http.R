@@ -1,10 +1,19 @@
 #' Make all HTTP requests return a fake 'response' object
 #'
 #' In this context, HTTP verb functions raise a 'message' so that test code can
-#' assert that the requests are made. Unlike [without_internet()],
+#' assert that the requests are made. As in [without_internet()], the message
+#' raised has a well-defined shape, made of three
+#' elements, separated by space: (1) the request
+#' method (e.g. "GET", or for downloading, "DOWNLOAD"); (2) the request URL; and
+#' (3) the request body, if present. The verb-expectation functions,
+#' such as `expect_GET` and `expect_POST`, look for this shape.
+#'
+#' Unlike `without_internet`,
 #' the HTTP functions do not error and halt execution, instead returning a
 #' `response`-class object so that code calling the HTTP functions can
-#' proceed with its response handling logic and itself be tested.
+#' proceed with its response handling logic and itself be tested. The response
+#' it returns echoes back most of the request itself, similar to how some
+#' endpoints on \url{http://httpbin.org} do.
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
 #' @examples
@@ -67,7 +76,7 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
         content <- charToRaw(content)
     }
     headers <- modifyList(base.headers, headers)
-    
+
     structure(list(
         url=url,
         status_code=status_code,

@@ -15,7 +15,7 @@ build: doc
 	R CMD build .
 
 check: build
-	-R CMD check --as-cran httptest_$(VERSION).tar.gz
+	-export _R_CHECK_CRAN_INCOMING_REMOTE_=FALSE && R CMD check --as-cran httptest_$(VERSION).tar.gz
 	rm -rf httptest.Rcheck/
 
 man: doc

@@ -1,16 +1,29 @@
 #' Expecations for mocked HTTP requests
 #'
-#' Use these inside one of the mock contexts.
+#' The mock contexts in `httptest` can raise errors or messages when requests
+#' are made, and those (error) messages have three
+#' elements, separated by space: (1) the request
+#' method (e.g. "GET"); (2) the request URL; and
+#' (3) the request body, if present.
+#' These verb-expectation functions look for this message shape. `expect_PUT`,
+#' for instance, looks for a request message that starts with "PUT".
 #'
 #' @param object Code to execute that may cause an HTTP request
-#' @param url character: the URL you expect a request to be made to
+#' @param url character: the URL you expect a request to be made to. Default is
+#' an empty string, meaning that you can just assert that a request is made with
+#' a certain method without asserting anything further.
 #' @param ... character segments of a request payload you expect to be included
 #' in the request body, to be joined together by `paste0`
 #' @return A `testthat` 'expectation'.
 #' @examples
+#' library(httr)
 #' without_internet({
-#'     expect_GET(httr::GET("http://httpbin.org/get"),
+#'     expect_GET(GET("http://httpbin.org/get"),
 #'         "http://httpbin.org/get")
+#'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'),
+#'         'http://httpbin.org/put',
+#'         '{"a":1}')
+#'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'))
 #'     expect_no_request(rnorm(5))
 #' })
 #' @name expect-verb
