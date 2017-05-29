@@ -3,29 +3,21 @@
 #' In this context, HTTP requests attempt to load API response fixtures from
 #' files. This allows test code to proceed evaluating code that expects
 #' HTTP requests to return meaningful responses. Requests that do not have a
-#' corresponding to a fixture file raise
-#' errors, like how [without_internet()] does.
+#' corresponding fixture file raise errors, like how [without_internet()]
+#' does.
+#'
+#' Requests are translated to mock file paths according to several rules that
+#' incorporate the request method, URL, query parameters, and body. See
+#' [buildMockURL()] for details.
 #'
 #' File paths for API fixture files may be relative to the 'tests/testthat'
-#' directory, i.e. relative to the .R test files themselves.
-#'
-#' Some file path matching rules: first, in order to emulate an HTTP API, in
-#' which, unlike a file system, a "directory" itself is a resource, all mock
-#' "URLs" should end in "/", and mock files themselves should end in ".json"
-#' (for in the current version of this package,
-#' all API responses are assumed to be Content-Type: application/json). That is,
-#' a mocked `GET("api/")` will read a "api.json" file, while
-#' `GET("api/object1/")` reads "api/object1.json". If the request URL
-#' contains a query string, it will be popped off, hashed
-#' by [digest::digest()], and the first six characters appended to the
-#' file being read. For example, `GET("api/object1/?a=1")` reads
-#' "api/object1-b64371.json". Request bodies are similarly hashed and appended.
-#' If method other than GET is used it will be appended to the end of the end of
-#' the file name. For example, `POST("api/object1/?a=1")` reads
-#' "api/object1-b64371-POST.json".
+#' directory, i.e. relative to the .R test files themselves. This is the default
+#' location for storing and retrieving mocks, but you can put them anywhere you
+#' want as long as you set the appropriate location with [.mockPaths()].
 #'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
+#' @seealso [buildMockURL()] [.mockPaths()]
 #' @export
 with_mock_API <- function (expr) {
     with_mock(
@@ -62,15 +54,38 @@ mockRequest <- function (req, handle, refresh) {
     return(stopRequest(req))
 }
 
-#' Convert a mock "URL" to a file path
+#' Convert a request to a mock file path
 #'
-#' Because HTTP allows "directories" to be resources themselves but the local
-#' file system does not, this function disambiguates those cases. Use
-#' HTTP-looking mock URLs in your fixtures, and this function lets you have both
-#' "api/" and "api/object1/" exist as files.
+#' Requests are translated to mock file paths according to several rules that
+#' incorporate the request method, URL, query parameters, and body.
 #'
-#' This function also handles query parameters, as described in
-#' [with_mock_API]().
+#' First, the URL is modified in two ways in order to allow it to map to a
+#' local file system. All mock files have the request protocol such as "http://"
+#' removed from the URL, and they also have a file extension appended. In an
+#' HTTP API, a "directory" itself is a resource,
+#' so the extension allows distinguishing directories and files in the file
+#' system. That is, a mocked `GET("http://example.com/api/")` may read a
+#' "example.com/api.json" file, while
+#' `GET("http://example.com/api/object1/")` reads "example.com/api/object1.json".
+#'
+#' The extension also gives information on content type. Two extensions are
+#' currently supported: (1) .json and (2) .R. JSON mocks can be stored in .json
+#' files, and when they are loaded by [with_mock_API()], relevant request
+#' metadata (headers, status code, etc.) are inferred. If your API doesn't
+#' return JSON, or if you want to simulate requests with other behavior (201
+#' Location response, or 400 Bad Request, for example), you can store full
+#' `response` objects in .R files that `with_mock_API` will `source` to load.
+#' Any request can be stored as a .R mock, but the .json mocks offer a
+#' simplified, more readable alternative. ([capture_requests()] will record
+#' simplified .json files where appropriate and .R mocks otherwise by default.)
+#'
+#' Second, if the request URL contains a query string, it will be popped off,
+#' hashed by [digest::digest()], and the first six characters appended to the
+#' file being read. For example, `GET("api/object1/?a=1")` reads
+#' "api/object1-b64371.json". Third, request bodies are similarly hashed and
+#' appended. Finally, if a request method other than GET is used it will be
+#' appended to the end of the end of the file name. For example,
+#' `POST("api/object1/?a=1")` reads "api/object1-b64371-POST.json".
 #'
 #' This function is exported so that other packages can construct similar mock
 #' behaviors or override specific requests at a higher level than
@@ -81,6 +96,7 @@ mockRequest <- function (req, handle, refresh) {
 #' @return A file path and name, with .json extension. The file may or may not
 #' exist: existence is not a concern of this function.
 #' @importFrom digest digest
+#' @seealso [with_mock_API()] [capture_requests()]
 #' @export
 buildMockURL <- function (req, method="GET") {
     if (is.character(req)) {
@@ -100,11 +116,11 @@ buildMockURL <- function (req, method="GET") {
     ## Remove trailing slash
     f <- sub("\\/$", "", parts[1])
     if (length(parts) > 1) {
-        ## Append the digest suffix
+        ## There's a query string. Append the digest as a suffix.
         f <- paste0(f, "-", hash(parts[2]))
     }
 
-    ## Handle body
+    ## Handle body and append its hash if present
     if (length(body) > 0) {
         f <- paste0(f, "-", hash(rawToChar(body)))
     }

@@ -14,10 +14,20 @@ The result of \code{expr}
 }
 \description{
 In this context, HTTP verb functions raise a 'message' so that test code can
-assert that the requests are made. Unlike \code{\link[=without_internet]{without_internet()}},
+assert that the requests are made. As in \code{\link[=without_internet]{without_internet()}}, the message
+raised has a well-defined shape, made of three
+elements, separated by space: (1) the request
+method (e.g. "GET", or for downloading, "DOWNLOAD"); (2) the request URL; and
+(3) the request body, if present. The verb-expectation functions,
+such as \code{expect_GET} and \code{expect_POST}, look for this shape.
+}
+\details{
+Unlike \code{without_internet},
 the HTTP functions do not error and halt execution, instead returning a
 \code{response}-class object so that code calling the HTTP functions can
-proceed with its response handling logic and itself be tested.
+proceed with its response handling logic and itself be tested. The response
+it returns echoes back most of the request itself, similar to how some
+endpoints on \url{http://httpbin.org} do.
 }
 \examples{
 with_fake_HTTP({

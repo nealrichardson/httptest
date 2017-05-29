@@ -37,6 +37,15 @@ those mocks, running your tests in \code{\link[=with_mock_API]{with_mock_API()}}
 \details{
 \code{start_capturing} and \code{stop_capturing} allow you to turn on/off request
 recording for more convenient use in an interactive session.
+
+Mocks stored by this context are written out as plain-text files, either with
+extension \code{.json} if the request returned JSON content or with extension \code{.R}
+otherwise. The \code{.R} files contain syntax that when executed recreates the
+\code{httr} "response" object. By storing fixtures as plain-text files, you can
+more easily confirm that your mocks look correct, and you can more easily
+maintain them without having to re-record them. If the API changes subtly,
+such as when adding an additional attribute to an object, you can just touch
+up the mocks.
 }
 \examples{
 \dontrun{
