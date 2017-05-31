@@ -59,18 +59,10 @@ start_capturing <- function (path=".", simplify=TRUE) {
     req_tracer <- substitute({
         f <- file.path(path, buildMockURL(req))
         dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
-        ## Put these here so they're in scope in case we're capturing mocked
-        ## responses. Pretty meta.
-        if (!exists("all_headers")) all_headers <- headers
-        if (!exists("date")) date <- Sys.time()
-
-        ## Construct the "response" here because it's not assigned to a variable
-        ## when the function returns.
-        ## One difference: omit curl handle related stuff.
-        .resp <- structure(list(url = resp$url, status_code = resp$status_code,
-            headers = headers, all_headers = all_headers,
-            content = resp$content, date = date, times = resp$times,
-            request = req), class="response")
+        ## Get the value returned from the function
+        .resp <- returnValue()
+        ## Omit curl handle C pointer
+        .resp$handle <- NULL
         ## Get the Content-Type
         ct <- unlist(headers[tolower(names(headers)) == "content-type"])
         is_json <- any(grepl("application/json", ct))
