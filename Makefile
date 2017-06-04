@@ -26,7 +26,6 @@ md:
 	mkdir -p inst/doc
 	R -e 'setwd("vignettes"); lapply(dir(pattern="Rmd"), knitr::knit, envir=globalenv())'
 	mv vignettes/*.md inst/doc/
-	-cd inst/doc && ls | grep .md | xargs -n 1 sed -i '' 's/.html)/.md)/g'
 	-cd inst/doc && ls | grep .md | xargs -n 1 egrep "^.. Error"
 
 build-vignettes: md
