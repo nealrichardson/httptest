@@ -42,26 +42,25 @@ with_fake_HTTP <- function (expr) {
 #' "response" class object that should behave like a real response generated
 #' by a real request.
 #'
-#' These mock functions can be used to replace the 'httr' verb functions using
-#' the 'testthat' package's \code{\link[testthat]{with_mock}} function. See the
-#' test suite for this package for an illustration of how to use them.
-#' @param url A character URL for the request. For \code{fakeDownload}, this
+#' @param url A character URL for the request. For `fakeDownload`, this
 #' should be a path to a file that exists.
 #' @param verb Character name for the HTTP verb. Default is "GET"
 #' @param status_code Integer HTTP response status
 #' @param headers Optional list of additional response headers to return
 #' @param content If supplied, a JSON-serializable list that will be returned
-#' as response content with Content-Type: application/json. If no \code{content}
-#' is provided, and if the \code{status_code} is not 204 No Content, the
-#' \code{url} will be set as the response content with Content-Type: text/plain.
+#' as response content with Content-Type: application/json. If no `content`
+#' is provided, and if the `status_code` is not 204 No Content, the
+#' `url` will be set as the response content with Content-Type: text/plain.
+#' @param destfile For `fakeDownload`, character file path to "download"
+#' to. `fakeDownload` will copy the file at `url` to this path.
+#' @param ... Additional arguments for `fakeDownload`
 #' @return The fake verbs return a 'httr' response class object.
-#' \code{fakeDownload} returns 0, the success code returned by
-#' \code{\link[utils]{download.file}}.
+#' `fakeDownload` returns 0, the success code returned by
+#' [utils::download.file()].
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
 fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), content=NULL) {
-    ## Return something that looks enough like an httr 'response'
     base.headers <- list()
     if (status_code == 204) {
         content <- NULL
@@ -90,12 +89,8 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
     ), class="response")
 }
 
-# This goes with the mock api backend
-# #' @rdname fakeResponse
-# #' @param destfile For \code{fakeDownload}, character file path to "download"
-# #' to. \code{fakeDownload} will copy the file at \code{url} to this path.
-# #' @export
-
+#' @rdname fakeResponse
+#' @export
 fakeDownload <- function (url, destfile, ...) {
     message("DOWNLOAD ", url)
     writeLines(url, destfile)

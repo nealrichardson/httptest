@@ -33,11 +33,10 @@ it is called for its side effects.
 you make and stores them as mock files. This enables you to perform a series
 of requests against a live server once and then build your test suite using
 those mocks, running your tests in \code{\link[=with_mock_API]{with_mock_API()}}.
-}
-\details{
 \code{start_capturing} and \code{stop_capturing} allow you to turn on/off request
 recording for more convenient use in an interactive session.
-
+}
+\details{
 Mocks stored by this context are written out as plain-text files, either with
 extension \code{.json} if the request returned JSON content or with extension \code{.R}
 otherwise. The \code{.R} files contain syntax that when executed recreates the

@@ -12,9 +12,9 @@ options(width=120)
 
 Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package lets you test R code that constructs API requests and handles their responses, all without requiring access to the remote service during the test run. This makes tests easy to write and fast to run.
 
-`httptest` sits on top of the [testthat](https://github.com/hadley/testthat) package and provides test **contexts** that mock the network connection. These let you provide mock API responses for some requests, as well as allowing you to assert that HTTP requests were--or were not--made using custom **expectation** functions. The package further includes tools for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly without depending on a connection to a remote API.
+`httptest` sits on top of the [testthat](https://github.com/hadley/testthat) package and provides test **contexts** that mock the network connection. These let you provide mock API responses for some requests, as well as allowing you to assert that HTTP requests were—or were not—made using custom **expectation** functions. The package further includes tools for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly without depending on a connection to a remote API.
 
-This vignette covers some of the core features of the `httptest` package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks. Note that `httptest` requires the `testthat` package, and it follows the testing conventions and interfaces defined there, extending them with some additional wrappers and expectations. If you're not familiar with `testthat`, see the ["Testing" chapter](http://r-pkgs.had.co.nz/tests.html) chapter of Hadley Wickham's _R Packages_ book. Furthermore, `httptest` is designed for use with packages that rely on the [httr](https://github.com/hadley/httr) requests library--it is a bridge between `httr` and `testthat`.
+This vignette covers some of the core features of the `httptest` package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks. Note that `httptest` requires the `testthat` package, and it follows the testing conventions and interfaces defined there, extending them with some additional wrappers and expectations. If you're not familiar with `testthat`, see the ["Testing" chapter](http://r-pkgs.had.co.nz/tests.html) chapter of Hadley Wickham's _R Packages_ book. Furthermore, `httptest` is designed for use with packages that rely on the [httr](https://github.com/hadley/httr) requests library—it is a bridge between `httr` and `testthat`.
 
 # The `with_mock_API` context
 
@@ -29,7 +29,7 @@ First, we need to set up some boilerplate for `testthat` testing, which `httptes
     library(httptest)
     test_check("twitteR")
 
-Note that it says `library(httptest)` instead of the `library(testthat)` that you would otherwise use with `testthat`. Next, let's add a "testthat" directory to hold our test files. In that directory, we'll start with a "helper.R" file for common setup code. From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real Twitter API, so we don't need a valid token--we just need a token to exist so the R code that looks for a token finds one:
+Note that it says `library(httptest)` instead of the `library(testthat)` that you would otherwise use with `testthat`. Next, let's add a "testthat" directory to hold our test files. In that directory, we'll start with a "helper.R" file for common setup code. From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real Twitter API, so we don't need a valid token—we just need a token to exist so the R code that looks for a token finds one:
 
     use_oauth_token("foo")
 
@@ -52,7 +52,7 @@ When we run the tests, it fails with
 The error message reveals a few things about how `with_mock_API` works. First, it tells us what the request method and URL was, and if there had been a request body, it would have been part of the error message as well. Second, the final part of the error message is a file name. That's the mock file that the test context was looking for and didn't find. If the file had existed, it would have been loaded and the code would have continued executing *as if the server had returned it*.
 
 Requests are translated to mock file paths according to several rules that
-incorporate the request method, URL, query parameters, and body. Query parameters and request bodies are incorporated into the file path by hashing--hence the `84627b` in the `getUser` example. If a request method other than GET is used, it will be appended to the end of the end of the file name. For example, `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json".
+incorporate the request method, URL, query parameters, and body. Query parameters and request bodies are incorporated into the file path by hashing—hence the `84627b` in the `getUser` example. If a request method other than GET is used, it will be appended to the end of the end of the file name. For example, `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json".
 
 Mock file paths also have an extension appended because in an
 HTTP API, a "directory" itself is a resource. The extension allows distinguishing directories and files in the file system. That is, a mocked `GET("http://example.com/api/")` may read a
@@ -67,7 +67,7 @@ Location response, or 400 Bad Request, for example), you can store full
 Any request can be stored as a .R mock, but the .json mocks offer a
 simplified, more readable alternative.
 
-Back to the `getUser` example. The error message tells us that the request it is making--`GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev`--is what we should expect based on the API documentation, so that's good. Now let's provide a mock response. The API documentation page has an example JSON response, which looks like
+Back to the `getUser` example. The error message tells us that the request it is making—`GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev`—is what we should expect based on the API documentation, so that's good. Now let's provide a mock response. The API documentation page has an example JSON response, which looks like
 
     {
       "id": 2244994945,
@@ -158,7 +158,7 @@ While recording requests to use later in tests can be very convenient, we don't 
 
 # Mocks are text files
 
-`httptest` stores these API mocks as plain-text files, which has several nice features, particularly relative to storing serialized (binary) R objects. You can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. When you do edit them, text files are more easily handled by version-control systems like Git and Mercurial. Plain-text files can also have comments, so you can make notes as to why a certain fixture exists, what a particular value means, and so on, which will help the users of your package--and your future self!
+`httptest` stores these API mocks as plain-text files, which has several nice features, particularly relative to storing serialized (binary) R objects. You can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. When you do edit them, text files are more easily handled by version-control systems like Git and Mercurial. Plain-text files can also have comments, so you can make notes as to why a certain fixture exists, what a particular value means, and so on, which will help the users of your package—and your future self!
 
 By having mocks in human-readable text files, you can also more easily extend your code. APIs are living things that evolve over time, and your code that communicates with an API needs to be able to change with them. If the API adds an additional attribute to an object, no big deal: just touch up the mocks. In addition, you can future-proof your code by tweaking a fixture file, as in [this example](https://github.com/Crunch-io/rcrunch/blob/master/inst/app.crunch.io/api/datasets/1.json#L33) fro, the `crunch` package. It has an extra, nonsense attribute in the JSON, there just to ensure that the code doesn't break if there are new, unknown features added to the API response. That way, if the API grows new features, people who are using your package don't get errors if they haven't upgraded to the release that recognizes the new feature.
 
@@ -242,9 +242,9 @@ This tells us that our cache is working as expected: we can get results from cac
 
 ## Assert the shape of request payloads
 
-Sometimes it is more clear what you're testing if you focus only on the requests. One case is when the response itself isn't that interesting or doesn't tell you that the request did the correct thing. For example, if you're testing a POST request that alters the state of something on the server and returns 204 No Content status on success, nothing in the response itself (which would be stored in the mock file) tells you that the request you made was shaped correctly--the response has no content. A more transparent, readable test would just assert that the POST request was made to the right URL and had the expected request body.
+Sometimes it is more clear what you're testing if you focus only on the requests. One case is when the response itself isn't that interesting or doesn't tell you that the request did the correct thing. For example, if you're testing a POST request that alters the state of something on the server and returns 204 No Content status on success, nothing in the response itself (which would be stored in the mock file) tells you that the request you made was shaped correctly—the response has no content. A more transparent, readable test would just assert that the POST request was made to the right URL and had the expected request body.
 
-Both `without_internet` and `with_mock_API` allow you to make assertions about requests--method, URL, and payload--that should be made. We saw in the `twitteR` example above using `with_mock_API` that when your code makes a request that doesn't have a corresponding mock file, the code raises an error indicating the request and expected file. This is the same kind of error message that `without_internet` raises, the kind that can be tested for using the `expect_VERB` functions.
+Both `without_internet` and `with_mock_API` allow you to make assertions about requests—method, URL, and payload—that should be made. We saw in the `twitteR` example above using `with_mock_API` that when your code makes a request that doesn't have a corresponding mock file, the code raises an error indicating the request and expected file. This is the same kind of error message that `without_internet` raises, the kind that can be tested for using the `expect_VERB` functions.
 
 In this example from the `crunch` package, inside the `with_mock_API` context, there is a catalog resource containing three entities, each of which has an "archived" attribute. The `is.archived` method returns the value of that attribute:
 
