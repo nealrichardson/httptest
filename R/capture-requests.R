@@ -4,7 +4,6 @@
 #' you make and stores them as mock files. This enables you to perform a series
 #' of requests against a live server once and then build your test suite using
 #' those mocks, running your tests in [with_mock_API()].
-#'
 #' `start_capturing` and `stop_capturing` allow you to turn on/off request
 #' recording for more convenient use in an interactive session.
 #'
