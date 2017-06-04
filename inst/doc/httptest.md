@@ -10,9 +10,9 @@
 
 Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package lets you test R code that constructs API requests and handles their responses, all without requiring access to the remote service during the test run. This makes tests easy to write and fast to run.
 
-`httptest` sits on top of the [testthat](http://github.com/hadley/testthat) package and provides test **contexts** that mock the network connection. These let you provide mock API responses for some requests, as well as allowing you to assert that HTTP requests were--or were not--made using custom **expectation** functions. The package further includes tools for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly without depending on a connection to a remote API.
+`httptest` sits on top of the [testthat](https://github.com/hadley/testthat) package and provides test **contexts** that mock the network connection. These let you provide mock API responses for some requests, as well as allowing you to assert that HTTP requests were--or were not--made using custom **expectation** functions. The package further includes tools for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly without depending on a connection to a remote API.
 
-This vignette covers some of the core features of the `httptest` package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks. Note that `httptest` requires the `testthat` package, and it follows the testing conventions and interfaces defined there, extending them with some additional wrappers and expectations. If you're not familiar with `testthat`, see the ["Testing" chapter](http://r-pkgs.had.co.nz/tests.md) chapter of Hadley Wickham's _R Packages_ book. Furthermore, `httptest` is designed for use with packages that rely on the [httr](https://github.com/hadley/httr) requests library--it is a bridge between `httr` and `testthat`.
+This vignette covers some of the core features of the `httptest` package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks. Note that `httptest` requires the `testthat` package, and it follows the testing conventions and interfaces defined there, extending them with some additional wrappers and expectations. If you're not familiar with `testthat`, see the ["Testing" chapter](http://r-pkgs.had.co.nz/tests.html) chapter of Hadley Wickham's _R Packages_ book. Furthermore, `httptest` is designed for use with packages that rely on the [httr](https://github.com/hadley/httr) requests library--it is a bridge between `httr` and `testthat`.
 
 # The `with_mock_API` context
 
@@ -20,7 +20,7 @@ The package includes three contexts, which are "with"-style functions that you w
 
 ## Example
 
-To illustrate the power of `with_mock_API`, let's try to add tests to an R package that wraps a prominent web API. The `twitteR` package is quite popular ([14k downloads per month](https://cranlogs.r-pkg.org/badges/twitteR)), but like many R packages, it doesn't have a test suite. It is hard to test the querying of an API that requires OAuth authentication, and thus a user/account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
+To illustrate the power of `with_mock_API`, let's try to add tests to an R package that wraps a prominent web API. The `twitteR` package is quite popular ([13k downloads per month](https://cranlogs.r-pkg.org/badges/twitteR)), but like many R packages, it doesn't have a test suite. It is hard to test the querying of an API that requires OAuth authentication, and thus a user/account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
 
 First, we need to set up some boilerplate for `testthat` testing, which `httptest` uses. Add a "tests" directory, and in that, a "testthat.R" with
 
@@ -43,9 +43,11 @@ Now let's write a test. Add "test-user.R" and put a test for getting a user reco
 
 When we run the tests, it fails with
 
-    Get a user: Error: GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev (api.twitter.com/1.1/users/show.json-84627b.json)
+    Get a user: Error:
+        GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev
+        (api.twitter.com/1.1/users/show.json-84627b.json)
 
-The error message reveals a few things about how `with_mock_API` works. First, the error tells us what the request method and URL was, and if there had been a request body, it would have been part of the error message as well. Second, the final part of the error message is a file name. That's the mock file that the test context was looking for and didn't find. If the file had existed, it would have been loaded and the code would have continued executing *as if the server had returned it*.
+The error message reveals a few things about how `with_mock_API` works. First, it tells us what the request method and URL was, and if there had been a request body, it would have been part of the error message as well. Second, the final part of the error message is a file name. That's the mock file that the test context was looking for and didn't find. If the file had existed, it would have been loaded and the code would have continued executing *as if the server had returned it*.
 
 Requests are translated to mock file paths according to several rules that
 incorporate the request method, URL, query parameters, and body. Query parameters and request bodies are incorporated into the file path by hashing--hence the `84627b` in the `getUser` example. If a request method other than GET is used, it will be appended to the end of the end of the file name. For example, `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json".
@@ -53,7 +55,7 @@ incorporate the request method, URL, query parameters, and body. Query parameter
 Mock file paths also have an extension appended because in an
 HTTP API, a "directory" itself is a resource. The extension allows distinguishing directories and files in the file system. That is, a mocked `GET("http://example.com/api/")` may read a
 "example.com/api.json" file, while
-`GET("http://example.com/api/object1/")` reads "example.com/api/object1.json". The extension also gives information on content type. Two extensions are
+`GET("http://example.com/api/object1/")` reads "example.com/api/object1.json".^[The Twitter API is interesting in that it does appear to include a .json "file extension" in its endpoints, but `httptest` does not inspect URLs for this, hence the double ".json" in these examples.] The extension also gives information on content type. Two extensions are
 currently supported: (1) .json and (2) .R. JSON mocks can be stored in .json
 files, and when they are loaded by `with_mock_API`, relevant request
 metadata (headers, status code, etc.) are inferred. If your API doesn't
