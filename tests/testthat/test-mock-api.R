@@ -90,6 +90,33 @@ public({
             dick <- GET("http://example.com/html")
             expect_true(grepl("Melville", content(dick, "text")))
         })
+
+        test_that("POST/PUT/etc. with other body types", {
+            b2 <- "http://httpbin.org/post"
+            expect_POST(POST(b2, body = list(x = "A simple text string")),
+                'http://httpbin.org/post',
+                'list(x = "A simple text string") ',
+                '(httpbin.org/post-97fc23-POST.json)')
+            expect_POST(POST(b2, body = list(x = "A simple text string"), encode="form"),
+                'http://httpbin.org/post',
+                'x=A%20simple%20text%20string ',
+                '(httpbin.org/post-aa2999-POST.json)')
+            expect_PUT(PUT(b2, body = list(x = "A simple text string")),
+                'http://httpbin.org/post',
+                'list(x = "A simple text string") ',
+                '(httpbin.org/post-97fc23-PUT.json)')
+            expect_POST(POST(b2, body=list(x="A simple text string"), encode="json"),
+                'http://httpbin.org/post',
+                '{"x":"A simple text string"} ',
+                '(httpbin.org/post-34199a-POST.json)')
+            skip("Need to find a platform-independent way to hash the filename")
+            expect_POST(POST(b2, body = list(y = upload_file("helper.R"))),
+                'http://httpbin.org/post',
+                'list(y = list(path = "',
+                normalizePath("helper.R"),
+                '", type = "text/plain")) ',
+                '(httpbin.org/post-78d84e-POST.json)')
+        })
     })
 })
 

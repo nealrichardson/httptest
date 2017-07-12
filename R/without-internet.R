@@ -31,8 +31,8 @@ without_internet <- function (expr) {
 stopRequest <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
     body <- requestBody(req)
-    if (length(body) > 0) {
-        out <- paste(out, rawToChar(body))
+    if (!is.null(body)) {
+        out <- paste(out, body)
     }
     if (!is.null(req$mockfile)) {
         ## Poked in here by mockRequest for ease of debugging
