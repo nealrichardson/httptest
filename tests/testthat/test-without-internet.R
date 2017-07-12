@@ -36,6 +36,10 @@ public({
             expect_PATCH(PATCH("http://httpbin.org/get", body='{"test":true}'),
                 "http://httpbin.org/get",
                 '{"test":true}')
+            b2 <- "http://httpbin.org/post"
+            expect_POST(POST(b2, body = list(x = "A simple text string")),
+                'http://httpbin.org/post',
+                'list(x = "A simple text string")')
         })
 
         test_that("without_internet respects query params", {

@@ -121,8 +121,8 @@ buildMockURL <- function (req, method="GET") {
     }
 
     ## Handle body and append its hash if present
-    if (length(body) > 0) {
-        f <- paste0(f, "-", hash(rawToChar(body)))
+    if (!is.null(body)) {
+        f <- paste0(f, "-", hash(body))
     }
 
     if (method == "DOWNLOAD") {
@@ -156,7 +156,23 @@ findMockFile <- function (file) {
     return(NULL)
 }
 
-requestBody <- function (req) req$options$postfields
+requestBody <- function (req) {
+    b <- req$options$postfields
+    if (length(b) > 0) {
+        ## Check length this way because b may be NULL or length 0 raw vector
+        b <- rawToChar(b)
+    } else {
+        b <- req$fields
+        if (!is.null(b)) {
+            ## Get a readable string representation
+            b <- deparse(b, control=NULL)
+            ## Strip out unhelpful indentation that it may add, then collapse
+            ## to single string, if broken into multiple lines
+            b <- paste(sub("^ +", "", b), collapse="")
+        }
+    }
+    return(b)
+}
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
 
