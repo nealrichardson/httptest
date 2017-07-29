@@ -115,6 +115,8 @@ buildMockURL <- function (req, method="GET") {
     parts <- unlist(strsplit(url, "?", fixed=TRUE))
     ## Remove trailing slash
     f <- sub("\\/$", "", parts[1])
+    ## Sanitize the path to be portable for all R platforms
+    f <- gsub(":", "-", f)
     if (length(parts) > 1) {
         ## There's a query string. Append the digest as a suffix.
         f <- paste0(f, "-", hash(parts[2]))

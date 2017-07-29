@@ -6,16 +6,17 @@
 \alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
-capture_requests(expr, path = ".", simplify = TRUE)
+capture_requests(expr, path = .mockPaths()[1], simplify = TRUE)
 
-start_capturing(path = ".", simplify = TRUE)
+start_capturing(path = .mockPaths()[1], simplify = TRUE)
 
 stop_capturing()
 }
 \arguments{
 \item{expr}{Code to run inside the context}
 
-\item{path}{Where to save the mock files. Default is the current working
+\item{path}{Where to save the mock files. Default is the first directory in
+\code{\link[=.mockPaths]{.mockPaths()}}, which if not otherwise specified is the current working
 directory.}
 
 \item{simplify}{logical: if \code{TRUE} (default), JSON responses with status 200

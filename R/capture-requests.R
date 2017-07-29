@@ -17,7 +17,8 @@
 #' up the mocks.
 #'
 #' @param expr Code to run inside the context
-#' @param path Where to save the mock files. Default is the current working
+#' @param path Where to save the mock files. Default is the first directory in
+#' [.mockPaths()], which if not otherwise specified is the current working
 #' directory.
 #' @param simplify logical: if `TRUE` (default), JSON responses with status 200
 #' will be written as just the text of the response body. In all other cases,
@@ -45,7 +46,7 @@
 #' stop_capturing()
 #' }
 #' @export
-capture_requests <- function (expr, path=".", simplify=TRUE) {
+capture_requests <- function (expr, path=.mockPaths()[1], simplify=TRUE) {
     start_capturing(path, simplify=simplify)
     on.exit(stop_capturing())
     eval.parent(expr)
@@ -53,7 +54,7 @@ capture_requests <- function (expr, path=".", simplify=TRUE) {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path=".", simplify=TRUE) {
+start_capturing <- function (path=.mockPaths()[1], simplify=TRUE) {
     ## Use "substitute" so that "path" gets inserted. Code remains quoted.
     req_tracer <- substitute({
         f <- file.path(path, buildMockURL(req))

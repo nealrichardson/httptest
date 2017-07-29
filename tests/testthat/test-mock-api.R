@@ -141,3 +141,9 @@ test_that("buildMockURL file path construction with character URL", {
     expect <- "www.test.com/api/call-a3679d-POST.json"
     expect_identical(file, expect, "POST method with query string")
 })
+
+test_that("buildMockURL returns file names that are valid on all R platforms", {
+    u <- "https://language.googleapis.com/v1/documents:annotateText/"
+    expect_identical(buildMockURL(u),
+        "language.googleapis.com/v1/documents-annotateText.json")
+})
