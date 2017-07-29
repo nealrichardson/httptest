@@ -69,9 +69,11 @@ with_mock_API({
             readLines("api/object1.json"))
     })
 
-    test_that("Using simplify=FALSE", {
+    test_that("Using simplify=FALSE (and setting .mockPaths)", {
         d3 <- tempfile()
-        capture_requests(path=d3, simplify=FALSE, {
+        .mockPaths(d3)
+        on.exit(options(httptest.mock.paths=NULL))
+        capture_requests(simplify=FALSE, {
             GET("http://example.com/get/")
             utils::download.file("api/object1.json", tempfile())
         })

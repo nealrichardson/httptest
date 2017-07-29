@@ -1,5 +1,7 @@
 ### httptest 2.0.1 (under development)
-* `with_mock_API` and `without_internet` handle multipart and urlencoded form data in mocked HTTP requests. 
+* `with_mock_API` and `without_internet` handle multipart and urlencoded form data in mocked HTTP requests.
+* `buildMockURL` escapes URL characters that are not valid in file names on all R platforms (which `R CMD check` would warn about).
+* `capture_requests` takes the first element in `.mockPaths` as its default "path" argument. The default is unchanged since `.mockPaths` by default returns the current working directory, just as the "path" default was, but if you set a different mock path for reading mocks, `capture_requests` will write there as well.
 
 # httptest 2.0.0
 * `capture_requests` now writes non-JSON-content-type and non-200-status responses as full "response" objects in .R files. `with_mock_API` now looks for .R mocks if a .json mock isn't found. This allows all requests and all responses, not just JSON content, to be mocked.
