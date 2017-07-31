@@ -91,9 +91,9 @@ with_mock_API({
         on.exit(options(httptest.mock.paths=NULL))
         capture_requests(verbose=TRUE, {
             expect_message(GET("http://example.com/get/"),
-                "Writing .*example.com/get.json")
+                "Writing .*example.com.get.json")
             expect_message(utils::download.file("api/object1.json", tempfile()),
-                "Writing .*api/object1.json")
+                "Writing .*api.object1.json")
         })
         expect_true(setequal(dir(d4, recursive=TRUE),
             c("example.com/get.json", "api/object1.json")))
