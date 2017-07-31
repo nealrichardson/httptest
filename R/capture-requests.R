@@ -24,6 +24,10 @@
 #' will be written as just the text of the response body. In all other cases,
 #' and when `simplify` is `FALSE`, the "response" object will be written out to
 #' a .R file using [base::dput()].
+#' @param verbose logical: if `TRUE`, a `message` is printed for every file
+#' that is written when capturing requests containing the absolute path of the
+#' file. Useful for debugging if you're capturing but don't see the fixture
+#' files being written in the expected location. Default is `FALSE`.
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
 #' it is called for its side effects.
@@ -46,15 +50,15 @@
 #' stop_capturing()
 #' }
 #' @export
-capture_requests <- function (expr, path=.mockPaths()[1], simplify=TRUE) {
-    start_capturing(path, simplify=simplify)
+capture_requests <- function (expr, path=.mockPaths()[1], simplify=TRUE, verbose=FALSE) {
+    start_capturing(path, simplify=simplify, verbose=verbose)
     on.exit(stop_capturing())
     eval.parent(expr)
 }
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path=.mockPaths()[1], simplify=TRUE) {
+start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE) {
     ## Use "substitute" so that "path" gets inserted. Code remains quoted.
     req_tracer <- substitute({
         f <- file.path(path, buildMockURL(req))
@@ -89,15 +93,17 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE) {
             f <- sub("json$", "R", f)
             dput(.resp, file=f)
         }
-    }, list(path=path, simplify=simplify))
+        if (verbose) message("Writing ", normalizePath(f))
+    }, list(path=path, simplify=simplify, verbose=verbose))
     dl_tracer <- substitute({
         if (status == 0) {
             ## Only do this if the download was successful
             f <- file.path(path, buildMockURL(url, method="DOWNLOAD"))
             dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
             file.copy(destfile, f)
+            if (verbose) message("Writing ", normalizePath(f))
         }
-    }, list(path=path))
+    }, list(path=path, verbose=verbose))
     suppressMessages(trace("request_perform", exit=req_tracer, where=add_headers,
         print=FALSE))
     suppressMessages(trace("download.file", exit=dl_tracer, where=modifyList,

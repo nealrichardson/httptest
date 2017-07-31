@@ -84,4 +84,22 @@ with_mock_API({
         expect_identical(content(response),
             content(GET("http://example.com/get/")))
     })
+
+    test_that("Using verbose=TRUE (and .mockPaths)", {
+        d4 <- tempfile()
+        .mockPaths(d4)
+        on.exit(options(httptest.mock.paths=NULL))
+        capture_requests(verbose=TRUE, {
+            expect_message(GET("http://example.com/get/"),
+                "Writing .*example.com/get.json")
+            expect_message(utils::download.file("api/object1.json", tempfile()),
+                "Writing .*api/object1.json")
+        })
+        expect_true(setequal(dir(d4, recursive=TRUE),
+            c("example.com/get.json", "api/object1.json")))
+        expect_identical(readLines(file.path(d4, "example.com/get.json")),
+            readLines("example.com/get.json"))
+        expect_identical(readLines(file.path(d4, "api/object1.json")),
+            readLines("api/object1.json"))
+    })
 })

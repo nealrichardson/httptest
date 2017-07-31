@@ -55,6 +55,24 @@ Mocks stored by `capture_requests` are written out as plain-text files, either w
 * **skip_if_disconnected** skips following tests if you don't have a working internet connection or can't reach a given URL. This is useful for preventing spurious failures when doing integration tests with a real API.
 * **public** is another wrapper around test code that will cause tests to fail if they call functions that aren't "exported" in the package's namespace. Nothing HTTP specific about it, but it's something that I've found useful for preventing accidentally releasing a package without documenting and exporting new functions. While you can use "examples" in the man pages for ensuring that functions you're documenting are exported, code that communicates with remote APIs may not be easily set up to run in a help page example. This context allows you to make those assertions within your test suite.
 
+### FAQ
+
+**Q.** I'm using `capture_requests` but when I try to run tests with those fixtures in `with_mock_API`, the tests are erroring and printing the requests. Why isn't it finding the mocks?
+
+**A.** First, make sure that your recorded request files are where you think they are and where your tests think they should be. When recording fixtures, keep in mind that the destination path for `capture_requests` is relative to the current working directory of the process. If you're running `capture_requests` within a test suite in an installed package, the working directory may not be the same as your code repository. So either record the requests in an interactive session, or you may have to specify an absolute path if you want to record when running package tests.
+
+If you don't see the captured request files, try specifying `verbose = TRUE` when calling `capture_requests` or `start_capturing`, and it will print the absolute path of the files as it writes them.
+
+Second, once you see where your mock files are, make sure that you've placed the mock directories at the same level of directory nesting as your `test-*.R` files, or if you want them somewhere else, that you've set `.mockPaths` appropriately.
+
+**Q.** I have tests working nicely with `with_mock_API` but `R CMD build` and `R CMD check` warn that my package has "non-portable file paths". How do I make valid file paths that my code and tests will recognize?
+
+**A.** Generally, this error means that there are file paths are longer than 100 characters. Depending on how long your URLs are, there are a few ways to save on characters without greatly compromising readability of your code and tests. First, if you have your tests inside a `tests/testthat/` directory, and your fixture files inside that, you can save 9 characters by moving the fixtures up to `tests/` and setting `.mockPaths("../")`.
+
+If you need more, look for places where your URLs contain segments that perhaps could be (or already are) configurable settings. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could define that in your package as `options(mypackage.api="https://language.googleapis.com/v1/")`, construct your URLs relative to that in the code, and then in your tests, set something different, such as `options(mypackage.api="api/")`. That way, all mocked requests would have a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) another 23 characters.
+
+You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long entity ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
+
 ## Contributing
 
 Suggestions and pull requests are more than welcome. This package was initially pulled together from test setup code I'd written and copied around among three different packages. While the code here has been well used and hashed out over a couple of years of working with them, I have naturally focused on features that have been helpful for working with specific APIs. The concepts provided here are generally useful, but some details or conveniences for working with other APIs may be missing. In particular, the package privileges "Content-Type: application/json" in several places.
