@@ -13,7 +13,7 @@ Description: Testing code and packages that communicate with remote servers can
     not--made. Using these tools, one can test that code is making the intended
     requests and that it handles the expected responses correctly, all without
     depending on a connection to a remote API.
-Version: 2.0.1
+Version: 2.1.0
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: https://github.com/nealrichardson/httptest
 BugReports: https://github.com/nealrichardson/httptest/issues

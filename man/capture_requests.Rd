@@ -6,9 +6,10 @@
 \alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
-capture_requests(expr, path = .mockPaths()[1], simplify = TRUE)
+capture_requests(expr, path = .mockPaths()[1], simplify = TRUE,
+  verbose = FALSE)
 
-start_capturing(path = .mockPaths()[1], simplify = TRUE)
+start_capturing(path = .mockPaths()[1], simplify = TRUE, verbose = FALSE)
 
 stop_capturing()
 }
@@ -23,6 +24,11 @@ directory.}
 will be written as just the text of the response body. In all other cases,
 and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
 a .R file using \code{\link[base:dput]{base::dput()}}.}
+
+\item{verbose}{logical: if \code{TRUE}, a \code{message} is printed for every file
+that is written when capturing requests containing the absolute path of the
+file. Useful for debugging if you're capturing but don't see the fixture
+files being written in the expected location. Default is \code{FALSE}.}
 }
 \value{
 \code{capture_requests} returns the result of \code{expr}. \code{start_capturing}
