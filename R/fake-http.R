@@ -99,15 +99,11 @@ fakeDownload <- function (url, destfile, ...) {
 
 fakeRequest <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
-    body <- req$options$postfields
+    body <- requestBody(req)
     headers <- list(`Content-Type`="application/json") ## TODO: don't assume content-type
-    if (length(body) == 0) {
-        ## raw(0). Make it NULL instead
-        body <- NULL
-    }
     status_code <- ifelse(is.null(body) && req$method != "GET", 204, 200)
     if (!is.null(body)) {
-        out <- paste(out, rawToChar(body))
+        out <- paste(out, body)
     }
     message(out)
     return(fakeResponse(req$url, req$method, content=body,
