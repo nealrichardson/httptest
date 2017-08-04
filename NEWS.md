@@ -1,3 +1,6 @@
+### httptest 2.1.2
+* Fix for compatibility with upcoming release of [httr](https://github.com/r-lib/httr/) that affected non-GET requests that did not contain any request body. 
+
 ## httptest 2.1.0
 * `with_mock_API` and `without_internet` handle multipart and urlencoded form data in mocked HTTP requests.
 * `buildMockURL` escapes URL characters that are not valid in file names on all R platforms (which `R CMD check` would warn about).
