@@ -40,8 +40,7 @@ mockRequest <- function (req, handle, refresh) {
         } else {
             ## TODO: don't assume content-type
             headers <- list(`Content-Type`="application/json")
-            cont <- readBin(mockfile, "raw", 4096*32)
-            ## Assumes mock is under 128K       ^
+            cont <- readBin(mockfile, "raw", n=file.size(mockfile))
             resp <- fakeResponse(req$url, req$method, content=cont,
                 status_code=200L, headers=headers)
             return(resp)

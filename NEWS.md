@@ -1,5 +1,8 @@
+### httptest 2.1.3 (under development)
+* Remove the file size limitation for mock files loaded in `with_mock_API`
+
 ### httptest 2.1.2
-* Fix for compatibility with upcoming release of [httr](https://github.com/r-lib/httr/) that affected non-GET requests that did not contain any request body. 
+* Fix for compatibility with upcoming release of [httr](https://github.com/r-lib/httr/) that affected non-GET requests that did not contain any request body.
 
 ## httptest 2.1.0
 * `with_mock_API` and `without_internet` handle multipart and urlencoded form data in mocked HTTP requests.
