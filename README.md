@@ -73,6 +73,49 @@ If you need to save more, look for places where your URLs contain segments that 
 
 You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long entity ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
 
+**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_API` blocks?
+
+**A.** One way to do this is to set `with_mock_API` to another function in your test file (or in `helper.R` if you want it to run for all test files). So
+
+```
+with_mock_API({
+    a <- GET("https://httpbin.org/get")
+    print(a)
+})
+```
+
+looks for the mock file, but
+
+```
+with_mock_API <- force
+with_mock_API({
+    a <- GET("https://httpbin.org/get")
+    print(a)
+})
+```
+
+just evaluates the code with no mocking and makes the request, and
+
+```
+with_mock_API <- capture_requests
+with_mock_API({
+    a <- GET("https://httpbin.org/get")
+    print(a)
+})
+```
+
+would make the request and record the response as a mock file. You could control this behavior with environment variables by adding something like
+
+```
+if (Sys.getenv("MOCK_BYPASS") == "true") {
+    with_mock_api <- force
+} else if (Sys.getenv("MOCK_BYPASS") == "capture") {
+    with_mock_api <- capture_requests
+}
+```
+
+to your `helper.R`.
+
 ## Contributing
 
 Suggestions and pull requests are more than welcome. This package was initially pulled together from test setup code I'd written and copied around among three different packages. While the code here has been well used and hashed out over a couple of years of working with them, I have naturally focused on features that have been helpful for working with specific APIs. The concepts provided here are generally useful, but some details or conveniences for working with other APIs may be missing. In particular, the package privileges "Content-Type: application/json" in several places.
