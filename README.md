@@ -57,6 +57,8 @@ Mocks stored by `capture_requests` are written out as plain-text files, either w
 
 ### FAQ
 
+#### Where are my mocks recorded?
+
 **Q.** I'm using `capture_requests` but when I try to run tests with those fixtures in `with_mock_API`, the tests are erroring and printing the request URLs. Why aren't the tests finding the mocks?
 
 **A.** First, make sure that your recorded request files are where you think they are and where your tests think they should be. When recording fixtures, keep in mind that the destination path for `capture_requests` is relative to the current working directory of the process. If you're running `capture_requests` within a test suite in an installed package, the working directory may not be the same as your code repository. So either record the requests in an interactive session, or you may have to specify an absolute path if you want to record when running package tests.
@@ -65,6 +67,8 @@ If you don't see the captured request files, try specifying `verbose = TRUE` whe
 
 Second, once you see where your mock files are, make sure that you've placed the mock directories at the same level of directory nesting as your `test-*.R` files, or if you want them somewhere else, that you've set `.mockPaths` appropriately.
 
+#### How do I fix "non-portable file paths"?
+
 **Q.** I have tests working nicely with `with_mock_API` but `R CMD build` and `R CMD check` warn that my package has "non-portable file paths". How do I make legal file paths that my code and tests will recognize?
 
 **A.** Generally, this error means that there are file paths are longer than 100 characters. Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests. First, if you have your tests inside a `tests/testthat/` directory, and your fixture files inside that, you can save 9 characters by moving the fixtures up to `tests/` and setting `.mockPaths("../")`.
@@ -72,6 +76,8 @@ Second, once you see where your mock files are, make sure that you've placed the
 If you need to save more, look for places where your URLs contain segments that perhaps could be (or already are) configurable settings. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could define that in your package as `options(mypackage.api="https://language.googleapis.com/v1/")`, construct your URLs relative to that in the code, and then in your tests, set something different, such as `options(mypackage.api="api/")`. That way, all mocked requests would have a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) another 23 characters.
 
 You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long entity ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
+
+#### How do I switch between mocking and real requests?
 
 **Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_API` blocks?
 
