@@ -5,16 +5,18 @@
 \alias{fakeDownload}
 \title{Return something that looks enough like an httr 'response'}
 \usage{
-fakeResponse(url = "", verb = "GET", status_code = 200,
-  headers = list(), content = NULL)
+fakeResponse(request, verb = "GET", status_code = 200, headers = list(),
+  content = NULL)
 
 fakeDownload(url, destfile, ...)
 }
 \arguments{
-\item{url}{A character URL for the request. For \code{fakeDownload}, this
-should be a path to a file that exists.}
+\item{request}{An 'httr' \code{request}-class object. A character URL is also
+accepted, for which a fake request object will be created, using the \code{verb}
+argument as well. This behavior is deprecated.}
 
-\item{verb}{Character name for the HTTP verb. Default is "GET"}
+\item{verb}{Character name for the HTTP verb. Default is "GET". This argument
+is deprecated; instead you should pass in a \code{request}}
 
 \item{status_code}{Integer HTTP response status}
 
@@ -24,6 +26,8 @@ should be a path to a file that exists.}
 as response content with Content-Type: application/json. If no \code{content}
 is provided, and if the \code{status_code} is not 204 No Content, the
 \code{url} will be set as the response content with Content-Type: text/plain.}
+
+\item{url}{For \code{fakeDownload}, a path to a file that exists.}
 
 \item{destfile}{For \code{fakeDownload}, character file path to "download"
 to. \code{fakeDownload} will copy the file at \code{url} to this path.}

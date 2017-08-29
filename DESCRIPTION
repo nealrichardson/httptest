@@ -28,6 +28,6 @@ Imports:
 Suggests:
     knitr,
     xml2
-RoxygenNote: 6.0.0
+RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

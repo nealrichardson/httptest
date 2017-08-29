@@ -117,6 +117,11 @@ public({
                 '", type = "text/plain")) ',
                 '(httpbin.org/post-78d84e-POST.json)')
         })
+
+        test_that("Returned (JSON) mock response contains the actual request", {
+            a <- GET("api/", add_headers(`X-FakeHeader`="fake_value"))
+            expect_true("X-FakeHeader" %in% names(a$request$headers))
+        })
     })
 })
 
