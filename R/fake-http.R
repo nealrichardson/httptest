@@ -42,9 +42,12 @@ with_fake_HTTP <- function (expr) {
 #' "response" class object that should behave like a real response generated
 #' by a real request.
 #'
-#' @param url A character URL for the request. For `fakeDownload`, this
-#' should be a path to a file that exists.
-#' @param verb Character name for the HTTP verb. Default is "GET"
+#' @param url For `fakeDownload`, a path to a file that exists.
+#' @param request An 'httr' `request`-class object. A character URL is also
+#' accepted, for which a fake request object will be created, using the `verb`
+#' argument as well. This behavior is deprecated.
+#' @param verb Character name for the HTTP verb. Default is "GET". This argument
+#' is deprecated; instead you should pass in a `request`
 #' @param status_code Integer HTTP response status
 #' @param headers Optional list of additional response headers to return
 #' @param content If supplied, a JSON-serializable list that will be returned
@@ -60,7 +63,12 @@ with_fake_HTTP <- function (expr) {
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
-fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), content=NULL) {
+fakeResponse <- function (request, verb="GET", status_code=200, headers=list(), content=NULL) {
+    if (is.character(request)) {
+        ## To-be-deprecated behavior of passing in a URL. Fake a request.
+        ## TODO: give deprecation warning
+        request <- structure(list(method=verb, url=request), class="request")
+    }
     base.headers <- list()
     if (status_code == 204) {
         content <- NULL
@@ -77,14 +85,13 @@ fakeResponse <- function (url="", verb="GET", status_code=200, headers=list(), c
     headers <- modifyList(base.headers, headers)
 
     structure(list(
-        url=url,
+        url=request$url,
         status_code=status_code,
-        times=structure(c(rep(0, 5), nchar(url)),
+        times=structure(c(rep(0, 5), nchar(request$url)),
             .Names=c("redirect", "namelookup", "connect", "pretransfer",
                     "starttransfer", "total")),
-        request=list(method=verb, url=url),
+        request=request,
         headers=headers,
-
         content=content
     ), class="response")
 }
@@ -106,6 +113,6 @@ fakeRequest <- function (req, handle, refresh) {
         out <- paste(out, body)
     }
     message(out)
-    return(fakeResponse(req$url, req$method, content=body,
-        status_code=status_code, headers=headers))
+    return(fakeResponse(req, content=body, status_code=status_code,
+        headers=headers))
 }

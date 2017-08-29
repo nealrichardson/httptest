@@ -1,4 +1,5 @@
 ### httptest 2.1.3 (under development)
+* Add redacting functions (`redact_auth`, `redact_cookies`, `redact_headers`) that can be specified in `capture_requests` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth`.
 * Remove the file size limitation for mock files loaded in `with_mock_API`
 
 ### httptest 2.1.2
