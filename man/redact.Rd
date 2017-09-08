@@ -5,8 +5,10 @@
 \alias{redact_auth}
 \alias{redact_cookies}
 \alias{redact_headers}
+\alias{redact_HTTP_auth}
 \alias{redact_cookies}
 \alias{redact_headers}
+\alias{redact_HTTP_auth}
 \title{Remove sensitive content from HTTP responses}
 \usage{
 redact_auth(response)
@@ -14,6 +16,8 @@ redact_auth(response)
 redact_cookies(response)
 
 redact_headers(headers = c())
+
+redact_HTTP_auth(response)
 }
 \arguments{
 \item{response}{An 'httr' \code{response} object to sanitize. Redacting functions should take as their only argument a response object.}
@@ -21,11 +25,11 @@ redact_headers(headers = c())
 \item{headers}{For \code{redact_headers()}, a character vector of header names to sanitize. Note that \code{redact_headers()} itself does not do redacting but returns a function that when called does the redacting.}
 }
 \value{
-Redacting functions must return a well-formed 'httr' \code{response} object. \code{redact_headers()} returns a redacting function, while \code{redact_auth()} and \code{redact_cookies()} themselves are redacting functions.
+Redacting functions must return a well-formed 'httr' \code{response} object. \code{redact_headers()} returns a redacting function, while \code{redact_auth()}, \code{redact_HTTP_auth()}, and \code{redact_cookies()} themselves are redacting functions.
 }
 \description{
 When recording requests for use as test fixtures, you don't want to include secrets like authentication tokens and personal ids. These functions provide a means for redacting this kind of content, or anything you want, from responses that \code{\link[=capture_requests]{capture_requests()}} saves.
 }
 \details{
-\code{redact_cookies()} removes cookies from 'httr' \code{response} objects. \code{redact_headers()} lets you target selected request and response headers for redaction. \code{redact_auth()} is a convenience wrapper around them for a useful default redactor in \code{capture_requests()}.
+\code{redact_cookies()} removes cookies from 'httr' \code{response} objects. \code{redact_headers()} lets you target selected request and response headers for redaction. \code{redact_HTTP_auth()} removes \code{username:password}-based HTTP auth credentials. \code{redact_auth()} is a convenience wrapper around them for a useful default redactor in \code{capture_requests()}.
 }

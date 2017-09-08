@@ -16,6 +16,21 @@ with_mock_API({
         on.exit(options(httptest.mock.paths=NULL))
         b <- GET("api/", add_headers(`Authorization`="Bearer token"))
         expect_equal(b$request$headers[["Authorization"]], "REDACTED")
+    })
+})
 
+capture_requests({
+    cooks <- GET("http://httpbin.org/cookies", config(cookie="token=12345"))
+    print(str(cooks))
+    print(content(cooks))
+    c2 <- GET("http://httpbin.org/cookies/set", query=list(token=12345))
+    print(str(c2))
+    print(content(c2))
+    test_that("redact_cookies", {
+
+    })
+
+    test_that("redact_HTTP_auth", {
+        # GET("http://httpbin.org/basic-auth/user/passwd", authenticate("user", "passwd"))
     })
 })
