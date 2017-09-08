@@ -20,6 +20,7 @@ with_mock_API({
 })
 
 capture_requests({
+    skip_if_disconnected()
     cooks <- GET("http://httpbin.org/cookies", config(cookie="token=12345"))
     print(str(cooks))
     print(content(cooks))

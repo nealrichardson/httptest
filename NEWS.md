@@ -1,6 +1,7 @@
 ### httptest 2.1.3 (under development)
 * Add redacting functions (`redact_auth`, `redact_cookies`, `redact_headers`, `redact_HTTP_auth`) that can be specified in `capture_requests` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth`, which wraps them all.
 * Remove the file size limitation for mock files loaded in `with_mock_API`
+* `skip_if_disconnected` now also wraps `testthat::skip_on_cran`
 
 ### httptest 2.1.2
 * Fix for compatibility with upcoming release of [httr](https://github.com/r-lib/httr/) that affected non-GET requests that did not contain any request body.
