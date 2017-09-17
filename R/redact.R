@@ -21,7 +21,7 @@ redact_auth <- function (response) {
 #' @export
 redact_cookies <- function (response) {
     ## Delete from request
-    if ("cookie" %in% response$request$options) {
+    if ("cookie" %in% names(response$request$options)) {
         response$request$options$cookie <- "REDACTED"
     }
     ## Delete from response
@@ -39,7 +39,10 @@ redact_cookies <- function (response) {
 redact_headers <- function (headers=c()) {
     return(function (r) {
         r$headers <- redact_from_header_list(r$headers, headers)
-        r$all_headers <- redact_from_header_list(r$all_headers, headers)
+        r$all_headers <- lapply(r$all_headers, function (h) {
+            h$headers <- redact_from_header_list(h$headers, headers)
+            return(h)
+        })
         r$request$headers <- redact_from_header_list(r$request$headers, headers)
         return(r)
     })
@@ -54,7 +57,7 @@ redact_from_header_list <- function (headers, to_redact=c()) {
 #' @rdname redact
 #' @export
 redact_HTTP_auth <- function (response) {
-    if ("userpwd" %in% response$request$options) {
+    if ("userpwd" %in% names(response$request$options)) {
         response$request$options$userpwd <- "REDACTED"
     }
     return(response)

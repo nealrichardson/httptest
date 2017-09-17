@@ -55,6 +55,7 @@
 #' utils::download.file("http://httpbin.org/gzip", tempfile())
 #' stop_capturing()
 #' }
+#' @importFrom httr content
 #' @export
 capture_requests <- function (expr, path=.mockPaths()[1], simplify=TRUE,
                               verbose=FALSE, redact=redact_auth) {
@@ -79,11 +80,12 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
         dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
 
         ## Get the Content-Type
-        ct <- unlist(headers[tolower(names(headers)) == "content-type"])
+        ct <- unlist(.resp$headers[tolower(names(.resp$headers)) == "content-type"])
         is_json <- any(grepl("application/json", ct))
         if (simplify && .resp$status_code == 200 && is_json) {
+            ## Squelch the "No encoding supplied: defaulting to UTF-8."
             ## TODO: support other text content-types than JSON
-            cat(content(.resp, "text"), file=f)
+            cat(suppressMessages(content(.resp, "text")), file=f)
         } else {
             ## Dump an object that can be sourced
 
@@ -96,7 +98,8 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
             is_text <- length(ct) && any(unlist(strsplit(ct, "; ")) %in% text_types)
             ## strsplit on ; because "charset" may be appended
             if (is_text) {
-                cont <- content(.resp, "text")
+                ## Squelch the "No encoding supplied: defaulting to UTF-8."
+                cont <- suppressMessages(content(.resp, "text"))
                 .resp$content <- substitute(charToRaw(cont))
             }
 

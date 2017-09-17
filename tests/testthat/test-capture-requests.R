@@ -5,6 +5,7 @@ d <- tempfile()
 test_that("We can record a series of requests", {
     skip_if_disconnected()
     capture_requests(path=d, {
+        ## <<- assign these so that they're available in the next test_that too
         r1 <<- GET("http://httpbin.org/get")
         r2 <<- GET("http://httpbin.org")
         r3 <<- GET("http://httpbin.org/status/418")
