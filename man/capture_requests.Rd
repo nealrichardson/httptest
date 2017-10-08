@@ -68,7 +68,6 @@ capture_requests({
     GET("http://httpbin.org")
     GET("http://httpbin.org/response-headers",
         query=list(`Content-Type`="application/json"))
-    utils::download.file("http://httpbin.org/gzip", tempfile())
 })
 # Or:
 start_capturing()
@@ -76,7 +75,6 @@ GET("http://httpbin.org/get")
 GET("http://httpbin.org")
 GET("http://httpbin.org/response-headers",
     query=list(`Content-Type`="application/json"))
-utils::download.file("http://httpbin.org/gzip", tempfile())
 stop_capturing()
 }
 }

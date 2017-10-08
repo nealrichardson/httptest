@@ -2,13 +2,10 @@
 % Please edit documentation in R/fake-http.R
 \name{fakeResponse}
 \alias{fakeResponse}
-\alias{fakeDownload}
 \title{Return something that looks enough like an httr 'response'}
 \usage{
 fakeResponse(request, verb = "GET", status_code = 200, headers = list(),
   content = NULL)
-
-fakeDownload(url, destfile, ...)
 }
 \arguments{
 \item{request}{An 'httr' \code{request}-class object. A character URL is also
@@ -26,18 +23,9 @@ is deprecated; instead you should pass in a \code{request}}
 as response content with Content-Type: application/json. If no \code{content}
 is provided, and if the \code{status_code} is not 204 No Content, the
 \code{url} will be set as the response content with Content-Type: text/plain.}
-
-\item{url}{For \code{fakeDownload}, a path to a file that exists.}
-
-\item{destfile}{For \code{fakeDownload}, character file path to "download"
-to. \code{fakeDownload} will copy the file at \code{url} to this path.}
-
-\item{...}{Additional arguments for \code{fakeDownload}}
 }
 \value{
-The fake verbs return a 'httr' response class object.
-\code{fakeDownload} returns 0, the success code returned by
-\code{\link[utils:download.file]{utils::download.file()}}.
+An 'httr' response class object.
 }
 \description{
 These functions allow mocking of HTTP requests without requiring an internet
