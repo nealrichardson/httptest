@@ -103,7 +103,7 @@ with_mock_API({
         expect_identical(loginb$cookies$value, "REDACTED")
     })
 
-    # redact_cookies from request
+    # redact_HTTP_auth from request
     capture_requests(simplify=FALSE, path=d, {
         pwauth <- GET("http://httpbin.org/basic-auth/user/passwd",
             authenticate("user", "passwd"))
@@ -129,6 +129,9 @@ with_mock_API({
     my_redactor <- function (response) {
         # Proof that you can alter other parts of the response/mock
         response$url <- response$request$url <- "http://example.com/fakeurl"
+        # Proof that you can alter the response body
+        cleaner <- function (x) gsub("loaded", "changed", x)
+        response <- within_body_text(cleaner)(response)
         return(response)
     }
     capture_requests(simplify=FALSE, path=d, redact=my_redactor, {
@@ -136,8 +139,9 @@ with_mock_API({
     })
     test_that("The real request is not affected by the redactor", {
         expect_identical(r$url, "http://example.com/get")
+        expect_identical(content(r), list(loaded=TRUE))
     })
-    test_that("But the mock file gets written to the modified location", {
+    test_that("But the mock file gets written to the modified path with altered content", {
         options(httptest.mock.paths=d)  ## Do this way to make sure "." isn't in
                                         ## the search path. We're checking that
                                         ## the original request doesn't have a
@@ -146,6 +150,7 @@ with_mock_API({
         on.exit(options(httptest.mock.paths=NULL))
         expect_GET(GET("http://example.com/get"),
             "http://example.com/get")
-        expect_error(GET("http://example.com/fakeurl"), NA)
+        expect_error(alt <- GET("http://example.com/fakeurl"), NA)
+        expect_identical(content(alt), list(changed=TRUE))
     })
 })

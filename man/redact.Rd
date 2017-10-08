@@ -6,9 +6,11 @@
 \alias{redact_cookies}
 \alias{redact_headers}
 \alias{redact_HTTP_auth}
+\alias{within_body_text}
 \alias{redact_cookies}
 \alias{redact_headers}
 \alias{redact_HTTP_auth}
+\alias{within_body_text}
 \title{Remove sensitive content from HTTP responses}
 \usage{
 redact_auth(response)
@@ -18,18 +20,42 @@ redact_cookies(response)
 redact_headers(headers = c())
 
 redact_HTTP_auth(response)
+
+within_body_text(FUN)
 }
 \arguments{
-\item{response}{An 'httr' \code{response} object to sanitize. Redacting functions should take as their only argument a response object.}
+\item{response}{An 'httr' \code{response} object to sanitize. Redacting functions
+should take as their only argument a response object.}
 
-\item{headers}{For \code{redact_headers()}, a character vector of header names to sanitize. Note that \code{redact_headers()} itself does not do redacting but returns a function that when called does the redacting.}
+\item{headers}{For \code{redact_headers()}, a character vector of header names to
+sanitize. Note that \code{redact_headers()} itself does not do redacting but
+returns a function that when called does the redacting.}
+
+\item{FUN}{For \code{within_body_text()}, a function that takes as its argument a
+character vector and returns a modified version of that. This function will
+be applied to the text of the response's "content".}
 }
 \value{
-Redacting functions must return a well-formed 'httr' \code{response} object. \code{redact_headers()} returns a redacting function, while \code{redact_auth()}, \code{redact_HTTP_auth()}, and \code{redact_cookies()} themselves are redacting functions.
+Redacting functions must return a well-formed 'httr' \code{response}
+object. \code{redact_auth()}, \code{redact_HTTP_auth()}, and \code{redact_cookies()}
+themselves are redacting functions, while \code{redact_headers()} and
+\code{within_body_text()} return redacting functions.
 }
 \description{
-When recording requests for use as test fixtures, you don't want to include secrets like authentication tokens and personal ids. These functions provide a means for redacting this kind of content, or anything you want, from responses that \code{\link[=capture_requests]{capture_requests()}} saves.
+When recording requests for use as test fixtures, you don't want to include
+secrets like authentication tokens and personal ids. These functions provide
+a means for redacting this kind of content, or anything you want, from
+responses that \code{\link[=capture_requests]{capture_requests()}} saves.
 }
 \details{
-\code{redact_cookies()} removes cookies from 'httr' \code{response} objects. \code{redact_headers()} lets you target selected request and response headers for redaction. \code{redact_HTTP_auth()} removes \code{username:password}-based HTTP auth credentials. \code{redact_auth()} is a convenience wrapper around them for a useful default redactor in \code{capture_requests()}.
+\code{redact_cookies()} removes cookies from 'httr' \code{response} objects.
+\code{redact_headers()} lets you target selected request and response headers for
+redaction. \code{redact_HTTP_auth()} removes \code{username:password}-based HTTP auth
+credentials. \code{redact_auth()} is a convenience wrapper around them for a
+useful default redactor in \code{capture_requests()}.
+
+\code{within_body_text()}
+}
+\seealso{
+\code{vignette("redacting", package="httptest")} for a detailed discussion of what these functions do and how to customize them.
 }

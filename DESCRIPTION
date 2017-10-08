@@ -10,10 +10,11 @@ Description: Testing code and packages that communicate with remote servers can
     requiring access to the remote service. Importantly, it provides three test
     contexts that mock the network connection in different ways, and it offers
     additional expectations to assert that HTTP requests were--or were
-    not--made. Using these tools, one can test that code is making the intended
+    not--made. It also allows you to record real API responses to use as mocks
+    in tests. With these tools, one can test that code is making the intended
     requests and that it handles the expected responses correctly, all without
     depending on a connection to a remote API.
-Version: 2.1.3
+Version: 2.2.0
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: https://github.com/nealrichardson/httptest
 BugReports: https://github.com/nealrichardson/httptest/issues
