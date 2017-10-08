@@ -81,12 +81,5 @@ public({
                 "http://httpbin.org/get")
             expect_DELETE(DELETE("http://httpbin.org/get"))
         })
-        test_that("fakeDownload", {
-            f <- tempfile()
-            expect_message(dl <- download.file("http://httpbin.org/get", f),
-                "DOWNLOAD http://httpbin.org/get")
-            expect_identical(readLines(f), "http://httpbin.org/get")
-            expect_equal(dl, 0)
-        })
     })
 })

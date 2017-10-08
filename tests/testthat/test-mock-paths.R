@@ -22,12 +22,6 @@ public({
         test_that("There is no api/object2/ mock", {
             expect_GET(GET("api/object2/"))
         })
-        test_that("File download copies the file", {
-            f <- tempfile()
-            dl <- download.file("api/object1.json", f)
-            expect_equal(dl, 0)
-            expect_identical(readLines(f), readLines("api/object1.json"))
-        })
 
         .mockPaths("alt")
         test_that("GET with query, different mock path", {
@@ -45,12 +39,6 @@ public({
         })
         test_that("Failure to find a mock in any dir", {
             expect_GET(GET("api/NOTAFILE/"))
-        })
-        test_that("File download copies the right file", {
-            f <- tempfile()
-            dl <- download.file("api/object2.json", f)
-            expect_equal(dl, 0)
-            expect_identical(readLines(f), readLines("alt/api/object2.json"))
         })
 
         .mockPaths(NULL)

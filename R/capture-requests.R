@@ -44,7 +44,6 @@
 #'     GET("http://httpbin.org")
 #'     GET("http://httpbin.org/response-headers",
 #'         query=list(`Content-Type`="application/json"))
-#'     utils::download.file("http://httpbin.org/gzip", tempfile())
 #' })
 #' # Or:
 #' start_capturing()
@@ -52,7 +51,6 @@
 #' GET("http://httpbin.org")
 #' GET("http://httpbin.org/response-headers",
 #'     query=list(`Content-Type`="application/json"))
-#' utils::download.file("http://httpbin.org/gzip", tempfile())
 #' stop_capturing()
 #' }
 #' @importFrom httr content
@@ -109,18 +107,7 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
         }
         if (verbose) message("Writing ", normalizePath(f))
     }, list(path=path, simplify=simplify, verbose=verbose, redact=redact))
-    dl_tracer <- substitute({
-        if (status == 0) {
-            ## Only do this if the download was successful
-            f <- file.path(path, buildMockURL(url, method="DOWNLOAD"))
-            dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
-            file.copy(destfile, f)
-            if (verbose) message("Writing ", normalizePath(f))
-        }
-    }, list(path=path, verbose=verbose))
     suppressMessages(trace("request_perform", exit=req_tracer, where=add_headers,
-        print=FALSE))
-    suppressMessages(trace("download.file", exit=dl_tracer, where=modifyList,
         print=FALSE))
     invisible(path)
 }
@@ -129,5 +116,4 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
 #' @export
 stop_capturing <- function () {
     suppressMessages(untrace("request_perform", where=add_headers))
-    suppressMessages(untrace("download.file", where=modifyList))
 }

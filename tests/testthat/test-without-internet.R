@@ -52,10 +52,5 @@ public({
             expect_no_request(rnorm(5))
             expect_failure(expect_no_request(GET("http://httpbin.org/get")))
         })
-
-        test_that("without_internet on download.file", {
-            expect_error(download.file("http://httpbin.org/get"),
-                "DOWNLOAD http://httpbin.org/get")
-        })
     })
 })

@@ -30,7 +30,6 @@ with_fake_HTTP <- function (expr) {
     with_mock(
         `httr:::request_perform`=fakeRequest,
         `httptest::request_happened`=expect_message,
-        `utils::download.file`=fakeDownload,
         eval.parent(expr)
     )
 }
@@ -42,7 +41,6 @@ with_fake_HTTP <- function (expr) {
 #' "response" class object that should behave like a real response generated
 #' by a real request.
 #'
-#' @param url For `fakeDownload`, a path to a file that exists.
 #' @param request An 'httr' `request`-class object. A character URL is also
 #' accepted, for which a fake request object will be created, using the `verb`
 #' argument as well. This behavior is deprecated.
@@ -54,12 +52,7 @@ with_fake_HTTP <- function (expr) {
 #' as response content with Content-Type: application/json. If no `content`
 #' is provided, and if the `status_code` is not 204 No Content, the
 #' `url` will be set as the response content with Content-Type: text/plain.
-#' @param destfile For `fakeDownload`, character file path to "download"
-#' to. `fakeDownload` will copy the file at `url` to this path.
-#' @param ... Additional arguments for `fakeDownload`
-#' @return The fake verbs return a 'httr' response class object.
-#' `fakeDownload` returns 0, the success code returned by
-#' [utils::download.file()].
+#' @return An 'httr' response class object.
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
@@ -94,14 +87,6 @@ fakeResponse <- function (request, verb="GET", status_code=200, headers=list(), 
         headers=headers,
         content=content
     ), class="response")
-}
-
-#' @rdname fakeResponse
-#' @export
-fakeDownload <- function (url, destfile, ...) {
-    message("DOWNLOAD ", url)
-    writeLines(url, destfile)
-    return(0)
 }
 
 fakeRequest <- function (req, handle, refresh) {

@@ -15,10 +15,10 @@ The result of \code{expr}
 \description{
 \code{without_internet} simulates the situation when any network request will
 fail, as in when you are without an internet connection. Any HTTP request
-through the verb functions in \code{httr}, or \code{\link[utils:download.file]{utils::download.file()}}, will raise
+through the verb functions in \code{httr} will raise
 an error. The error message raised has a well-defined shape, made of three
 elements, separated by space: (1) the request
-method (e.g. "GET", or for downloading, "DOWNLOAD"); (2) the request URL; and
+method (e.g. "GET"); (2) the request URL; and
 (3) the request body, if present. The verb-expectation functions,
 such as \code{\link[=expect_GET]{expect_GET()}} and \code{\link[=expect_POST]{expect_POST()}}, look for this shape.
 }

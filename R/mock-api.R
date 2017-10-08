@@ -22,7 +22,6 @@
 with_mock_API <- function (expr) {
     with_mock(
         `httr:::request_perform`=mockRequest,
-        `utils::download.file`=mockDownload,
         eval.parent(expr)
     )
 }
@@ -126,10 +125,7 @@ buildMockURL <- function (req, method="GET") {
         f <- paste0(f, "-", hash(body))
     }
 
-    if (method == "DOWNLOAD") {
-        ## Don't append anything further.
-        return(f)
-    } else if (method != "GET") {
+    if (method != "GET") {
         ## Append method to the file name for non GET requests
         f <- paste0(f, "-", method)
     }
@@ -177,14 +173,3 @@ requestBody <- function (req) {
 }
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
-
-mockDownload <- function (url, destfile, ...) {
-    f <- findMockFile(buildMockURL(url, method="DOWNLOAD"))
-    if (!is.null(f)) {
-        file.copy(f, destfile)
-        status <- 0
-        return(status)
-    } else {
-        stopDownload(url)
-    }
-}
