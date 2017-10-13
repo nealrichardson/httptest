@@ -90,3 +90,7 @@ public({
         })
     })
 })
+
+test_that("fakeResponse returns a valid enough response even if you give it just a URL", {
+    expect_is(fakeResponse("http://httpbin.org/get"), "response")
+})
