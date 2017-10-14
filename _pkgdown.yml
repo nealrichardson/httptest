@@ -1,0 +1,48 @@
+template:
+  params:
+    ganalytics: UA-104182925-1
+navbar:
+  title: httptest
+  type: default
+  left:
+  - text: Get Started
+    href: articles/httptest.html
+  - text: Reference
+    href: reference/index.html
+  - text: Articles
+    menu:
+    - text: Overview
+      href: articles/httptest.html
+    - text: Redacting Sensitive Information
+      href: articles/redacting.html
+    - text: FAQ
+      href: index.html#faq
+  - text: News
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/nealrichardson/httptest
+  - icon: fa-home fa-lg
+    href: /
+reference:
+- title: Contexts
+  contents:
+  - with_mock_API
+  - without_internet
+  - with_fake_HTTP
+- title: Expectations
+  contents:
+  - expect-verb
+  - expect_header
+  - expect_json_equivalent
+- title: Mocking
+  contents:
+  - capture_requests
+  - redact
+  - .mockPaths
+  - buildMockURL
+  - fakeResponse
+- title: Other testing tools
+  contents:
+  - public
+  - skip_if_disconnected
