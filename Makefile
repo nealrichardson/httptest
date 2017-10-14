@@ -18,6 +18,10 @@ check: build
 	-export _R_CHECK_CRAN_INCOMING_REMOTE_=FALSE && R CMD check --as-cran httptest_$(VERSION).tar.gz
 	rm -rf httptest.Rcheck/
 
+release: build
+	-R CMD check --as-cran httptest_$(VERSION).tar.gz
+	rm -rf httptest.Rcheck/
+
 man: doc
 	R CMD Rd2pdf man/ --force
 
