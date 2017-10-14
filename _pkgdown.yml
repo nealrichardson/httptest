@@ -3,15 +3,13 @@ template:
   params:
     ganalytics: UA-104182925-1
 navbar:
-  title: enpiar
+  title: httptest
   type: default
   left:
-  - text: httptest
-    href: index.html
   - text: Get Started
     href: articles/httptest.html
   - text: Reference
-    href: reference/index.html
+    href: reference/
   - text: Articles
     menu:
     - text: Overview
@@ -21,12 +19,12 @@ navbar:
     - text: FAQ
       href: index.html#faq
   - text: News
-    href: news/index.html
+    href: news/
   right:
   - icon: fa-github fa-lg
     href: https://github.com/nealrichardson/httptest
   - icon: fa-home fa-lg
-    href: /
+    href: http://enpiar.com
 reference:
 - title: Contexts
   contents:
