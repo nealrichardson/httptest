@@ -1,3 +1,5 @@
+### httptest 2.2.1 (under development)
+
 ## httptest 2.2.0
 * Add redacting functions (`redact_auth`, `redact_cookies`, `redact_HTTP_auth`, `redact_headers`, `within_body_text`) that can be specified in `capture_requests` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth`, which wraps several of them. See the [vignette](https://github.com/nealrichardson/httptest/blob/master/inst/doc/redacting.md) for more.
 * When loading a JSON mock response, the current "request" object is now included in the response returned, as is the case with real responses.
