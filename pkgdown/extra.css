@@ -1,0 +1,71 @@
+@import url("http://enpiar.com/css/font.css");
+@import url("http://enpiar.com/css/custom.css");
+
+body {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    font-size: 19px;
+    font-weight: 200;
+}
+
+#sidebar {
+    font-size: 16px
+}
+
+#sidebar p {
+    font-size: 16px
+}
+
+.contents h1, .contents h2, .contents h3, .contents h4 {
+    padding-top: 60px;
+    margin-top: -50px;
+}
+
+h4 {
+    font-size: 19px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 26px;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+pre {
+    border: 0;
+    overflow: inherit;
+    background: #FAFAFA;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 20px;
+    padding-right: 20px;
+    line-height: 21px;
+    font-size: 15px;
+}
+
+pre code {
+    color: #182125;
+    background: #FAFAFA;
+}
+
+code {
+    font-size: 85%;
+    font-family: Consolas,Monaco,"Courier New",monospace;
+}
+
+.nav-pills>li>a {
+    border-radius: 0;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    color: #408AB4;
+}
+.navbar-default .navbar-nav>li>a {
+    color: #408AB4;
+}
