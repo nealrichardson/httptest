@@ -1,10 +1,13 @@
+url: http://enpiar.com/r/httptest
 template:
   params:
     ganalytics: UA-104182925-1
 navbar:
-  title: httptest
+  title: enpiar
   type: default
   left:
+  - text: httptest
+    href: index.html
   - text: Get Started
     href: articles/httptest.html
   - text: Reference
