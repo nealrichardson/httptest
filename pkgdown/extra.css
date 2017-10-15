@@ -57,6 +57,7 @@ pre code {
 code {
     font-size: 85%;
     font-family: Consolas,Monaco,"Courier New",monospace;
+    border-radius: 0;
 }
 
 .nav-pills>li>a {
@@ -68,4 +69,12 @@ code {
 }
 .navbar-default .navbar-nav>li>a {
     color: #408AB4;
+}
+
+table p {
+  font-size: 85%;
+}
+
+.ref-index h2 {
+    font-size: 24px;
 }
