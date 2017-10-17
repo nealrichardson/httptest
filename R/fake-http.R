@@ -62,6 +62,8 @@ fakeResponse <- function (request, verb="GET", status_code=200, headers=list(), 
         ## TODO: give deprecation warning
         request <- structure(list(method=verb, url=request), class="request")
     }
+    ## TODO: if the request says `write_disk`, should we copy the mock file to
+    ## that location, so that that file exists?
     base.headers <- list()
     if (status_code == 204) {
         content <- NULL
