@@ -10,3 +10,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^revdep$
+^docs$
+^_pkgdown\.yml$
+^pkgdown$
