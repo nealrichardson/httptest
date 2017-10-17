@@ -1,6 +1,8 @@
 context("capture_requests")
 
 d <- tempfile()
+dl_file <- tempfile()
+webp_file <- tempfile()
 
 test_that("We can record a series of requests", {
     skip_if_disconnected()
@@ -12,10 +14,15 @@ test_that("We can record a series of requests", {
         r4 <<- PUT("http://httpbin.org/put")
         r5 <<- GET("http://httpbin.org/response-headers",
             query=list(`Content-Type`="application/json"))
+        r6 <<- GET("http://httpbin.org/anything", config=write_disk(dl_file))
+        r7 <<- GET("http://httpbin.org/image/webp", config=write_disk(webp_file))
     })
     expect_identical(sort(dir(d, recursive=TRUE)),
         c("httpbin.org.R", ## it's HTML, so .R
+          "httpbin.org/anything.json",
           "httpbin.org/get.json",
+          "httpbin.org/image/webp.R",
+          "httpbin.org/image/webp.R-FILE", ## The `write_disk` location
           "httpbin.org/put-PUT.json", ## Not a GET, but returns 200
           "httpbin.org/response-headers-ac4928.json",
           "httpbin.org/status/418.R" ## Not 200 response, so .R
@@ -36,6 +43,17 @@ test_that("We can then load the mocks it stores", {
     skip_if_disconnected()
     .mockPaths(d) ## Look for mocks in our temp dir
     on.exit(.mockPaths(NULL))
+
+    mock_dl_file <- tempfile()
+    mock_webp_file <- tempfile()
+    ## Because the place we wrote out the file in our real request might not
+    ## naturally be in our mock directory, assume that that file doesn't exist
+    ## when we load our mocks.
+    content_r6 <- content(r6)
+    file.remove(dl_file)
+    content_r7 <- content(r7)
+    file.remove(webp_file)
+
     with_mock_API({
         m1 <- GET("http://httpbin.org/get")
         m2 <- GET("http://httpbin.org")
@@ -43,6 +61,8 @@ test_that("We can then load the mocks it stores", {
         m4 <- PUT("http://httpbin.org/put")
         m5 <- GET("http://httpbin.org/response-headers",
             query=list(`Content-Type`="application/json"))
+        m6 <- GET("http://httpbin.org/anything", config=write_disk(mock_dl_file))
+        m7 <- GET("http://httpbin.org/image/webp", config=write_disk(mock_webp_file))
     })
     expect_identical(content(m1), content(r1))
     ## Compare the HTML as text because the parsed HTML (XML) object has a
@@ -51,6 +71,8 @@ test_that("We can then load the mocks it stores", {
     expect_identical(content(m3), content(r3))
     expect_identical(content(m4), content(r4))
     expect_identical(content(m5), content(r5))
+    expect_identical(content(m6), content_r6)
+    expect_identical(content(m7), content_r7)
 })
 
 with_mock_API({

@@ -87,6 +87,9 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
         } else {
             ## Dump an object that can be sourced
 
+            ## Change the file extension to .R
+            f <- sub("json$", "R", f)
+
             ## If content is text, rawToChar it and dput it as charToRaw(that)
             ## so that it loads correctly but is also readable
             text_types <- c("application/json",
@@ -99,10 +102,16 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
                 ## Squelch the "No encoding supplied: defaulting to UTF-8."
                 cont <- suppressMessages(content(.resp, "text"))
                 .resp$content <- substitute(charToRaw(cont))
+            } else if (inherits(.resp$request$output, "write_disk")) {
+                ## Copy real file and substitute the response$content "path".
+                ## Note that if content is a text type, the above attempts to
+                ## make the mock file readable call `content()`, which reads
+                ## in the file that has been written to disk, so it effectively
+                ## negates the "download" behavior for the recorded response.
+                downloaded_file <- paste0(f, "-FILE")
+                file.copy(.resp$content, downloaded_file)
+                .resp$content <- structure(downloaded_file, class="path")
             }
-
-            ## Change the file extension to .R
-            f <- sub("json$", "R", f)
             dput(.resp, file=f)
         }
         if (verbose) message("Writing ", normalizePath(f))
