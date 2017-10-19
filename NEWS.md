@@ -1,5 +1,5 @@
-### httptest 2.2.1 (under development)
-* Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config=write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`. 
+## httptest 2.3.0
+* Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config=write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`.
 
 ## httptest 2.2.0
 * Add redacting functions (`redact_auth()`, `redact_cookies()`, `redact_HTTP_auth()`, `redact_headers()`, `within_body_text()`) that can be specified in `capture_requests()` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth()`, which wraps several of them. See `vignette("redacting", package="httptest")` for more.
