@@ -1,5 +1,5 @@
 ### httptest 2.3.2
-* Add `redact_oauth()` to purge `httr::Token()` objects from requests. `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
+* Add `redact_oauth()` to purge `httr::Token()` objects from requests ([#9](https://github.com/nealrichardson/httptest/issues/9)). `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
 
 ## httptest 2.3.0
 * Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config=write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`.
