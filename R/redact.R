@@ -8,10 +8,12 @@
 #' `redact_cookies()` removes cookies from 'httr' `response` objects.
 #' `redact_headers()` lets you target selected request and response headers for
 #' redaction. `redact_HTTP_auth()` removes `username:password`-based HTTP auth
-#' credentials. `redact_auth()` is a convenience wrapper around them for a
-#' useful default redactor in `capture_requests()`.
+#' credentials. `redact_oauth()` removes the OAuth 'Token' object that 'httr'
+#' sticks in the request object. `redact_auth()` is a convenience wrapper around
+#' them for a useful default redactor in `capture_requests()`.
 #'
-#' `within_body_text()`
+#' `within_body_text()` lets you manipulate the text of the response body
+#' and manages the parsing of the raw (binary) data in the 'response' object.
 #'
 #' @param response An 'httr' `response` object to sanitize. Redacting functions
 #' should take as their only argument a response object.
@@ -26,13 +28,14 @@
 #' themselves are redacting functions, while `redact_headers()` and
 #' `within_body_text()` return redacting functions.
 #' @name redact
-#' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth within_body_text
+#' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
 #' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them.
 #' @export
 redact_auth <- function (response) {
     response <- redact_cookies(response)
     response <- redact_headers(c("Authorization", "Proxy-Authorization"))(response)
     response <- redact_HTTP_auth(response)
+    response <- redact_oauth(response)
     return(response)
 }
 
@@ -79,6 +82,14 @@ redact_HTTP_auth <- function (response) {
     if ("userpwd" %in% names(response$request$options)) {
         response$request$options$userpwd <- "REDACTED"
     }
+    return(response)
+}
+
+#' @rdname redact
+#' @export
+redact_oauth <- function (response) {
+    response$request$auth_token <- NULL
+    response <- redact_headers("Authorization")(response)
     return(response)
 }
 

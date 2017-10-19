@@ -14,6 +14,7 @@ with_mock_API({
         expect_false(any(grepl("Bearer token", readLines(file.path(d, "api.R")))))
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         .mockPaths(d)
         on.exit(options(httptest.mock.paths=NULL))
         b <- GET("api/", add_headers(`Authorization`="Bearer token"))
@@ -34,6 +35,7 @@ with_mock_API({
             readLines(file.path(d, "httpbin.org", "cookies.R")))))
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         .mockPaths(d)
         on.exit(options(httptest.mock.paths=NULL))
         cooksb <- GET("http://httpbin.org/cookies", set_cookies(token="12345"))
@@ -63,6 +65,7 @@ with_mock_API({
             2)
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         .mockPaths(d)
         on.exit(options(httptest.mock.paths=NULL))
         c2b <- GET("http://httpbin.org/cookies/set", query=list(token=12345))
@@ -93,6 +96,7 @@ with_mock_API({
             3)
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         .mockPaths(d)
         on.exit(options(httptest.mock.paths=NULL))
         loginb <- POST("http://example.com/login",
@@ -118,11 +122,33 @@ with_mock_API({
             readLines(file.path(d, "httpbin.org", "basic-auth", "user", "passwd.R")))))
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         .mockPaths(d)
         on.exit(options(httptest.mock.paths=NULL))
         pwauthb <- GET("http://httpbin.org/basic-auth/user/passwd",
             authenticate("user", "passwd"))
         expect_equal(pwauthb$request$options$userpwd, "REDACTED")
+    })
+
+    # redact oauth
+    # Example token copied from a test in httr
+    token <- Token2.0$new(
+        app = oauth_app("x", "y", "z"),
+        endpoint = oauth_endpoints("google"),
+        credentials = list(access_token = "ofNoArms")
+    )
+    capture_requests(simplify=FALSE, path=d, {
+        oauth <- GET("api/object1/", config(token = token))
+    })
+    test_that("The response has the 'auth_token' object'", {
+        expect_is(oauth$request$auth_token, "Token2.0")
+    })
+    test_that("And when loading that .R mock, the 'auth_token' doesn't appear", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
+        .mockPaths(d)
+        on.exit(options(httptest.mock.paths=NULL))
+        oauthb <- GET("api/object1/", config(token = token))
+        expect_null(oauthb$request$auth_token)
     })
 
     # Custom redacting function
@@ -142,6 +168,7 @@ with_mock_API({
         expect_identical(content(r), list(loaded=TRUE))
     })
     test_that("But the mock file gets written to the modified path with altered content", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         options(httptest.mock.paths=d)  ## Do this way to make sure "." isn't in
                                         ## the search path. We're checking that
                                         ## the original request doesn't have a

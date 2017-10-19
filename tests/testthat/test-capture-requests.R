@@ -77,6 +77,7 @@ test_that("We can then load the mocks it stores", {
 
 with_mock_API({
     test_that("Recording requests even with the mock API", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d2 <- tempfile()
         capture_requests(path=d2, {
             GET("http://example.com/get/")
@@ -88,6 +89,7 @@ with_mock_API({
     })
 
     test_that("Using simplify=FALSE (and setting .mockPaths)", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d3 <- tempfile()
         .mockPaths(d3)
         on.exit(options(httptest.mock.paths=NULL))
@@ -103,6 +105,7 @@ with_mock_API({
     })
 
     test_that("Using verbose=TRUE (and .mockPaths)", {
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d4 <- tempfile()
         .mockPaths(d4)
         on.exit(options(httptest.mock.paths=NULL))

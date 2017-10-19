@@ -6,10 +6,12 @@
 \alias{redact_cookies}
 \alias{redact_headers}
 \alias{redact_HTTP_auth}
+\alias{redact_oauth}
 \alias{within_body_text}
 \alias{redact_cookies}
 \alias{redact_headers}
 \alias{redact_HTTP_auth}
+\alias{redact_oauth}
 \alias{within_body_text}
 \title{Remove sensitive content from HTTP responses}
 \usage{
@@ -20,6 +22,8 @@ redact_cookies(response)
 redact_headers(headers = c())
 
 redact_HTTP_auth(response)
+
+redact_oauth(response)
 
 within_body_text(FUN)
 }
@@ -51,10 +55,12 @@ responses that \code{\link[=capture_requests]{capture_requests()}} saves.
 \code{redact_cookies()} removes cookies from 'httr' \code{response} objects.
 \code{redact_headers()} lets you target selected request and response headers for
 redaction. \code{redact_HTTP_auth()} removes \code{username:password}-based HTTP auth
-credentials. \code{redact_auth()} is a convenience wrapper around them for a
-useful default redactor in \code{capture_requests()}.
+credentials. \code{redact_oauth()} removes the OAuth 'Token' object that 'httr'
+sticks in the request object. \code{redact_auth()} is a convenience wrapper around
+them for a useful default redactor in \code{capture_requests()}.
 
-\code{within_body_text()}
+\code{within_body_text()} lets you manipulate the text of the response body
+and manages the parsing of the raw (binary) data in the 'response' object.
 }
 \seealso{
 \code{vignette("redacting", package="httptest")} for a detailed discussion of what these functions do and how to customize them.
