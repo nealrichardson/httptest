@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Redacting Sensitive Information from Recorded Requests
-
 `httptest` makes it easy for you to write tests that don't require a network connection. With `capture_requests()`, you can record responses from real requests so that you can use them later in tests. A further benefit of testing with mocks is that you don't have to deal with authentication and authorization on the server in your tests---you don't need to supply real login credentials for your test suite to run. You can have full test coverage of your code, both on public continuous-integration services like Travis-CI and when you submit packages to CRAN, all without having to publish secret tokens or passwords.
 
 It is important to ensure that the mocks you include in your test suite do not inadvertently reveal private information as well. For many requests and responses, the default behavior of `capture_requests` is to write out only the response body, which makes for clean, easy-to-read test fixtures. For other responses, however---those returning non-JSON content or an error status---it writes a `.R` file containing a `httr` "response" object. This response contains all of the headers and cookies that the server returns, and it also has a copy of your "request" object, with the headers, tokens, and other configuration you sent to the server. If not addressed, this would mean that you might be exposing your personal credentials publicly.
