@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# httptest: A Test Environment for HTTP Requests in R
-
 ```{r, results='hide', echo=FALSE, message=FALSE}
 options(width=120)
 ```
