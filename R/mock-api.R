@@ -184,7 +184,8 @@ deparseNamedList <- function () {
     ## R 3.4.2 has the old behavior. The new behavior may appear in R 3.4.3, or
     ## perhaps not until R 3.5.
     past <- inherits(try(.deparseOpts("niceNames"), silent=TRUE), "try-error")
-    return(if (past) { NULL } else { "niceNames" })
+    past <- ifelse(past, "old", "new")
+    return(list(new="niceNames")[[past]])
 }
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
