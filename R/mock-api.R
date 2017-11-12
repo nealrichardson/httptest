@@ -163,13 +163,28 @@ requestBody <- function (req) {
         b <- req$fields
         if (!is.null(b)) {
             ## Get a readable string representation
-            b <- deparse(b, control=NULL)
+            b <- deparse(b, control=deparseNamedList())
             ## Strip out unhelpful indentation that it may add, then collapse
             ## to single string, if broken into multiple lines
             b <- paste(sub("^ +", "", b), collapse="")
         }
     }
     return(b)
+}
+
+deparseNamedList <- function () {
+    ## r73699 2017-11-09
+    ## (https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866)
+    ## adds a "niceNames" deparse option, which is now required to get named
+    ## lists printed with names (they no longer are named with `control=NULL`).
+    ## As it turns out, you can't specify "niceNames" prophalactically---it
+    ## errors on older versions of R that don't support it. So this function
+    ## standardizes the behavior across R versions.
+    ##
+    ## R 3.4.2 has the old behavior. The new behavior may appear in R 3.4.3, or
+    ## perhaps not until R 3.5.
+    past <- inherits(try(.deparseOpts("niceNames"), silent=TRUE), "try-error")
+    return(if (past) { NULL } else { "niceNames" })
 }
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
