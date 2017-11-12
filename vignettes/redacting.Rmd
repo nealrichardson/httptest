@@ -1,6 +1,6 @@
 ---
 title: "Redacting Sensitive Information from Recorded Requests"
-description: "httptest makes it easy for you to record responses from real requests so that you can use them later in tests. It is important to ensure that the mocks you include in your test suite do not inadvertently reveal private information, such as tokens and ids. The package provides a framework for sanitizing the responses that capture_requests records. By default, it redacts the standard ways that auth credentials are passed in requests, but it is fully extensible."
+description: "httptest provides a framework for sanitizing mocks recorded from real requests so that your tests don't reveal private tokens. By default, it redacts standard auth credentials, and it is extensible."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Redacting Sensitive Information from Recorded Requests}
