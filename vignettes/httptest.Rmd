@@ -1,6 +1,6 @@
 ---
 title: "httptest: A Test Environment for HTTP Requests in R"
-description: "Testing code and packages that communicate with remote servers can be painful, but it doesn't need to be. The httptest package lets you test R code that constructs API requests and handles their responses, all without requiring access to the remote service during the test run. This makes tests easy to write and fast to run. This vignette covers some of the core features of the 'httptest' package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks.   "
+description: "This vignette covers the core features of the httptest package, focusing on how to mock HTTP responses, how to make assertions about requests, and how to record real requests for future use as mocks."
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{httptest: A Test Environment for HTTP Requests in R}
