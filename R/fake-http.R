@@ -28,9 +28,12 @@
 #' @importFrom testthat expect_message
 with_fake_HTTP <- function (expr) {
     old <- options(..httptest.request.errors=FALSE)
-    on.exit(do.call(options, old))
-    with_trace("request_perform", where=add_headers, at=1, tracer=fake_fetch,
-        expr=expr)
+    mock_perform(fake_fetch)
+    on.exit({
+        do.call(options, old)
+        stop_mocking()
+    })
+    eval.parent(expr)
 }
 
 #' Return something that looks enough like an httr 'response'
