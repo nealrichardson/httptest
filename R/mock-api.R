@@ -20,10 +20,8 @@
 #' @seealso [buildMockURL()] [.mockPaths()]
 #' @export
 with_mock_API <- function (expr) {
-    with_mock(
-        `httr:::request_perform`=mockRequest,
-        eval.parent(expr)
-    )
+    with_trace("request_perform", where=add_headers, at=1, tracer=mock_fetch,
+        expr=expr)
 }
 
 mockRequest <- function (req, handle, refresh) {
@@ -189,3 +187,20 @@ deparseNamedList <- function () {
 }
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
+
+mock_fetch <- substitute({
+    request_fetch <- function (x, url, handle) mockRequest(req)
+    parse_headers <- function (x) {
+        if (length(resp$all_headers)) {
+            # print(str(resp$all_headers))
+            return(resp$all_headers)
+        } else {
+            return(list(list(headers=x)))
+        }
+    }
+    response <- function (...) {
+        out <- structure(list(...), class="response")
+        out$cookies <- resp$cookies
+        return(out)
+    }
+})

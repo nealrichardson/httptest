@@ -116,13 +116,17 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
         }
         if (verbose) message("Writing ", normalizePath(f))
     }, list(path=path, simplify=simplify, verbose=verbose, redact=redact))
-    suppressMessages(trace("request_perform", exit=req_tracer, where=add_headers,
-        print=FALSE))
+    for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
+        suppressMessages(trace(verb, exit=req_tracer, where=add_headers,
+            print=FALSE))
+    }
     invisible(path)
 }
 
 #' @rdname capture_requests
 #' @export
 stop_capturing <- function () {
-    suppressMessages(untrace("request_perform", where=add_headers))
+    for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB")) {
+        suppressMessages(untrace(verb, where=add_headers))
+    }
 }

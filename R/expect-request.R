@@ -61,16 +61,23 @@ expect_DELETE <- function (object, url="") {
 #' @export
 expect_no_request <- function (object, ...) {
     ## No request means no error/message thrown
-    request_happened(object, NA)
+    request_happened()(object, NA)
 }
 
 #' @importFrom testthat expect_error
 expect_mock_request <- function (object, ...) {
     expected <- sub(" +$", "", paste0(...)) ## PUT/POST/PATCH with no body may have trailing whitespace
-    request_happened(object, expected, fixed=TRUE)
+    request_happened()(object, expected, fixed=TRUE)
 }
 
 ## Without internet, POST/PUT/PATCH throw errors with their request info
 ## With fake HTTP, POST/PUT/PATCH print messages with their request info.
 ## with_fake_HTTP mocks request_happened to make it expect_message
-request_happened <- testthat::expect_error
+#' @importFrom testthat expect_error expect_message
+request_happened <- function () {
+    if (getOption("..httptest.request.errors", TRUE)) {
+        return(testthat::expect_error)
+    } else {
+        return(testthat::expect_message)
+    }
+}
