@@ -27,11 +27,10 @@
 #' @export
 #' @importFrom testthat expect_message
 with_fake_HTTP <- function (expr) {
-    with_mock(
-        `httr:::request_perform`=fakeRequest,
-        `httptest::request_happened`=expect_message,
-        eval.parent(expr)
-    )
+    old <- options(..httptest.request.errors=FALSE)
+    on.exit(do.call(options, old))
+    with_trace("request_perform", where=add_headers, at=1, tracer=fake_fetch,
+        expr=expr)
 }
 
 #' Return something that looks enough like an httr 'response'
@@ -103,3 +102,8 @@ fakeRequest <- function (req, handle, refresh) {
     return(fakeResponse(req, content=body, status_code=status_code,
         headers=headers))
 }
+
+fake_fetch <- substitute({
+    request_fetch <- function (x, url, handle) fakeRequest(req)
+    parse_headers <- function (x) list(list(headers=x))
+})

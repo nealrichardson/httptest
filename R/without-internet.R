@@ -10,7 +10,6 @@
 #' such as [expect_GET()] and [expect_POST()], look for this shape.
 #' @param expr Code to run inside the mock context
 #' @return The result of `expr`
-#' @importFrom testthat with_mock
 #' @examples
 #' without_internet({
 #'     expect_error(httr::GET("http://httpbin.org/get"),
@@ -21,10 +20,8 @@
 #' })
 #' @export
 without_internet <- function (expr) {
-    with_mock(
-        `httr:::request_perform`=stopRequest,
-        eval.parent(expr)
-    )
+    with_trace("request_perform", where=add_headers, at=1, tracer=stop_fetch,
+        expr=expr)
 }
 
 stopRequest <- function (req, handle, refresh) {
@@ -40,3 +37,7 @@ stopRequest <- function (req, handle, refresh) {
     }
     stop(out, call.=FALSE)
 }
+
+stop_fetch <- substitute({
+    request_fetch <- function (x, url, handle) stopRequest(req)
+}, list(stopRequest=stopRequest))
