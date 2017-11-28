@@ -20,8 +20,9 @@
 #' })
 #' @export
 without_internet <- function (expr) {
-    with_trace("request_perform", where=add_headers, at=1, tracer=stop_fetch,
-        expr=expr)
+    mock_perform(stop_fetch)
+    on.exit(stop_mocking())
+    eval.parent(expr)
 }
 
 stopRequest <- function (req, handle, refresh) {
@@ -40,4 +41,4 @@ stopRequest <- function (req, handle, refresh) {
 
 stop_fetch <- substitute({
     request_fetch <- function (x, url, handle) stopRequest(req)
-}, list(stopRequest=stopRequest))
+})

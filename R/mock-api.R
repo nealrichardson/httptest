@@ -20,9 +20,12 @@
 #' @seealso [buildMockURL()] [.mockPaths()]
 #' @export
 with_mock_API <- function (expr) {
-    with_trace("request_perform", where=add_headers, at=1, tracer=mock_fetch,
-        expr=expr)
+    use_mock_API()
+    on.exit(stop_mocking())
+    eval.parent(expr)
 }
+
+use_mock_API <- function () mock_perform(mock_fetch)
 
 mockRequest <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
@@ -192,7 +195,6 @@ mock_fetch <- substitute({
     request_fetch <- function (x, url, handle) mockRequest(req)
     parse_headers <- function (x) {
         if (length(resp$all_headers)) {
-            # print(str(resp$all_headers))
             return(resp$all_headers)
         } else {
             return(list(list(headers=x)))
