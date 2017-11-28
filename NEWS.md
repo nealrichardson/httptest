@@ -1,3 +1,6 @@
+## httptest 2.3.4
+* Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
+
 ## httptest 2.3.2
 * Add `redact_oauth()` to purge `httr::Token()` objects from requests ([#9](https://github.com/nealrichardson/httptest/issues/9)). `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
 
