@@ -28,7 +28,7 @@
 #' @importFrom testthat expect_message
 with_fake_HTTP <- function (expr) {
     old <- options(..httptest.request.errors=FALSE)
-    mock_perform(fake_fetch)
+    mock_perform(fakeRequest)
     on.exit({
         do.call(options, old)
         stop_mocking()
@@ -105,8 +105,3 @@ fakeRequest <- function (req, handle, refresh) {
     return(fakeResponse(req, content=body, status_code=status_code,
         headers=headers))
 }
-
-fake_fetch <- substitute({
-    request_fetch <- function (x, url, handle) fakeRequest(req)
-    parse_headers <- function (x) list(list(headers=x))
-})

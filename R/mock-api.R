@@ -25,7 +25,7 @@ with_mock_API <- function (expr) {
     eval.parent(expr)
 }
 
-use_mock_API <- function () mock_perform(mock_fetch)
+use_mock_API <- function () mock_perform(mockRequest)
 
 mockRequest <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
@@ -190,19 +190,3 @@ deparseNamedList <- function () {
 }
 
 hash <- function (string, n=6) substr(digest(string), 1, n)
-
-mock_fetch <- substitute({
-    request_fetch <- function (x, url, handle) mockRequest(req)
-    parse_headers <- function (x) {
-        if (length(resp$all_headers)) {
-            return(resp$all_headers)
-        } else {
-            return(list(list(headers=x)))
-        }
-    }
-    response <- function (...) {
-        out <- structure(list(...), class="response")
-        out$cookies <- resp$cookies
-        return(out)
-    }
-})

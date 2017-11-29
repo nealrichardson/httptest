@@ -20,7 +20,7 @@
 #' })
 #' @export
 without_internet <- function (expr) {
-    mock_perform(stop_fetch)
+    mock_perform(stopRequest)
     on.exit(stop_mocking())
     eval.parent(expr)
 }
@@ -38,7 +38,3 @@ stopRequest <- function (req, handle, refresh) {
     }
     stop(out, call.=FALSE)
 }
-
-stop_fetch <- substitute({
-    request_fetch <- function (x, url, handle) stopRequest(req)
-})

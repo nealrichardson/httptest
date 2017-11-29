@@ -15,7 +15,8 @@ with_trace <- function (x, where=topenv(parent.frame()), print=FALSE, ..., expr)
     eval.parent(expr)
 }
 
-mock_perform <- function (tracer, print=FALSE, ...) {
+mock_perform <- function (mocker, print=FALSE, ...) {
+    tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
     suppressMessages(trace("request_perform", where=add_headers, print=print,
         tracer=tracer))
 }
@@ -23,3 +24,23 @@ mock_perform <- function (tracer, print=FALSE, ...) {
 stop_mocking <- function () {
     suppressMessages(untrace("request_perform", where=add_headers))
 }
+
+fetch_tracer <- quote({
+    request_fetch <- function (x, url, handle) .mocker(req)
+    parse_headers <- function (x) {
+        if (length(resp$all_headers)) {
+            return(resp$all_headers)
+        } else {
+            return(list(list(headers=x)))
+        }
+    }
+    response <- function (...) {
+        out <- structure(list(...), class="response")
+        out$cookies <- resp$cookies
+        out$handle <- NULL
+        return(out)
+    }
+})
+
+## cf http://adv-r.had.co.nz/Computing-on-the-language.html#substitute
+substitute_q <- function (x, env) eval(substitute(substitute(y, env), list(y=x)))
