@@ -30,5 +30,5 @@ location for storing and retrieving mocks, but you can put them anywhere you
 want as long as you set the appropriate location with \code{\link[=.mockPaths]{.mockPaths()}}.
 }
 \seealso{
-\code{\link[=buildMockURL]{buildMockURL()}} \code{\link[=.mockPaths]{.mockPaths()}}
+\code{\link[=use_mock_API]{use_mock_API()}} to enable mocking on its own (not in a context); \code{\link[=buildMockURL]{buildMockURL()}}; \code{\link[=.mockPaths]{.mockPaths()}}
 }

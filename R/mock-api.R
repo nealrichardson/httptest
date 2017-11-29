@@ -17,7 +17,7 @@
 #'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
-#' @seealso [buildMockURL()] [.mockPaths()]
+#' @seealso [use_mock_API()] to enable mocking on its own (not in a context); [buildMockURL()]; [.mockPaths()]
 #' @export
 with_mock_API <- function (expr) {
     use_mock_API()
@@ -25,6 +25,18 @@ with_mock_API <- function (expr) {
     eval.parent(expr)
 }
 
+#' Turn on API mocking
+#'
+#' This function intercepts HTTP requests made through `httr` and serves mock
+#' file responses instead. It is what [with_mock_API()] does, minus the
+#' automatic disabling of mocking when the context finishes.
+#'
+#' Note that you in order to resume normal request behavior, you will need to
+#' call [stop_mocking()] yourself---this function does not clean up after itself
+#' as 'with_mock_API` does. 
+#' @return Nothing; called for its side effects.
+#' @seealso [with_mock_API()] [stop_mocking()]
+#' @export
 use_mock_API <- function () mock_perform(mockRequest)
 
 mockRequest <- function (req, handle, refresh) {
