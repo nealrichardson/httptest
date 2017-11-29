@@ -15,7 +15,7 @@ with_trace(x, where = topenv(parent.frame()), print = FALSE, ..., expr)
 Default is \code{FALSE}; note that in \code{trace}, the default is \code{TRUE}.}
 
 \item{...}{Additional arguments to pass to \code{trace}. At minimum, must include
-either \code{tracer} and \code{at}, or \code{exit}.}
+either \code{tracer} or \code{exit}.}
 
 \item{expr}{Code to run inside the context}
 }
