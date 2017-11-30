@@ -20,5 +20,5 @@ call \code{\link[=stop_mocking]{stop_mocking()}} yourself---this function does n
 as 'with_mock_API` does.
 }
 \seealso{
-\code{\link[=with_mock_API]{with_mock_API()}} \code{\link[=stop_mocking]{stop_mocking()}}
+\code{\link[=with_mock_API]{with_mock_API()}} \code{\link[=stop_mocking]{stop_mocking()}} \code{\link[=block_requests]{block_requests()}}
 }

@@ -33,9 +33,9 @@ with_mock_API <- function (expr) {
 #'
 #' Note that you in order to resume normal request behavior, you will need to
 #' call [stop_mocking()] yourself---this function does not clean up after itself
-#' as 'with_mock_API` does. 
+#' as 'with_mock_API` does.
 #' @return Nothing; called for its side effects.
-#' @seealso [with_mock_API()] [stop_mocking()]
+#' @seealso [with_mock_API()] [stop_mocking()] [block_requests()]
 #' @export
 use_mock_API <- function () mock_perform(mockRequest)
 

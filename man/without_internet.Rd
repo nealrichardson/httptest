@@ -15,8 +15,10 @@ The result of \code{expr}
 \description{
 \code{without_internet} simulates the situation when any network request will
 fail, as in when you are without an internet connection. Any HTTP request
-through the verb functions in \code{httr} will raise
-an error. The error message raised has a well-defined shape, made of three
+through the verb functions in \code{httr} will raise an error.
+}
+\details{
+The error message raised has a well-defined shape, made of three
 elements, separated by space: (1) the request
 method (e.g. "GET"); (2) the request URL; and
 (3) the request body, if present. The verb-expectation functions,
@@ -30,4 +32,7 @@ without_internet({
         body='{"a":1}'),
         'PUT http://httpbin.org/put {"a":1}', fixed=TRUE)
 })
+}
+\seealso{
+\code{\link[=block_requests]{block_requests()}} to enable mocking on its own (not in a context)
 }
