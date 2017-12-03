@@ -38,3 +38,10 @@
         invisible(current)
     }
 }
+
+with_mock_path <- function (path, expr) {
+    oldmp <- .mockPaths()
+    .mockPaths(path)
+    on.exit(options(httptest.mock.paths=oldmp))
+    eval.parent(expr)
+}

@@ -55,18 +55,29 @@
 #' }
 #' @importFrom httr content
 #' @export
-capture_requests <- function (expr, path=.mockPaths()[1], simplify=TRUE,
-                              verbose=FALSE, redact=redact_auth) {
-    start_capturing(path, simplify, verbose, redact)
+capture_requests <- function (expr, path, simplify=TRUE, verbose=FALSE,
+                              redact=redact_auth) {
+    start_capturing(simplify=simplify, verbose=verbose, redact=redact)
     on.exit(stop_capturing())
-    eval.parent(expr)
+    where <- parent.frame()
+    if (!missing(path)) {
+        with_mock_path(path, eval(expr, where))
+    } else {
+        eval(expr, where)
+    }
 }
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
+start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
                              redact=redact_auth) {
-    ## Use "substitute" so that "path" gets inserted. Code remains quoted.
+    if (!missing(path)) {
+        ## Note that this changes state and doesn't reset it
+        .mockPaths(path)
+    } else {
+        path <- NULL
+    }
+    ## Use "substitute" so that args get inserted. Code remains quoted.
     req_tracer <- substitute({
         ## Get the value returned from the function, and sanitize it
         .resp <- redact(returnValue())
@@ -74,7 +85,7 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
         .resp$handle <- NULL
 
         ## Construct the mock file path
-        f <- file.path(path, buildMockURL(.resp$request))
+        f <- file.path(.mockPaths()[1], buildMockURL(.resp$request))
         dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
 
         ## Get the Content-Type
@@ -115,7 +126,7 @@ start_capturing <- function (path=.mockPaths()[1], simplify=TRUE, verbose=FALSE,
             dput(.resp, file=f)
         }
         if (verbose) message("Writing ", normalizePath(f))
-    }, list(path=path, simplify=simplify, verbose=verbose, redact=redact))
+    }, list(simplify=simplify, verbose=verbose, redact=redact))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
         suppressMessages(trace(verb, exit=req_tracer, where=add_headers,
             print=FALSE))

@@ -1,7 +1,12 @@
-## httptest 2.3.4
+## httptest 2.4.0
+* `use_mock_API()` and `block_requests()` enable the request altering behavior of `with_mock_API()` and `without_internet()`, respectively, without the enclosing context. To disable either, call `stop_mocking()`. This allows you to more naturally do things like use mocks in a vignette.
+* Internal change: test contexts no longer use `testthat::with_mock()` and instead use `trace()`, in order to allow that new functionality.
+* `capture_requests()`/`start_capturing()` now allows you to call `.mockPaths()` while actively recording, so that you can record server state changes to a different mock "layer".
+
+### httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
 
-## httptest 2.3.2
+### httptest 2.3.2
 * Add `redact_oauth()` to purge `httr::Token()` objects from requests ([#9](https://github.com/nealrichardson/httptest/issues/9)). `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
 
 ## httptest 2.3.0
