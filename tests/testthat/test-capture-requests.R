@@ -4,7 +4,7 @@ d <- tempfile()
 dl_file <- tempfile()
 webp_file <- tempfile()
 
-test_that("We can record a series of requests", {
+test_that("We can record a series of requests (a few ways)", {
     skip_if_disconnected()
     capture_requests(path=d, {
         ## <<- assign these so that they're available in the next test_that too
@@ -12,11 +12,14 @@ test_that("We can record a series of requests", {
         r2 <<- GET("http://httpbin.org")
         r3 <<- GET("http://httpbin.org/status/418")
         r4 <<- PUT("http://httpbin.org/put")
+    })
+    start_capturing(path=d)
         r5 <<- GET("http://httpbin.org/response-headers",
             query=list(`Content-Type`="application/json"))
         r6 <<- GET("http://httpbin.org/anything", config=write_disk(dl_file))
         r7 <<- GET("http://httpbin.org/image/webp", config=write_disk(webp_file))
-    })
+    stop_capturing()
+    .mockPaths(NULL) ## because start_capturing with path modifies global state
     expect_identical(sort(dir(d, recursive=TRUE)),
         c("httpbin.org.R", ## it's HTML, so .R
           "httpbin.org/anything.json",
@@ -41,28 +44,28 @@ test_that("We can record a series of requests", {
 
 test_that("We can then load the mocks it stores", {
     skip_if_disconnected()
-    .mockPaths(d) ## Look for mocks in our temp dir
-    on.exit(.mockPaths(NULL))
+    ## Look for mocks in our temp dir
+    with_mock_path(d, {
+        mock_dl_file <- tempfile()
+        mock_webp_file <- tempfile()
+        ## Because the place we wrote out the file in our real request might not
+        ## naturally be in our mock directory, assume that that file doesn't exist
+        ## when we load our mocks.
+        content_r6 <- content(r6)
+        file.remove(dl_file)
+        content_r7 <- content(r7)
+        file.remove(webp_file)
 
-    mock_dl_file <- tempfile()
-    mock_webp_file <- tempfile()
-    ## Because the place we wrote out the file in our real request might not
-    ## naturally be in our mock directory, assume that that file doesn't exist
-    ## when we load our mocks.
-    content_r6 <- content(r6)
-    file.remove(dl_file)
-    content_r7 <- content(r7)
-    file.remove(webp_file)
-
-    with_mock_API({
-        m1 <- GET("http://httpbin.org/get")
-        m2 <- GET("http://httpbin.org")
-        m3 <- GET("http://httpbin.org/status/418")
-        m4 <- PUT("http://httpbin.org/put")
-        m5 <- GET("http://httpbin.org/response-headers",
-            query=list(`Content-Type`="application/json"))
-        m6 <- GET("http://httpbin.org/anything", config=write_disk(mock_dl_file))
-        m7 <- GET("http://httpbin.org/image/webp", config=write_disk(mock_webp_file))
+        with_mock_API({
+            m1 <- GET("http://httpbin.org/get")
+            m2 <- GET("http://httpbin.org")
+            m3 <- GET("http://httpbin.org/status/418")
+            m4 <- PUT("http://httpbin.org/put")
+            m5 <- GET("http://httpbin.org/response-headers",
+                query=list(`Content-Type`="application/json"))
+            m6 <- GET("http://httpbin.org/anything", config=write_disk(mock_dl_file))
+            m7 <- GET("http://httpbin.org/image/webp", config=write_disk(mock_webp_file))
+        })
     })
     expect_identical(content(m1), content(r1))
     ## Compare the HTML as text because the parsed HTML (XML) object has a
@@ -79,7 +82,7 @@ with_mock_API({
     test_that("Recording requests even with the mock API", {
         skip_on_cran() ## They have a broken R-devel build that chokes on these
         d2 <- tempfile()
-        capture_requests(path=d2, {
+        capture_while_mocking(path=d2, {
             GET("http://example.com/get/")
         })
         expect_true(setequal(dir(d2, recursive=TRUE),
@@ -91,10 +94,10 @@ with_mock_API({
     test_that("Using simplify=FALSE (and setting .mockPaths)", {
         skip_on_cran() ## They have a broken R-devel build that chokes on these
         d3 <- tempfile()
-        .mockPaths(d3)
-        on.exit(options(httptest.mock.paths=NULL))
-        capture_requests(simplify=FALSE, {
-            GET("http://example.com/get/")
+        with_mock_path(d3, {
+            capture_while_mocking(simplify=FALSE, {
+                GET("http://example.com/get/")
+            })
         })
         expect_true(setequal(dir(d3, recursive=TRUE),
             c("example.com/get.R")))
@@ -107,11 +110,11 @@ with_mock_API({
     test_that("Using verbose=TRUE (and .mockPaths)", {
         skip_on_cran() ## They have a broken R-devel build that chokes on these
         d4 <- tempfile()
-        .mockPaths(d4)
-        on.exit(options(httptest.mock.paths=NULL))
-        capture_requests(verbose=TRUE, {
-            expect_message(GET("http://example.com/get/"),
-                "Writing .*example.com.get.json")
+        with_mock_path(d4, {
+            capture_while_mocking(verbose=TRUE, {
+                expect_message(GET("http://example.com/get/"),
+                    "Writing .*example.com.get.json")
+            })
         })
         expect_true(setequal(dir(d4, recursive=TRUE),
             c("example.com/get.json")))
