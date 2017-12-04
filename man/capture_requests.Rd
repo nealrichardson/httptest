@@ -6,10 +6,10 @@
 \alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
-capture_requests(expr, path = .mockPaths()[1], simplify = TRUE,
-  verbose = FALSE, redact = redact_auth)
+capture_requests(expr, path, simplify = TRUE, verbose = FALSE,
+  redact = redact_auth)
 
-start_capturing(path = .mockPaths()[1], simplify = TRUE, verbose = FALSE,
+start_capturing(path, simplify = TRUE, verbose = FALSE,
   redact = redact_auth)
 
 stop_capturing()
