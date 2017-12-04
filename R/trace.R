@@ -17,8 +17,8 @@ with_trace <- function (x, where=topenv(parent.frame()), print=FALSE, ..., expr)
 
 mock_perform <- function (mocker, print=FALSE, ...) {
     tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
-    suppressMessages(trace("request_perform", where=add_headers, print=print,
-        tracer=tracer))
+    invisible(suppressMessages(trace("request_perform", where=add_headers,
+        print=print, tracer=tracer, ...)))
 }
 
 #' Turn off request mocking
@@ -27,8 +27,15 @@ mock_perform <- function (mocker, print=FALSE, ...) {
 #' requesting behavior can be resumed
 #' @return Nothing; called for its side effects
 #' @export
-stop_mocking <- function () {
-    suppressMessages(untrace("request_perform", where=add_headers))
+stop_mocking <- function () safe_untrace("request_perform", add_headers)
+
+safe_untrace <- function (what, where) {
+    ## If you attempt to untrace a function (1) that isn't exported from
+    ## whatever namespace it lives in and (2) that isn't currently traced,
+    ## it errors. This prevents that so that it's always safe to call `untrace`
+    if (inherits(get(what, environment(where)), "functionWithTrace")) {
+        suppressMessages(untrace(what, where=where))
+    }
 }
 
 ## This is the code that we'll inject into `request_perform` to override some
