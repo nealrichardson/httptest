@@ -27,6 +27,7 @@ Imports:
     httr,
     jsonlite
 Suggests:
+    covr,
     knitr,
     rmarkdown,
     xml2
