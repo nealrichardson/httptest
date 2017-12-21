@@ -17,14 +17,15 @@ with_trace <- function (x, where=topenv(parent.frame()), print=FALSE, ..., expr)
 
 mock_perform <- function (mocker, print=FALSE, ...) {
     tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
-    invisible(suppressMessages(trace("request_perform", where=add_headers,
-        print=print, tracer=tracer, ...)))
+    invisible(trace_httr("request_perform", print=print, tracer=tracer, ...))
 }
+
+trace_httr <- function (...) suppressMessages(trace(..., where=add_headers))
 
 #' Turn off request mocking
 #'
 #' This function "untraces" the `httr` request functions so that normal, real
-#' requesting behavior can be resumed
+#' requesting behavior can be resumed.
 #' @return Nothing; called for its side effects
 #' @export
 stop_mocking <- function () safe_untrace("request_perform", add_headers)

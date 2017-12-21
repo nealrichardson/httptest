@@ -128,8 +128,7 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
         if (verbose) message("Writing ", normalizePath(f))
     }, list(simplify=simplify, verbose=verbose, redact=redact))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
-        suppressMessages(trace(verb, exit=req_tracer, where=add_headers,
-            print=FALSE))
+        trace_httr(verb, exit=req_tracer, print=FALSE)
     }
     invisible(path)
 }

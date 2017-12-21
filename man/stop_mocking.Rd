@@ -11,5 +11,5 @@ Nothing; called for its side effects
 }
 \description{
 This function "untraces" the \code{httr} request functions so that normal, real
-requesting behavior can be resumed
+requesting behavior can be resumed.
 }
