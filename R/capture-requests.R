@@ -4,6 +4,7 @@
 #' you make and stores them as mock files. This enables you to perform a series
 #' of requests against a live server once and then build your test suite using
 #' those mocks, running your tests in [with_mock_API()].
+#'
 #' `start_capturing` and `stop_capturing` allow you to turn on/off request
 #' recording for more convenient use in an interactive session.
 #'
@@ -34,6 +35,8 @@
 #' certain request and response contents, such as authentication tokens, from
 #' the mocks that get written out. See [redact_auth()], the default, for more
 #' details.
+#' @param package character vector of installed package names
+#' @param ... Arguments passed through `capture_requests` to `start_capturing`
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
 #' it is called for its side effects.
@@ -55,9 +58,8 @@
 #' }
 #' @importFrom httr content
 #' @export
-capture_requests <- function (expr, path, simplify=TRUE, verbose=FALSE,
-                              redact=redact_auth) {
-    start_capturing(simplify=simplify, verbose=verbose, redact=redact)
+capture_requests <- function (expr, path, ...) {
+    start_capturing(...)
     on.exit(stop_capturing())
     where <- parent.frame()
     if (!missing(path)) {
@@ -69,14 +71,26 @@ capture_requests <- function (expr, path, simplify=TRUE, verbose=FALSE,
 
 #' @rdname capture_requests
 #' @export
+#' @importFrom utils sessionInfo
 start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
-                             redact=redact_auth) {
+                             redact=redact_auth,
+                             package=names(sessionInfo()$otherPkgs)) {
     if (!missing(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
     } else {
         path <- NULL
     }
+
+    ## If no redactor specified, look for package-defined redactors
+    if (missing(redact) && length(package)) {
+        funcs <- find_redactors(package)
+        if (length(funcs)) {
+            redact <- funcs
+        }
+    }
+    redact <- prepare_redactor(redact)
+
     ## Use "substitute" so that args get inserted. Code remains quoted.
     req_tracer <- substitute({
         ## Get the value returned from the function, and sanitize it
@@ -139,4 +153,50 @@ stop_capturing <- function () {
     for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB")) {
         safe_untrace(verb, add_headers)
     }
+}
+
+find_redactors <- function (packages) {
+    ## Given package names, find any redactors put in inst/httptest/redact.R
+    files <- vapply(packages,
+        function (p) system.file("httptest", "redact.R", package=p),
+        character(1),
+        USE.NAMES=TRUE)
+    ## If file does not exist, it returns "", so filter those out
+    files <- files[nchar(files) > 0]
+    funcs <- lapply(files, function (f) source(f)$value)
+    ## Make sure we have functions
+    funcs <- Filter(is.function, funcs)
+    return(funcs)
+}
+
+prepare_redactor <- function (redactor) {
+    ## Message which redactor being used, and concatenate if there are several
+    ## TODO: update docs to reflect what are now legal inputs
+    if (is.null(redactor)) {
+        ## Allow, and make it do nothing
+        ## TODO: e2e test NULL redactor
+        redactor <- force
+    } else if (identical(redactor, redact_auth)) {
+        message("Using default redactor")
+    } else if (is.function(redactor)) {
+        message("Using custom redactor")
+    } else if (is.list(redactor)) {
+        ## Distinguish length-1 list and named list, message and concat differently
+        just_one <- length(redactor) == 1
+        noun <- ifelse(just_one, "redactor", "redactors")
+        if (is.null(names(redactor))) {
+            msg <- paste("Using", length(redactor), "custom", noun)
+        } else {
+            msg <- paste("Using", noun, paste(dQuote(names(redactor)), collapse=", "))
+        }
+        message(msg)
+        if (just_one) {
+            redactor <- redactor[[1]]
+        } else {
+            redactor <- chain_redactors(redactor)
+        }
+    } else {
+        stop("Redactor must be a function or list of functions", call.=FALSE)
+    }
+    return(redactor)
 }

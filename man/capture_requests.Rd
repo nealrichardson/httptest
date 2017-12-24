@@ -6,11 +6,10 @@
 \alias{stop_capturing}
 \title{Collect API Responses as Mock Files}
 \usage{
-capture_requests(expr, path, simplify = TRUE, verbose = FALSE,
-  redact = redact_auth)
+capture_requests(expr, path, ...)
 
 start_capturing(path, simplify = TRUE, verbose = FALSE,
-  redact = redact_auth)
+  redact = redact_auth, package = names(sessionInfo()$otherPkgs))
 
 stop_capturing()
 }
@@ -20,6 +19,8 @@ stop_capturing()
 \item{path}{Where to save the mock files. Default is the first directory in
 \code{\link[=.mockPaths]{.mockPaths()}}, which if not otherwise specified is the current working
 directory.}
+
+\item{...}{Arguments passed through \code{capture_requests} to \code{start_capturing}}
 
 \item{simplify}{logical: if \code{TRUE} (default), JSON responses with status 200
 will be written as just the text of the response body. In all other cases,
@@ -37,6 +38,8 @@ and should return a cleansed \code{response} object. This allows you to remove
 certain request and response contents, such as authentication tokens, from
 the mocks that get written out. See \code{\link[=redact_auth]{redact_auth()}}, the default, for more
 details.}
+
+\item{package}{character vector of installed package names}
 }
 \value{
 \code{capture_requests} returns the result of \code{expr}. \code{start_capturing}

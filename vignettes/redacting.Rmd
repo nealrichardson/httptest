@@ -12,7 +12,7 @@ vignette: >
 
 It is important to ensure that the mocks you include in your test suite do not inadvertently reveal private information as well. For many requests and responses, the default behavior of `capture_requests` is to write out only the response body, which makes for clean, easy-to-read test fixtures. For other responses, however---those returning non-JSON content or an error status---it writes a `.R` file containing a `httr` "response" object. This response contains all of the headers and cookies that the server returns, and it also has a copy of your "request" object, with the headers, tokens, and other configuration you sent to the server. If not addressed, this would mean that you might be exposing your personal credentials publicly.
 
-Starting in version 2.2.0, `httptest` provides a framework for sanitizing the responses that `capture_requests` records. By default, it redacts the standard ways that auth credentials are passed in requests: cookies, authorization headers, and basic HTTP auth. The framework is extensible and allows you to specify custom redaction policies that match how your API accepts and returns sensitive information. Common redacting functions are configurable and natural to adapt to your needs, while the workflow also supports custom redacting functions that can alter the recorded requests however you want, including altering the response content and URL.
+`httptest` provides a framework for sanitizing the responses that `capture_requests` records. By default, it redacts the standard ways that auth credentials are passed in requests: cookies, authorization headers, and basic HTTP auth. The framework is extensible and allows you to specify custom redaction policies that match how your API accepts and returns sensitive information. Common redacting functions are configurable and natural to adapt to your needs, while the workflow also supports custom redacting functions that can alter the recorded requests however you want, including altering the response content and URL.
 
 ## Default: redact standard auth methods
 
@@ -30,6 +30,8 @@ real_resp$request$options$cookie
 
 ## [1] "token=12345"
 ```
+
+<!-- TODO: revise this to inspect the mockfile, like below -->
 
 But when we load that recorded response in tests later, the cookie won't appear because it was redacted:
 

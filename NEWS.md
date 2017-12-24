@@ -1,7 +1,13 @@
-## httptest 2.4.0
-* `use_mock_API()` and `block_requests()` enable the request altering behavior of `with_mock_API()` and `without_internet()`, respectively, without the enclosing context. To disable either, call `stop_mocking()`. This allows you to more naturally do things like use mocks in a vignette.
+# httptest 3.0.0
+
+## Major features
+* `use_mock_API()` and `block_requests()` enable the request altering behavior of `with_mock_API()` and `without_internet()`, respectively, without the enclosing context. This allows you to do things like use mocks in R Markdown code chunks, as in a vignette. To turn off mocking, call `stop_mocking()`.
+* Packages can now have a default redactor, such that whenever the package is loaded, `capture_requests()` will apply that function to any responses it records. This ensures that you never forget to sanitize your API responses if you need to use a custom function. To take advantage of this feature, put a `function (response) {...}` in a file at `inst/httptest/redact.R` in your package. See `vignette("redacting", package="httptest")` for more.  
+
+## Enhancements
 * Internal change: test contexts no longer use `testthat::with_mock()` and instead use `trace()`, in order to allow that new functionality.
-* `capture_requests()`/`start_capturing()` now allows you to call `.mockPaths()` while actively recording, so that you can record server state changes to a different mock "layer".
+* `capture_requests()`/`start_capturing()` now allow you to call `.mockPaths()` while actively recording so that you can record server state changes to a different mock "layer". Previously, the recording path was fixed when the context was initialized.
+* The `redact` argument to `capture_requests()`/`start_capturing()` can now take a list of functions that will be chained together, or `NULL` to disable the default `redact_auth()`.
 
 ### httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
