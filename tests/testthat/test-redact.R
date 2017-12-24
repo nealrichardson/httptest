@@ -186,4 +186,44 @@ with_mock_API({
         expect_error(alt <- GET("http://example.com/fakeurl"), NA)
         expect_identical(content(alt), list(changed=TRUE))
     })
+
+    test_that("Reading redactors from within a package", {
+        ## Install the "testpkg" to a temp lib.loc
+        lib <- tempfile()
+        dir.create(lib)
+        Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
+            stdout=NULL, stderr=NULL)
+        library(testpkg, lib.loc=lib)
+        expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+
+        newmocks <- tempfile()
+        expect_message(
+            capture_while_mocking(path=newmocks, {
+                r <- GET("http://example.com/get")
+            }),
+            paste0("Using redactor ", dQuote("testpkg"))
+        )
+        with_mock_path(newmocks, {
+            r2 <- GET("http://example.com/get")
+        })
+        ## The resulting mock content is what we injected into it from testpkg
+        expect_identical(content(r2), list(fake=TRUE))
+    })
+
+    test_that("redact=NULL to override default (and loaded packages)", {
+        expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+        newmocks2 <- tempfile()
+        expect_message(
+            capture_while_mocking(simplify=FALSE, path=newmocks2, redact=NULL, {
+                a <- GET("api/", add_headers(`Authorization`="Bearer token"))
+            }),
+            NA
+        )
+        expect_true(any(grepl("Bearer token", readLines(file.path(newmocks2, "api.R")))))
+        skip_on_cran() ## They have a broken R-devel build that chokes on these
+        with_mock_path(newmocks2, {
+            b <- GET("api/", add_headers(`Authorization`="Bearer token"))
+        })
+        expect_equal(content(b), content(a))
+    })
 })

@@ -14,3 +14,21 @@ capture_while_mocking <- function (..., path) {
             expr=capture_requests(...))
     })
 }
+
+## from __future__ import ...
+if ("Rcmd" %in% ls(envir=asNamespace("tools"))) {
+    Rcmd <- tools::Rcmd
+} else {
+    ## R < 3.3
+    Rcmd <- function (args, ...) {
+        if (.Platform$OS.type == "windows") {
+            system2(file.path(R.home("bin"), "Rcmd.exe"), args, ...)
+        } else {
+            system2(file.path(R.home("bin"), "R"), c("CMD", args), ...)
+        }
+    }
+}
+
+install_testpkg <- function (pkg) {
+    Rcmd(c("INSTALL", pkg))
+}

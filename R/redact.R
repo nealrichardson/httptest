@@ -1,3 +1,13 @@
+chain_redactors <- function (funs) {
+    ## Given a list of functions, return a function that execs them in sequence
+    return(function (response) {
+        for (f in funs) {
+            response <- f(response)
+        }
+        return(response)
+    })
+}
+
 #' Remove sensitive content from HTTP responses
 #'
 #' When recording requests for use as test fixtures, you don't want to include
@@ -31,13 +41,12 @@
 #' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
 #' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them.
 #' @export
-redact_auth <- function (response) {
-    response <- redact_cookies(response)
-    response <- redact_headers(c("Authorization", "Proxy-Authorization"))(response)
-    response <- redact_HTTP_auth(response)
-    response <- redact_oauth(response)
-    return(response)
-}
+redact_auth <- chain_redactors(list(
+    redact_cookies,
+    redact_headers(c("Authorization", "Proxy-Authorization")),
+    redact_HTTP_auth,
+    redact_oauth
+))
 
 #' @rdname redact
 #' @export
