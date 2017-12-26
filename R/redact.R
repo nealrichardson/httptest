@@ -43,7 +43,7 @@ chain_redactors <- function (funs) {
 #' @export
 redact_auth <- chain_redactors(list(
     redact_cookies,
-    redact_headers(c("Authorization", "Proxy-Authorization")),
+    as.redactor(redact_headers(c("Authorization", "Proxy-Authorization"))),
     redact_HTTP_auth,
     redact_oauth
 ))
@@ -56,7 +56,7 @@ redact_cookies <- function (response) {
         response$request$options$cookie <- "REDACTED"
     }
     ## Delete from response
-    response <- redact_headers("Set-Cookie")(response)
+    response <- redact_headers(response, "Set-Cookie")
     if (!is.null(response$cookies) && nrow(response$cookies)) {
         ## is.null check is for reading mocks.
         ## possible TODO: add $cookies to fakeResponse, then !is.null isn't needed
@@ -67,16 +67,15 @@ redact_cookies <- function (response) {
 
 #' @rdname redact
 #' @export
-redact_headers <- function (headers=c()) {
-    return(function (r) {
-        r$headers <- redact_from_header_list(r$headers, headers)
-        r$all_headers <- lapply(r$all_headers, function (h) {
-            h$headers <- redact_from_header_list(h$headers, headers)
-            return(h)
-        })
-        r$request$headers <- redact_from_header_list(r$request$headers, headers)
-        return(r)
+redact_headers <- function (response, headers=c()) {
+    response$headers <- redact_from_header_list(response$headers, headers)
+    response$all_headers <- lapply(response$all_headers, function (h) {
+        h$headers <- redact_from_header_list(h$headers, headers)
+        return(h)
     })
+    response$request$headers <- redact_from_header_list(response$request$headers,
+        headers)
+    return(response)
 }
 
 redact_from_header_list <- function (headers, to_redact=c()) {
@@ -98,17 +97,40 @@ redact_HTTP_auth <- function (response) {
 #' @export
 redact_oauth <- function (response) {
     response$request$auth_token <- NULL
-    response <- redact_headers("Authorization")(response)
-    return(response)
+    return(redact_headers(response, "Authorization"))
 }
 
 #' @rdname redact
 #' @export
-within_body_text <- function (FUN) {
-    return(function (response) {
-        old <- suppressMessages(content(response, "text"))
-        new <- FUN(old)
-        response$content <- charToRaw(new)
-        return(response)
-    })
+within_body_text <- function (response, FUN) {
+    old <- suppressMessages(content(response, "text"))
+    new <- FUN(old)
+    response$content <- charToRaw(new)
+    return(response)
+}
+
+#' Wrap a redacting expression as a proper function
+#'
+#' Redactors take a `response` as their first argument, and some take additional
+#' arguments: `redact_headers()`, for example, requires that you specify
+#' `headers`. This function allows you to take a simplified expression like what
+#' you would include in a `magrittr` pipe chain and generate the
+#' `function (response, ...)` for you so that you can provide the function to
+#' `capture_requests()`.
+#'
+#' For example, `as.redactor(redact_headers("X-Custom-Header"))` is equivalent
+#' to `function (response) redact_headers(response, "X-Custom-Header")`. This
+#' allows you to do
+#' `capture_requests(redact = as.redactor(redact_headers("X-Custom-Header")))`.
+#' @param expr Partial expression to turn into a function of `response`
+#' @return A `function`.
+#' @rdname as-redactor
+#' @export
+as.redactor <- function (expr) {
+    env <- parent.frame()
+    expr <- substitute(expr)
+    # cf. magrittr:::prepare_first: inject a first argument into the expression
+    expr <- as.call(c(expr[[1L]], quote(response), as.list(expr[-1L])))
+    # cf. magrittr:::wrap_function: wrap that in a function (response) ...
+    return(eval(call("function", as.pairlist(alist(response=)), expr), env, env))
 }

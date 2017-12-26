@@ -163,7 +163,7 @@ with_mock_API({
         response$url <- response$request$url <- "http://example.com/fakeurl"
         # Proof that you can alter the response body
         cleaner <- function (x) gsub("loaded", "changed", x)
-        response <- within_body_text(cleaner)(response)
+        response <- within_body_text(response, cleaner)
         return(response)
     }
     capture_while_mocking(simplify=FALSE, path=d, redact=my_redactor, {
@@ -225,5 +225,13 @@ with_mock_API({
             b <- GET("api/", add_headers(`Authorization`="Bearer token"))
         })
         expect_equal(content(b), content(a))
+    })
+
+    test_that("as.redactor", {
+        a <- GET("api/", add_headers(`Authorization`="Bearer token"))
+        a1 <- redact_headers(a, "Authorization")
+        a2 <- as.redactor(redact_headers("Authorization"))(a)
+        expect_identical(a1, a2)
+        expect_identical(a1$request$headers[["Authorization"]], "REDACTED")
     })
 })
