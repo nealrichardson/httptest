@@ -1,3 +1,3 @@
 function (response) {
-    within_body_text(function (txt) '{"fake":true}')(response)
+    within_body_text(response, function (txt) '{"fake":true}')
 }
