@@ -33,10 +33,8 @@ chain_redactors <- function (funs) {
 #' @param FUN For `within_body_text()`, a function that takes as its argument a
 #' character vector and returns a modified version of that. This function will
 #' be applied to the text of the response's "content".
-#' @return Redacting functions must return a well-formed 'httr' `response`
-#' object. `redact_auth()`, `redact_HTTP_auth()`, and `redact_cookies()`
-#' themselves are redacting functions, while `redact_headers()` and
-#' `within_body_text()` return redacting functions.
+#' @return All redacting functions return a well-formed 'httr' `response`
+#' object.
 #' @name redact
 #' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
 #' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them.

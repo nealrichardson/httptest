@@ -19,13 +19,13 @@ redact_auth(response)
 
 redact_cookies(response)
 
-redact_headers(headers = c())
+redact_headers(response, headers = c())
 
 redact_HTTP_auth(response)
 
 redact_oauth(response)
 
-within_body_text(FUN)
+within_body_text(response, FUN)
 }
 \arguments{
 \item{response}{An 'httr' \code{response} object to sanitize. Redacting functions
@@ -40,10 +40,8 @@ character vector and returns a modified version of that. This function will
 be applied to the text of the response's "content".}
 }
 \value{
-Redacting functions must return a well-formed 'httr' \code{response}
-object. \code{redact_auth()}, \code{redact_HTTP_auth()}, and \code{redact_cookies()}
-themselves are redacting functions, while \code{redact_headers()} and
-\code{within_body_text()} return redacting functions.
+All redacting functions return a well-formed 'httr' \code{response}
+object.
 }
 \description{
 When recording requests for use as test fixtures, you don't want to include
