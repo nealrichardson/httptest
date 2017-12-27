@@ -28,8 +28,7 @@ redact_oauth(response)
 within_body_text(response, FUN)
 }
 \arguments{
-\item{response}{An 'httr' \code{response} object to sanitize. Redacting functions
-should take as their only argument a response object.}
+\item{response}{An 'httr' \code{response} object to sanitize.}
 
 \item{headers}{For \code{redact_headers()}, a character vector of header names to
 sanitize. Note that \code{redact_headers()} itself does not do redacting but
@@ -61,5 +60,5 @@ them for a useful default redactor in \code{capture_requests()}.
 and manages the parsing of the raw (binary) data in the 'response' object.
 }
 \seealso{
-\code{vignette("redacting", package="httptest")} for a detailed discussion of what these functions do and how to customize them.
+\code{vignette("redacting", package="httptest")} for a detailed discussion of what these functions do and how to customize them. \code{\link[=gsub_response]{gsub_response()}} is another redactor.
 }

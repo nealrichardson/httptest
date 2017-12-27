@@ -25,8 +25,7 @@ chain_redactors <- function (funs) {
 #' `within_body_text()` lets you manipulate the text of the response body
 #' and manages the parsing of the raw (binary) data in the 'response' object.
 #'
-#' @param response An 'httr' `response` object to sanitize. Redacting functions
-#' should take as their only argument a response object.
+#' @param response An 'httr' `response` object to sanitize.
 #' @param headers For `redact_headers()`, a character vector of header names to
 #' sanitize. Note that `redact_headers()` itself does not do redacting but
 #' returns a function that when called does the redacting.
@@ -37,7 +36,7 @@ chain_redactors <- function (funs) {
 #' object.
 #' @name redact
 #' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
-#' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them.
+#' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them. [gsub_response()] is another redactor.
 #' @export
 redact_auth <- chain_redactors(list(
     redact_cookies,
@@ -107,6 +106,30 @@ within_body_text <- function (response, FUN) {
     return(response)
 }
 
+#' Find and replace within a 'response'
+#'
+#' This function passes its arguments to [base::gsub()] in order to find and
+#' replace string patterns (regular expressions) in three attributes of an
+#' `httr` 'response' object: (1) the response body; (2) the response URL; and
+#' (3) the request URL (that is, the URL appears twice in the response object).
+#'
+#' Note that, unlike `gsub()`, the first argument of the function is `response`,
+#' not `pattern`, while the equivalent argument in `gsub()`, "`x`", is placed
+#' third. This difference is to maintain consistency with the other redactor
+#' functions in `httptest`, which all take `response` as the first argument.
+#' @param response An 'httr' `response` object to sanitize.
+#' @param pattern From [base::gsub()]: "character string containing a regular
+#' expression (or character string for `fixed = TRUE`) to be matched in the
+#' given character vector." Passed to `gsub()`. See the docs for `gsub()` for
+#' further details.
+#' @param replacement A replacement for the matched pattern, possibly including
+#' regular expression backreferences. Passed to `gsub()`. See the docs for
+#' `gsub()` for further details.
+#' @param ... Additional logical arguments passed to `gsub()`: `ignore.case`,
+#' `perl`, `fixed`, and `useBytes` are the possible options.
+#' @return A `response` object with the pattern replaced in the URLs and
+#' response body.
+#' @export
 gsub_response <- function (response, pattern, replacement, ...) {
     replacer <- function (x) gsub(pattern, replacement, x, ...)
     # Sub in URL--note that it appears twice!
