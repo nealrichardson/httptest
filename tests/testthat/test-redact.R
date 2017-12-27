@@ -227,11 +227,18 @@ with_mock_API({
         expect_equal(content(b), content(a))
     })
 
+    a <- GET("api/", add_headers(`Authorization`="Bearer token"))
     test_that("as.redactor", {
-        a <- GET("api/", add_headers(`Authorization`="Bearer token"))
         a1 <- redact_headers(a, "Authorization")
         a2 <- as.redactor(redact_headers("Authorization"))(a)
         expect_identical(a1, a2)
         expect_identical(a1$request$headers[["Authorization"]], "REDACTED")
+    })
+
+    test_that("gsub_response", {
+        asub <- gsub_response(a, "api", "OTHER")
+        expect_identical(asub$url, "OTHER/")
+        expect_identical(asub$request$url, "OTHER/")
+        expect_identical(content(asub), list(value="OTHER/object1/"))
     })
 })

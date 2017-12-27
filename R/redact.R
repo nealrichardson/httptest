@@ -109,6 +109,16 @@ within_body_text <- function (response, FUN) {
     return(response)
 }
 
+gsub_response <- function (response, pattern, replacement, ...) {
+    replacer <- function (x) gsub(pattern, replacement, x, ...)
+    # Sub in URL--note that it appears twice!
+    response$url <- replacer(response$url)
+    response$request$url <- replacer(response$request$url)
+    # Now remove from the response body
+    response <- within_body_text(response, replacer)
+    return(response)
+}
+
 #' Wrap a redacting expression as a proper function
 #'
 #' Redactors take a `response` as their first argument, and some take additional
