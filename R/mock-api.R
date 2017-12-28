@@ -194,8 +194,7 @@ deparseNamedList <- function () {
     ## errors on older versions of R that don't support it. So this function
     ## standardizes the behavior across R versions.
     ##
-    ## R 3.4.2 has the old behavior. The new behavior may appear in R 3.4.3, or
-    ## perhaps not until R 3.5.
+    ## R 3.4 has the old behavior. The new behavior will appear in R 3.5.
     past <- inherits(try(.deparseOpts("niceNames"), silent=TRUE), "try-error")
     past <- ifelse(past, "old", "new")
     return(list(new="niceNames")[[past]])

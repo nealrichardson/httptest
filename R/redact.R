@@ -137,6 +137,7 @@ gsub_response <- function (response, pattern, replacement, ...) {
     response$request$url <- replacer(response$request$url)
     # Now remove from the response body
     response <- within_body_text(response, replacer)
+    ## TODO: check request body?
     return(response)
 }
 

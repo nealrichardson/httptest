@@ -1,11 +1,12 @@
 # httptest 3.0.0
 
 ## Major features
-* `use_mock_API()` and `block_requests()` enable the request altering behavior of `with_mock_API()` and `without_internet()`, respectively, without the enclosing context. This allows you to do things like use mocks in R Markdown code chunks, as in a vignette. To turn off mocking, call `stop_mocking()`.
+* Use previously recorded API responses in vignettes and R Markdown documents by putting `start_vignette()` at the beginning of your document. Recorded responses are loaded unless the environment variable `RECORD` is set to `true`, in which case real requests will be made and the resulting responses will be saved for future replay. This enables you to write real vignettes that use a remote API and be able to distribute them so that others can build and run them, even if they don't have the same API access. See `vignette("vignettes", package="httptest")` for details.
+* `use_mock_API()` and `block_requests()` enable the request altering behavior of `with_mock_API()` and `without_internet()`, respectively, without the enclosing context. (`use_mock_API` is called inside `start_vignette()`.) To turn off mocking, call `stop_mocking()`.
 * Packages can now have a default redactor, such that whenever the package is loaded, `capture_requests()` will apply that function to any responses it records. This ensures that you never forget to sanitize your API responses if you need to use a custom function. To take advantage of this feature, put a `function (response) {...}` in a file at `inst/httptest/redact.R` in your package. See the updated `vignette("redacting", package="httptest")` for more.  
 
 ## Enhancements
-* Internal change: test contexts no longer use `testthat::with_mock()` and instead use `trace()`, in order to allow that new functionality.
+* Internal change: mocking contexts no longer use `testthat::with_mock()` and instead use `trace()`.
 * `capture_requests()`/`start_capturing()` now allow you to call `.mockPaths()` while actively recording so that you can record server state changes to a different mock "layer". Previously, the recording path was fixed when the context was initialized.
 * The `redact` argument to `capture_requests()`/`start_capturing()` can now take a list of functions that will be chained together, or `NULL` to disable the default `redact_auth()`.
 * `redact_headers()` and `within_body_text()` no longer return redacting functions. Instead, they take `response` as their first argument. This makes them more natural to use and chain together in custom redacting functions. To instead return a function as before, see `as.redactor()`.
