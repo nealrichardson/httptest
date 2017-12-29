@@ -2,9 +2,12 @@
 #'
 #' By default, `with_mock_API` will look for mocks relative to the current
 #' working directory (the test directory). If you want to look in other places,
-#' you can call `.mockPaths` to add directories to the search path. It works
-#' like [base::.libPaths()]: any directories you specify will be added to the
-#' list and searched first. The default directory will be searched last.
+#' you can call `.mockPaths` to add directories to the search path.
+#'
+#' It works like [base::.libPaths()]: any directories you specify will be added
+#' to the list and searched first. The default directory will be searched last.
+#' Only unique values are kept: if you provide a path that is already found in
+#' `.mockPaths`, the result effectively moves that path to the first position.
 #'
 #' For finer-grained control, or to completely override the default behavior
 #' of searching in the current working directory, you can set the option
@@ -33,7 +36,7 @@
         invisible(current)
     } else {
         ## We're adding one or more paths
-        current <- c(new, current)
+        current <- unique(c(new, current))
         options(httptest.mock.paths=current)
         invisible(current)
     }

@@ -11,6 +11,7 @@
 * The `redact` argument to `capture_requests()`/`start_capturing()` can now take a list of functions that will be chained together, or `NULL` to disable the default `redact_auth()`.
 * `redact_headers()` and `within_body_text()` no longer return redacting functions. Instead, they take `response` as their first argument. This makes them more natural to use and chain together in custom redacting functions. To instead return a function as before, see `as.redactor()`.
 * `gsub_response()` is a new redactor that does regular-expression replacement (via `base::gsub()`) within a response's body text and URL.
+* `.mockPaths()` only keeps unique path values, consistent with `base::.libPaths()`.
 
 ### httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
