@@ -5,6 +5,9 @@ public({
         expect_identical(.mockPaths(), ".")
         .mockPaths("something else")
         expect_identical(.mockPaths(), c("something else", "."))
+        # Unique paths
+        .mockPaths(".")
+        expect_identical(.mockPaths(), c(".", "something else"))
         .mockPaths(NULL)
         expect_identical(.mockPaths(), ".")
     })
