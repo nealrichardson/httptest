@@ -98,53 +98,67 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
         ## Omit curl handle C pointer
         .resp$handle <- NULL
 
-        ## Construct the mock file path
-        f <- file.path(.mockPaths()[1], buildMockURL(.resp$request))
-        dir.create(dirname(f), showWarnings=FALSE, recursive=TRUE)
-
-        ## Get the Content-Type
-        ct <- unlist(.resp$headers[tolower(names(.resp$headers)) == "content-type"])
-        is_json <- any(grepl("application/json", ct))
-        if (simplify && .resp$status_code == 200 && is_json) {
-            ## Squelch the "No encoding supplied: defaulting to UTF-8."
-            ## TODO: support other text content-types than JSON
-            cat(suppressMessages(content(.resp, "text")), file=f)
-        } else {
-            ## Dump an object that can be sourced
-
-            ## Change the file extension to .R
-            f <- sub("json$", "R", f)
-
-            ## If content is text, rawToChar it and dput it as charToRaw(that)
-            ## so that it loads correctly but is also readable
-            text_types <- c("application/json",
-                "application/x-www-form-urlencoded", "application/xml",
-                "text/csv", "text/html", "text/plain",
-                "text/tab-separated-values", "text/xml")
-            is_text <- length(ct) && any(unlist(strsplit(ct, "; ")) %in% text_types)
-            ## strsplit on ; because "charset" may be appended
-            if (is_text) {
-                ## Squelch the "No encoding supplied: defaulting to UTF-8."
-                cont <- suppressMessages(content(.resp, "text"))
-                .resp$content <- substitute(charToRaw(cont))
-            } else if (inherits(.resp$request$output, "write_disk")) {
-                ## Copy real file and substitute the response$content "path".
-                ## Note that if content is a text type, the above attempts to
-                ## make the mock file readable call `content()`, which reads
-                ## in the file that has been written to disk, so it effectively
-                ## negates the "download" behavior for the recorded response.
-                downloaded_file <- paste0(f, "-FILE")
-                file.copy(.resp$content, downloaded_file)
-                .resp$content <- structure(downloaded_file, class="path")
-            }
-            dput(.resp, file=f)
-        }
+        f <- save_response(.resp, simplify)
         if (verbose) message("Writing ", normalizePath(f))
     }, list(simplify=simplify, verbose=verbose, redact=redact))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
         trace_httr(verb, exit=req_tracer, print=FALSE)
     }
     invisible(path)
+}
+
+#' Write out a captured response
+#'
+#' @param response An 'httr' `response` object
+#' @param simplify logical: if `TRUE` (default), JSON responses with status 200
+#' will be written as just the text of the response body. In all other cases,
+#' and when `simplify` is `FALSE`, the "response" object will be written out to
+#' a .R file using [base::dput()].
+#' @return The character file name that was written out.
+#' @export
+save_response <- function (response, simplify=TRUE) {
+    ## Construct the mock file path
+    filename <- file.path(.mockPaths()[1], buildMockURL(response$request))
+    dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
+
+    ## Get the Content-Type
+    ct <- unlist(response$headers[tolower(names(response$headers)) == "content-type"])
+    is_json <- any(grepl("application/json", ct))
+    if (simplify && response$status_code == 200 && is_json) {
+        ## Squelch the "No encoding supplied: defaulting to UTF-8."
+        ## TODO: support other text content-types than JSON
+        cat(suppressMessages(content(response, "text")), file=filename)
+    } else {
+        ## Dump an object that can be sourced
+
+        ## Change the file extension to .R
+        filename <- sub("json$", "R", filename)
+
+        ## If content is text, rawToChar it and dput it as charToRaw(that)
+        ## so that it loads correctly but is also readable
+        text_types <- c("application/json",
+            "application/x-www-form-urlencoded", "application/xml",
+            "text/csv", "text/html", "text/plain",
+            "text/tab-separated-values", "text/xml")
+        is_text <- length(ct) && any(unlist(strsplit(ct, "; ")) %in% text_types)
+        ## strsplit on ; because "charset" may be appended
+        if (is_text) {
+            ## Squelch the "No encoding supplied: defaulting to UTF-8."
+            cont <- suppressMessages(content(response, "text"))
+            response$content <- substitute(charToRaw(cont))
+        } else if (inherits(response$request$output, "write_disk")) {
+            ## Copy real file and substitute the response$content "path".
+            ## Note that if content is a text type, the above attempts to
+            ## make the mock file readable call `content()`, which reads
+            ## in the file that has been written to disk, so it effectively
+            ## negates the "download" behavior for the recorded response.
+            downloaded_file <- paste0(filename, "-FILE")
+            file.copy(response$content, downloaded_file)
+            response$content <- structure(downloaded_file, class="path")
+        }
+        dput(response, file=filename)
+    }
+    return(filename)
 }
 
 #' @rdname capture_requests
