@@ -230,7 +230,7 @@ with_mock_API({
     a <- GET("api/", add_headers(`Authorization`="Bearer token"))
     test_that("as.redactor", {
         a1 <- redact_headers(a, "Authorization")
-        a2 <- as.redactor(redact_headers("Authorization"))(a)
+        a2 <- prepare_redactor(~ redact_headers(., "Authorization"))(a)
         expect_identical(a1, a2)
         expect_identical(a1$request$headers[["Authorization"]], "REDACTED")
     })

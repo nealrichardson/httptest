@@ -17,6 +17,34 @@
 #' such as when adding an additional attribute to an object, you can just touch
 #' up the mocks.
 #'
+#' @section Redacting:
+#'
+#' You can provide a function that alters the response content being written
+#' out, allowing you to remove sensitive values, such as authentication tokens,
+#' as well as any other modification or truncation of the response body. By
+#' default, the [redact_auth()] function will be used to purge standard
+#' auth methods, but you can provide an alternative redacting function in
+#' several ways. You can provide in the `redact` argument of
+#' `capture_requests`/`start_capturing`:
+#'
+#' * A function taking a single argument, the `response`, and returning a valid
+#' `response` object.
+#' * A formula as shorthand for an anonymous function with `.` as the
+#' "response" argument, as in the `purrr` package. That is, instead of
+#' `function (response) redact_headers(response, "X-Custom-Header")`, you can
+#' use `~ redact_headers(., "X-Custom-Header")`
+#' * A list of redacting functions/formulas, which will be executed
+#' in sequence on the response
+#'
+#' Alternatively, you can put a redacting function in `inst/httptest/redact.R`
+#' in your package, and
+#' any time your package is loaded (as in when running tests or building
+#' vignettes), this function will be used automatically. To load a
+#' redactor from a package that isn't currently loaded, you can provide its name
+#' in the `package` argument.
+#'
+#' For further details on how to redact responses, see `vignette("redacting")`.
+#'
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the first directory in
 #' [.mockPaths()], which if not otherwise specified is the current working
@@ -30,12 +58,10 @@
 #' file. Useful for debugging if you're capturing but don't see the fixture
 #' files being written in the expected location. Default is `FALSE`.
 #' @param redact function to run to purge sensitive strings from the recorded
-#' response objects. It should take a `response`-class object as its argument
-#' and should return a cleansed `response` object. This allows you to remove
-#' certain request and response contents, such as authentication tokens, from
-#' the mocks that get written out. See [redact_auth()], the default, for more
-#' details.
-#' @param package character vector of installed package names
+#' response objects. See the "Redacting" section for details.
+#' @param package character vector of installed package names in which to search
+#' for redacting functions. By default, all loaded packages are checked.
+#' See the "Redacting" section for details.
 #' @param ... Arguments passed through `capture_requests` to `start_capturing`
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
@@ -98,7 +124,7 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
         ## Omit curl handle C pointer
         .resp$handle <- NULL
 
-        f <- save_response(.resp, simplify)
+        f <- save_response(.resp, simplify=simplify)
         if (verbose) message("Writing ", normalizePath(f))
     }, list(simplify=simplify, verbose=verbose, redact=redact))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
@@ -114,7 +140,7 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
 #' will be written as just the text of the response body. In all other cases,
 #' and when `simplify` is `FALSE`, the "response" object will be written out to
 #' a .R file using [base::dput()].
-#' @return The character file name that was written out.
+#' @return The character file name that was written out
 #' @export
 save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
@@ -184,26 +210,27 @@ find_redactors <- function (packages) {
 }
 
 prepare_redactor <- function (redactor) {
-    ## Message which redactor being used, and concatenate if there are several
-    ## TODO: update docs to reflect what are now legal inputs
+    ## Message if package redactor(s) are being used, and concatenate if there are several
     if (is.null(redactor)) {
         ## Allow, and make it do nothing
         ## TODO: e2e test NULL redactor
         redactor <- force
     } else if (identical(redactor, redact_auth)) {
-        message("Using default redactor")
+        # message("Using default redactor")
     } else if (is.function(redactor)) {
-        message("Using custom redactor")
+        # message("Using custom redactor")
+    } else if (inherits(redactor, "formula")) {
+        redactor <- as.redactor(redactor)
     } else if (is.list(redactor)) {
         ## Distinguish length-1 list and named list, message and concat differently
         just_one <- length(redactor) == 1
         noun <- ifelse(just_one, "redactor", "redactors")
         if (is.null(names(redactor))) {
-            msg <- paste("Using", length(redactor), "custom", noun)
+            # msg <- paste("Using", length(redactor), "custom", noun)
         } else {
             msg <- paste("Using", noun, paste(dQuote(names(redactor)), collapse=", "))
+            message(msg)
         }
-        message(msg)
         if (just_one) {
             redactor <- redactor[[1]]
         } else {
