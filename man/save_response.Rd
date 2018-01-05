@@ -15,7 +15,7 @@ and when \code{simplify} is \code{FALSE}, the "response" object will be written 
 a .R file using \code{\link[base:dput]{base::dput()}}.}
 }
 \value{
-The character file name that was written out.
+The character file name that was written out
 }
 \description{
 Write out a captured response

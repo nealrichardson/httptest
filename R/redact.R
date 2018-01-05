@@ -2,6 +2,9 @@ chain_redactors <- function (funs) {
     ## Given a list of functions, return a function that execs them in sequence
     return(function (response) {
         for (f in funs) {
+            if (inherits(f, "formula")) {
+                f <- as.redactor(f)
+            }
             response <- f(response)
         }
         return(response)
@@ -40,7 +43,7 @@ chain_redactors <- function (funs) {
 #' @export
 redact_auth <- chain_redactors(list(
     redact_cookies,
-    as.redactor(redact_headers(c("Authorization", "Proxy-Authorization"))),
+    ~ redact_headers(., c("Authorization", "Proxy-Authorization")),
     redact_HTTP_auth,
     redact_oauth
 ))
@@ -145,24 +148,23 @@ gsub_response <- function (response, pattern, replacement, ...) {
 #'
 #' Redactors take a `response` as their first argument, and some take additional
 #' arguments: `redact_headers()`, for example, requires that you specify
-#' `headers`. This function allows you to take a simplified expression like what
-#' you would include in a `magrittr` pipe chain and generate the
-#' `function (response, ...)` for you so that you can provide the function to
-#' `capture_requests()`.
+#' `headers`. This function allows you to take a simplified expression via a
+#' formula, similar to what `purrr` does, so that you can provide the function
+#' to `capture_requests()`.
 #'
-#' For example, `as.redactor(redact_headers("X-Custom-Header"))` is equivalent
+#' For example, `as.redactor(~ redact_headers(., "X-Custom-Header"))` is equivalent
 #' to `function (response) redact_headers(response, "X-Custom-Header")`. This
 #' allows you to do
-#' `capture_requests(redact = as.redactor(redact_headers("X-Custom-Header")))`.
+#' `capture_requests(redact = ~ redact_headers(., "X-Custom-Header"))`.
 #' @param expr Partial expression to turn into a function of `response`
 #' @return A `function`.
 #' @rdname as-redactor
-#' @export
-as.redactor <- function (expr) {
+#' @importFrom stats terms
+#' @keywords internal
+#' @seealso [capture_requests()]
+as.redactor <- function (fmla) {
     env <- parent.frame()
-    expr <- substitute(expr)
-    # cf. magrittr:::prepare_first: inject a first argument into the expression
-    expr <- as.call(c(expr[[1L]], quote(response), as.list(expr[-1L])))
+    expr <- attr(terms(fmla), "variables")[[2]]
     # cf. magrittr:::wrap_function: wrap that in a function (response) ...
-    return(eval(call("function", as.pairlist(alist(response=)), expr), env, env))
+    return(eval(call("function", as.pairlist(alist(.=)), expr), env, env))
 }

@@ -33,13 +33,11 @@ file. Useful for debugging if you're capturing but don't see the fixture
 files being written in the expected location. Default is \code{FALSE}.}
 
 \item{redact}{function to run to purge sensitive strings from the recorded
-response objects. It should take a \code{response}-class object as its argument
-and should return a cleansed \code{response} object. This allows you to remove
-certain request and response contents, such as authentication tokens, from
-the mocks that get written out. See \code{\link[=redact_auth]{redact_auth()}}, the default, for more
-details.}
+response objects. See the "Redacting" section for details.}
 
-\item{package}{character vector of installed package names}
+\item{package}{character vector of installed package names in which to search
+for redacting functions. By default, all loaded packages are checked.
+See the "Redacting" section for details.}
 }
 \value{
 \code{capture_requests} returns the result of \code{expr}. \code{start_capturing}
@@ -65,6 +63,37 @@ maintain them without having to re-record them. If the API changes subtly,
 such as when adding an additional attribute to an object, you can just touch
 up the mocks.
 }
+\section{Redacting}{
+
+
+You can provide a function that alters the response content being written
+out, allowing you to remove sensitive values, such as authentication tokens,
+as well as any other modification or truncation of the response body. By
+default, the \code{\link[=redact_auth]{redact_auth()}} function will be used to purge standard
+auth methods, but you can provide an alternative redacting function in
+several ways. You can provide in the \code{redact} argument of
+\code{capture_requests}/\code{start_capturing}:
+\itemize{
+\item A function taking a single argument, the \code{response}, and returning a valid
+\code{response} object.
+\item A formula as shorthand for an anonymous function with \code{.} as the
+"response" argument, as in the \code{purrr} package. That is, instead of
+\code{function (response) redact_headers(response, "X-Custom-Header")}, you can
+use \code{~ redact_headers(., "X-Custom-Header")}
+\item A list of redacting functions/formulas, which will be executed
+in sequence on the response
+}
+
+Alternatively, you can put a redacting function in \code{inst/httptest/redact.R}
+in your package, and
+any time your package is loaded (as in when running tests or building
+vignettes), this function will be used automatically. To load a
+redactor from a package that isn't currently loaded, you can provide its name
+in the \code{package} argument.
+
+For further details on how to redact responses, see \code{vignette("redacting")}.
+}
+
 \examples{
 \dontrun{
 capture_requests({

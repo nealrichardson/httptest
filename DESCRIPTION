@@ -25,7 +25,8 @@ Depends:
 Imports:
     digest,
     httr,
-    jsonlite
+    jsonlite,
+    stats
 Suggests:
     covr,
     knitr,

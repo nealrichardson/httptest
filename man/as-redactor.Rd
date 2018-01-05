@@ -4,7 +4,7 @@
 \alias{as.redactor}
 \title{Wrap a redacting expression as a proper function}
 \usage{
-as.redactor(expr)
+as.redactor(fmla)
 }
 \arguments{
 \item{expr}{Partial expression to turn into a function of \code{response}}
@@ -15,14 +15,17 @@ A \code{function}.
 \description{
 Redactors take a \code{response} as their first argument, and some take additional
 arguments: \code{redact_headers()}, for example, requires that you specify
-\code{headers}. This function allows you to take a simplified expression like what
-you would include in a \code{magrittr} pipe chain and generate the
-\code{function (response, ...)} for you so that you can provide the function to
-\code{capture_requests()}.
+\code{headers}. This function allows you to take a simplified expression via a
+formula, similar to what \code{purrr} does, so that you can provide the function
+to \code{capture_requests()}.
 }
 \details{
-For example, \code{as.redactor(redact_headers("X-Custom-Header"))} is equivalent
+For example, \code{as.redactor(~ redact_headers(., "X-Custom-Header"))} is equivalent
 to \code{function (response) redact_headers(response, "X-Custom-Header")}. This
 allows you to do
-\code{capture_requests(redact = as.redactor(redact_headers("X-Custom-Header")))}.
+\code{capture_requests(redact = ~ redact_headers(., "X-Custom-Header"))}.
 }
+\seealso{
+\code{\link[=capture_requests]{capture_requests()}}
+}
+\keyword{internal}

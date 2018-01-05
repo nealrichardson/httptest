@@ -7,14 +7,14 @@ expect_redactor <- function (expr) {
 test_that("prepare_redactor: default", {
     expect_message(
         expect_identical(prepare_redactor(redact_auth), redact_auth),
-        "Using default redactor"
+        NA
     )
 })
 
 test_that("prepare_redactor: custom", {
     expect_message(
         expect_identical(prepare_redactor(redact_HTTP_auth), redact_HTTP_auth),
-        "Using custom redactor"
+        NA
     )
 })
 
@@ -22,11 +22,11 @@ multiredact <- list(redact_HTTP_auth, redact_cookies)
 test_that("prepare_redactor: list/multiple", {
     expect_message(
         expect_redactor(prepare_redactor(multiredact)),
-        "Using 2 custom redactors"
+        NA
     )
     expect_message(
         expect_identical(prepare_redactor(multiredact[1]), redact_HTTP_auth),
-        "Using 1 custom redactor"
+        NA
     )
 })
 
