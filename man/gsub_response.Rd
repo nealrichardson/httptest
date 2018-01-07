@@ -2,9 +2,12 @@
 % Please edit documentation in R/redact.R
 \name{gsub_response}
 \alias{gsub_response}
-\title{Find and replace within a 'response'}
+\alias{gsub_request}
+\title{Find and replace within a 'response' or 'request'}
 \usage{
 gsub_response(response, pattern, replacement, ...)
+
+gsub_request(request, pattern, replacement, ...)
 }
 \arguments{
 \item{response}{An 'httr' \code{response} object to sanitize.}
@@ -20,19 +23,24 @@ regular expression backreferences. Passed to \code{gsub()}. See the docs for
 
 \item{...}{Additional logical arguments passed to \code{gsub()}: \code{ignore.case},
 \code{perl}, \code{fixed}, and \code{useBytes} are the possible options.}
+
+\item{request}{An 'httr' \code{request} object to sanitize.}
 }
 \value{
-A \code{response} object with the pattern replaced in the URLs and
-response body.
+A \code{request} or \code{response} object, same as was passed in, with the
+pattern replaced in the URLs and bodies.
 }
 \description{
-This function passes its arguments to \code{\link[base:gsub]{base::gsub()}} in order to find and
-replace string patterns (regular expressions) in three attributes of an
-\code{httr} 'response' object: (1) the response body; (2) the response URL; and
-(3) the request URL (that is, the URL appears twice in the response object).
+These functions pass their arguments to \code{\link[base:gsub]{base::gsub()}} in order to find and
+replace string patterns (regular expressions) within \code{request} or \code{response}
+objects. \code{gsub_request()} replaces in the request URL and any request body
+fields; \code{gsub_response()} replaces in the response URL, the response body,
+and it calls \code{gsub_request()} on the \code{request} object found within the
+\code{response}.
 }
 \details{
-Note that, unlike \code{gsub()}, the first argument of the function is \code{response},
+Note that, unlike \code{gsub()}, the first argument of the function is \code{request}
+or \code{response},
 not \code{pattern}, while the equivalent argument in \code{gsub()}, "\code{x}", is placed
 third. This difference is to maintain consistency with the other redactor
 functions in \code{httptest}, which all take \code{response} as the first argument.
