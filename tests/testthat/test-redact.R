@@ -241,4 +241,25 @@ with_mock_API({
         expect_identical(asub$request$url, "OTHER/")
         expect_identical(content(asub), list(value="OTHER/object1/"))
     })
+
+    postcreds <- POST("http://example.com/login",
+        body=list(username="password"), encode="json")
+    test_that("gsub_response gets request body too", {
+        postcreds_sub <- gsub_response(postcreds, "password", "SECRET")
+        expect_identical(rawToChar(postcreds_sub$request$options$postfields),
+            '{"username":"SECRET"}')
+    })
+})
+
+with_fake_HTTP({
+    test_that("gsub_request on non-JSON post fields", {
+        expect_PUT(
+            p <- PUT("http://httpbin.org/put",
+                body = list(x = "A string", string = "Something else")
+            )
+        )
+        psub <- gsub_response(p, "string", "SECRET")
+        expect_identical(psub$request$fields,
+            list(x = "A SECRET", SECRET = "Something else"))
+    })
 })

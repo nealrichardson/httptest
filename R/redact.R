@@ -109,14 +109,17 @@ within_body_text <- function (response, FUN) {
     return(response)
 }
 
-#' Find and replace within a 'response'
+#' Find and replace within a 'response' or 'request'
 #'
-#' This function passes its arguments to [base::gsub()] in order to find and
-#' replace string patterns (regular expressions) in three attributes of an
-#' `httr` 'response' object: (1) the response body; (2) the response URL; and
-#' (3) the request URL (that is, the URL appears twice in the response object).
+#' These functions pass their arguments to [base::gsub()] in order to find and
+#' replace string patterns (regular expressions) within `request` or `response`
+#' objects. `gsub_request()` replaces in the request URL and any request body
+#' fields; `gsub_response()` replaces in the response URL, the response body,
+#' and it calls `gsub_request()` on the `request` object found within the
+#' `response`.
 #'
-#' Note that, unlike `gsub()`, the first argument of the function is `response`,
+#' Note that, unlike `gsub()`, the first argument of the function is `request`
+#' or `response`,
 #' not `pattern`, while the equivalent argument in `gsub()`, "`x`", is placed
 #' third. This difference is to maintain consistency with the other redactor
 #' functions in `httptest`, which all take `response` as the first argument.
@@ -130,18 +133,43 @@ within_body_text <- function (response, FUN) {
 #' `gsub()` for further details.
 #' @param ... Additional logical arguments passed to `gsub()`: `ignore.case`,
 #' `perl`, `fixed`, and `useBytes` are the possible options.
-#' @return A `response` object with the pattern replaced in the URLs and
-#' response body.
+#' @return A `request` or `response` object, same as was passed in, with the
+#' pattern replaced in the URLs and bodies.
 #' @export
 gsub_response <- function (response, pattern, replacement, ...) {
     replacer <- function (x) gsub(pattern, replacement, x, ...)
-    # Sub in URL--note that it appears twice!
     response$url <- replacer(response$url)
-    response$request$url <- replacer(response$request$url)
-    # Now remove from the response body
     response <- within_body_text(response, replacer)
-    ## TODO: check request body?
+    response$request <- gsub_request(response$request, pattern, replacement, ...)
     return(response)
+}
+
+#' @param request An 'httr' `request` object to sanitize.
+#' @rdname gsub_response
+#' @export
+gsub_request <- function (request, pattern, replacement, ...) {
+    replacer <- function (x) gsub(pattern, replacement, x, ...)
+    request$url <- replacer(request$url)
+    # Body (as in JSON)
+    bod <- request_postfields(request)
+    if (!is.null(bod)) {
+        request$options[["postfields"]] <- charToRaw(replacer(bod))
+    }
+    # Multipart post fields
+    request$fields <- replace_in_fields(request$fields, replacer)
+    return(request)
+}
+
+replace_in_fields <- function (x, FUN) {
+    if (is.list(x)) {
+        x <- lapply(x, replace_in_fields, FUN)
+        if (!is.null(names(x))) {
+            names(x) <- FUN(names(x))
+        }
+    } else if (is.character(x)) {
+        x <- FUN(x)
+    }
+    return(x)
 }
 
 #' Wrap a redacting expression as a proper function

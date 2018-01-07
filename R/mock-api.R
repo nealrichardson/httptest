@@ -168,11 +168,8 @@ findMockFile <- function (file) {
 
 requestBody <- function (req) {
     ## requestBody returns a string if the request has a body, NULL otherwise
-    b <- req[["options"]][["postfields"]]
-    if (length(b) > 0) {
-        ## Check length this way because b may be NULL or length 0 raw vector
-        b <- rawToChar(b)
-    } else {
+    b <- request_postfields(req)
+    if (is.null(b)) {
         b <- req$fields
         if (!is.null(b)) {
             ## Get a readable string representation
@@ -183,6 +180,16 @@ requestBody <- function (req) {
         }
     }
     return(b)
+}
+
+request_postfields <- function (req) {
+    b <- req[["options"]][["postfields"]]
+    if (length(b) > 0) {
+        ## Check length this way because b may be NULL or length 0 raw vector
+        return(rawToChar(b))
+    } else {
+        return(NULL)
+    }
 }
 
 deparseNamedList <- function () {
