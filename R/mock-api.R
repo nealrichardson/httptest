@@ -43,7 +43,7 @@ mockRequest <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
     ## and if it's a file and not URL, it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
-    f <- buildMockURL(req)
+    f <- buildMockURL(preprocess_mock_request(req))
     mockfile <- findMockFile(f)
     if (!is.null(mockfile)) {
         if (grepl("\\.R$", mockfile)) {
@@ -63,6 +63,10 @@ mockRequest <- function (req, handle, refresh) {
     ## error that gets printed.
     req$mockfile <- f
     return(stopRequest(req))
+}
+
+preprocess_mock_request <- function (request) {
+    getOption("httptest.requester", force)(request)
 }
 
 #' Convert a request to a mock file path

@@ -39,9 +39,7 @@
 #' Alternatively, you can put a redacting function in `inst/httptest/redact.R`
 #' in your package, and
 #' any time your package is loaded (as in when running tests or building
-#' vignettes), this function will be used automatically. To load a
-#' redactor from a package that isn't currently loaded, you can provide its name
-#' in the `package` argument.
+#' vignettes), this function will be used automatically.
 #'
 #' For further details on how to redact responses, see `vignette("redacting")`.
 #'
@@ -59,9 +57,6 @@
 #' files being written in the expected location. Default is `FALSE`.
 #' @param redact function to run to purge sensitive strings from the recorded
 #' response objects. See the "Redacting" section for details.
-#' @param package character vector of installed package names in which to search
-#' for redacting functions. By default, all loaded packages are checked.
-#' See the "Redacting" section for details.
 #' @param ... Arguments passed through `capture_requests` to `start_capturing`
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
@@ -97,10 +92,10 @@ capture_requests <- function (expr, path, ...) {
 
 #' @rdname capture_requests
 #' @export
-#' @importFrom utils sessionInfo
-start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
-                             redact=redact_auth,
-                             package=names(sessionInfo()$otherPkgs)) {
+start_capturing <- function (path,
+                             simplify=TRUE,
+                             verbose=FALSE,
+                             redact=default_redactor()) {
     if (!missing(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
@@ -108,13 +103,6 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE,
         path <- NULL
     }
 
-    ## If no redactor specified, look for package-defined redactors
-    if (missing(redact) && length(package)) {
-        funcs <- find_redactors(package)
-        if (length(funcs)) {
-            redact <- funcs
-        }
-    }
     redact <- prepare_redactor(redact)
 
     ## Use "substitute" so that args get inserted. Code remains quoted.
@@ -195,18 +183,39 @@ stop_capturing <- function () {
     }
 }
 
+#' @importFrom utils sessionInfo
+default_redactor <- function () {
+    ## Look for redactor in options
+    funcs <- getOption("httptest.redactor")
+    if (is.null(funcs)) {
+        ## Look for package-defined redactors
+        funcs <- find_redactors(names(sessionInfo()$otherPkgs))
+        if (length(funcs) == 0) {
+            ## If none, provide a default
+            funcs <- redact_auth
+        }
+    }
+    return(funcs)
+}
+
 find_redactors <- function (packages) {
     ## Given package names, find any redactors put in inst/httptest/redact.R
-    files <- vapply(packages,
-        function (p) system.file("httptest", "redact.R", package=p),
-        character(1),
-        USE.NAMES=TRUE)
-    ## If file does not exist, it returns "", so filter those out
-    files <- files[nchar(files) > 0]
-    funcs <- lapply(files, function (f) source(f)$value)
+    funcs <- structure(lapply(packages, get_package_redactor), .Names=packages)
     ## Make sure we have functions
     funcs <- Filter(is.function, funcs)
     return(funcs)
+}
+
+get_package_redactor <- function (package) {
+    file <- system.file("httptest", "redact.R", package=package)
+    if (nchar(file)) {
+        ## If file does not exist, it returns ""
+        func <- source(file)$value
+        if (is.function(func)) {
+            return(func)
+        }
+    }
+    return(NULL)
 }
 
 prepare_redactor <- function (redactor) {

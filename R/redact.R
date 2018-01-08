@@ -193,6 +193,6 @@ replace_in_fields <- function (x, FUN) {
 as.redactor <- function (fmla) {
     env <- parent.frame()
     expr <- attr(terms(fmla), "variables")[[2]]
-    # cf. magrittr:::wrap_function: wrap that in a function (response) ...
+    # cf. magrittr:::wrap_function: wrap that in a function (.) ...
     return(eval(call("function", as.pairlist(alist(.=)), expr), env, env))
 }
