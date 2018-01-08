@@ -9,7 +9,7 @@
 capture_requests(expr, path, ...)
 
 start_capturing(path, simplify = TRUE, verbose = FALSE,
-  redact = redact_auth, package = names(sessionInfo()$otherPkgs))
+  redact = default_redactor())
 
 stop_capturing()
 }
@@ -34,10 +34,6 @@ files being written in the expected location. Default is \code{FALSE}.}
 
 \item{redact}{function to run to purge sensitive strings from the recorded
 response objects. See the "Redacting" section for details.}
-
-\item{package}{character vector of installed package names in which to search
-for redacting functions. By default, all loaded packages are checked.
-See the "Redacting" section for details.}
 }
 \value{
 \code{capture_requests} returns the result of \code{expr}. \code{start_capturing}
@@ -87,9 +83,7 @@ in sequence on the response
 Alternatively, you can put a redacting function in \code{inst/httptest/redact.R}
 in your package, and
 any time your package is loaded (as in when running tests or building
-vignettes), this function will be used automatically. To load a
-redactor from a package that isn't currently loaded, you can provide its name
-in the \code{package} argument.
+vignettes), this function will be used automatically.
 
 For further details on how to redact responses, see \code{vignette("redacting")}.
 }

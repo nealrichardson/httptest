@@ -105,6 +105,16 @@ public({
             a <- GET("api/", add_headers(`X-FakeHeader`="fake_value"))
             expect_true("X-FakeHeader" %in% names(a$request$headers))
         })
+
+        test_that("Request preprocessing", {
+            g1 <- GET("http://example.com/get")
+            old <- options(httptest.requester=function (request) {
+                gsub_request(request, "pythong.org", "example.com")
+            })
+            if (!is.null(old[[1]])) on.exit(options(httptest.requester=old))
+            expect_identical(content(GET("http://pythong.org/get")),
+                content(g1))
+        })
     })
 })
 
