@@ -11,43 +11,6 @@ chain_redactors <- function (funs) {
     })
 }
 
-#' Remove sensitive content from HTTP responses
-#'
-#' When recording requests for use as test fixtures, you don't want to include
-#' secrets like authentication tokens and personal ids. These functions provide
-#' a means for redacting this kind of content, or anything you want, from
-#' responses that [capture_requests()] saves.
-#'
-#' `redact_cookies()` removes cookies from 'httr' `response` objects.
-#' `redact_headers()` lets you target selected request and response headers for
-#' redaction. `redact_HTTP_auth()` removes `username:password`-based HTTP auth
-#' credentials. `redact_oauth()` removes the OAuth 'Token' object that 'httr'
-#' sticks in the request object. `redact_auth()` is a convenience wrapper around
-#' them for a useful default redactor in `capture_requests()`.
-#'
-#' `within_body_text()` lets you manipulate the text of the response body
-#' and manages the parsing of the raw (binary) data in the 'response' object.
-#'
-#' @param response An 'httr' `response` object to sanitize.
-#' @param headers For `redact_headers()`, a character vector of header names to
-#' sanitize. Note that `redact_headers()` itself does not do redacting but
-#' returns a function that when called does the redacting.
-#' @param FUN For `within_body_text()`, a function that takes as its argument a
-#' character vector and returns a modified version of that. This function will
-#' be applied to the text of the response's "content".
-#' @return All redacting functions return a well-formed 'httr' `response`
-#' object.
-#' @name redact
-#' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
-#' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them. [gsub_response()] is another redactor.
-#' @export
-redact_auth <- chain_redactors(list(
-    redact_cookies,
-    ~ redact_headers(., c("Authorization", "Proxy-Authorization")),
-    redact_HTTP_auth,
-    redact_oauth
-))
-
 #' @rdname redact
 #' @export
 redact_cookies <- function (response) {
@@ -196,3 +159,40 @@ as.redactor <- function (fmla) {
     # cf. magrittr:::wrap_function: wrap that in a function (.) ...
     return(eval(call("function", as.pairlist(alist(.=)), expr), env, env))
 }
+
+#' Remove sensitive content from HTTP responses
+#'
+#' When recording requests for use as test fixtures, you don't want to include
+#' secrets like authentication tokens and personal ids. These functions provide
+#' a means for redacting this kind of content, or anything you want, from
+#' responses that [capture_requests()] saves.
+#'
+#' `redact_cookies()` removes cookies from 'httr' `response` objects.
+#' `redact_headers()` lets you target selected request and response headers for
+#' redaction. `redact_HTTP_auth()` removes `username:password`-based HTTP auth
+#' credentials. `redact_oauth()` removes the OAuth 'Token' object that 'httr'
+#' sticks in the request object. `redact_auth()` is a convenience wrapper around
+#' them for a useful default redactor in `capture_requests()`.
+#'
+#' `within_body_text()` lets you manipulate the text of the response body
+#' and manages the parsing of the raw (binary) data in the 'response' object.
+#'
+#' @param response An 'httr' `response` object to sanitize.
+#' @param headers For `redact_headers()`, a character vector of header names to
+#' sanitize. Note that `redact_headers()` itself does not do redacting but
+#' returns a function that when called does the redacting.
+#' @param FUN For `within_body_text()`, a function that takes as its argument a
+#' character vector and returns a modified version of that. This function will
+#' be applied to the text of the response's "content".
+#' @return All redacting functions return a well-formed 'httr' `response`
+#' object.
+#' @name redact
+#' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
+#' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them. [gsub_response()] is another redactor.
+#' @export
+redact_auth <- chain_redactors(list(
+    redact_cookies,
+    ~ redact_headers(., c("Authorization", "Proxy-Authorization")),
+    redact_HTTP_auth,
+    redact_oauth
+))

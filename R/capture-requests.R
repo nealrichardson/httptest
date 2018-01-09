@@ -103,18 +103,16 @@ start_capturing <- function (path,
         path <- NULL
     }
 
-    redact <- prepare_redactor(redact)
+    options(httptest.redactor.current=prepare_redactor(redact))
 
     ## Use "substitute" so that args get inserted. Code remains quoted.
     req_tracer <- substitute({
         ## Get the value returned from the function, and sanitize it
-        .resp <- redact(returnValue())
-        ## Omit curl handle C pointer
-        .resp$handle <- NULL
-
+        redactor <- get_current_redactor()
+        .resp <- redactor(returnValue())
         f <- save_response(.resp, simplify=simplify)
         if (verbose) message("Writing ", normalizePath(f))
-    }, list(simplify=simplify, verbose=verbose, redact=redact))
+    }, list(simplify=simplify, verbose=verbose))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
         trace_httr(verb, exit=req_tracer, print=FALSE)
     }
@@ -134,6 +132,9 @@ save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
     filename <- file.path(.mockPaths()[1], buildMockURL(response$request))
     dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
+
+    ## Omit curl handle C pointer, which doesn't serialize meaningfully
+    response$handle <- NULL
 
     ## Get the Content-Type
     ct <- unlist(response$headers[tolower(names(response$headers)) == "content-type"])
