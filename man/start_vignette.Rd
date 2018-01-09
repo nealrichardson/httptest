@@ -23,8 +23,8 @@ environment variable.
 }
 \details{
 In a vignette or other R Markdown or Sweave document, place
-\code{start_vignette()} in an R code block
-executed before the first API request is made, and put
+\code{start_vignette()} in an R code block at the beginning,
+before the first API request is made, and put
 \code{end_vignette()} in a R code chunk at the end. You may
 want to make those R code chunks have \code{echo=FALSE} in order to hide the fact
 that you're calling them.

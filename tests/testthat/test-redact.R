@@ -188,17 +188,17 @@ with_mock_API({
     })
 
     test_that("Reading redactors from within a package", {
-        ## Install the "testpkg" to a temp lib.loc
-        lib <- tempfile()
-        dir.create(lib)
-        Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
-            stdout=NULL, stderr=NULL)
-        library(testpkg, lib.loc=lib)
-        expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
-
         newmocks <- tempfile()
         expect_message(
             capture_while_mocking(path=newmocks, {
+                ## Install the "testpkg" to a temp lib.loc _after_ we've already started recording
+                lib <- tempfile()
+                dir.create(lib)
+                Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
+                    stdout=NULL, stderr=NULL)
+                library(testpkg, lib.loc=lib)
+                expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+
                 r <- GET("http://example.com/get")
             }),
             paste0("Using redactor ", dQuote("testpkg"))
@@ -212,6 +212,8 @@ with_mock_API({
 
     test_that("redact=NULL to override default (and loaded packages)", {
         expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+        ## Great, but let's kill it when we're done
+        on.exit(detach(package:testpkg))
         newmocks2 <- tempfile()
         expect_message(
             capture_while_mocking(simplify=FALSE, path=newmocks2, redact=NULL, {
