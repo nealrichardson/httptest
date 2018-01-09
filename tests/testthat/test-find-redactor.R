@@ -25,7 +25,7 @@ test_that("prepare_redactor: garbage", {
 })
 
 test_that("get_current_redactor edge cases", {
-    options(httptest.redactor.current=NULL)
+    options(httptest.redactor=NULL)
     expect_identical(get_current_redactor(), redact_auth)
     options(httptest.redactor.packages="NOTAPACKAGE")
     expect_identical(get_current_redactor(), redact_auth)

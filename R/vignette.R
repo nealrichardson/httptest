@@ -25,8 +25,10 @@
 start_vignette <- function (...) {
     ## Cache the original .mockPaths so we can restore it on exit?
     # options(httptest.mock.paths.old=getOption("httptest.mock.paths")
+    ## Don't print messages in a vignette
+    options(httptest.verbose=FALSE)
     if (identical(toupper(Sys.getenv("RECORD")), "TRUE")) {
-        suppressMessages(start_capturing(...))
+        start_capturing(...)
     } else {
         use_mock_API()
     }
