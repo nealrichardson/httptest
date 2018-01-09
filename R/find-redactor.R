@@ -1,40 +1,44 @@
-default_redactor <- function () {
-    ## Look for redactor in options
-    funcs <- getOption("httptest.redactor")
-    if (is.null(funcs)) {
-        ## Look for package-defined redactors
-        packages <- get_attached_packages()
-        funcs <- find_redactors(packages)
-        if (length(funcs) == 0) {
-            ## If none, provide a default
-            funcs <- redact_auth
-        }
-        ## Record what packages we considered here
-        options(httptest.redactor.packages=packages)
-    }
-    return(funcs)
+default_redactor <- function (packages=get_attached_packages()) {
+    ## Look for package-defined requesters
+    func <- redactor_from_packages(packages)
+    ## Record what packages we considered here
+    options(httptest.redactor.packages=packages)
+    return(func)
 }
 
-find_redactors <- function (packages) {
+redactor_from_packages <- function (packages) {
+    funcs <- find_package_functions(packages, "redact.R")
+    if (length(funcs)) {
+        out <- prepare_redactor(funcs)
+    } else {
+        ## Default
+        out <- redact_auth
+    }
+    return(out)
+}
+
+find_package_functions <- function (packages, file="redact.R") {
     ## Given package names, find any redactors put in inst/httptest/redact.R
     base_pkgs <- c("base", "compiler", "datasets", "graphics", "grDevices",
                    "grid", "methods", "parallel", "splines", "stats", "stats4",
                    "tcltk", "tools", "utils")
     packages <- setdiff(packages, base_pkgs)
-    funcs <- structure(lapply(packages, get_package_redactor), .Names=packages)
+    funcs <- lapply(packages, get_package_function, file)
     ## Make sure we have functions
     funcs <- Filter(is.function, funcs)
     return(funcs)
 }
 
 ## TODO: export?
-get_package_redactor <- function (package) {
-    file <- system.file("httptest", "redact.R", package=package)
-    if (nchar(file)) {
+get_package_function <- function (package, file="redact.R") {
+    func_file <- system.file("httptest", file, package=package)
+    if (nchar(func_file)) {
         ## If file does not exist, it returns ""
-        func <- source(file)$value
+        func <- source(func_file)$value
         if (is.function(func)) {
-            message(paste("Using redactor", dQuote(package)))
+            if (isTRUE(getOption("httptest.verbose", TRUE))) {
+                message(paste("Using", file, "from", dQuote(package)))
+            }
             return(func)
         }
     }
@@ -50,32 +54,23 @@ get_package_redactor <- function (package) {
 #' @export
 #' @keywords internal
 get_current_redactor <- function () {
-    ## TODO: document
     ## First, check where we've cached the current one
-    out <- getOption("httptest.redactor.current")
+    out <- getOption("httptest.redactor")
     if (is.null(out)) {
         ## Set the default
-        out <- prepare_redactor(default_redactor())
-        options(httptest.redactor.current=out)
+        out <- default_redactor()
+        options(httptest.redactor=out)
     } else {
-        ## See if it needs refreshing
+        ## See if default is based on packages and needs refreshing
         pkgs <- getOption("httptest.redactor.packages")
         if (!is.null(pkgs)) {
-            ## We're using the result of default_redactor(). Let's see if any
+            ## We're using the result of default_requester(). Let's see if any
             ## new packages have been loaded
             current_packages <- get_attached_packages()
             if (!identical(current_packages, pkgs)) {
                 ## Re-evaluate
-                funcs <- find_redactors(current_packages)
-                if (length(funcs)) {
-                    out <- prepare_redactor(funcs)
-                } else {
-                    out <- redact_auth
-                }
-                options(
-                    httptest.redactor.current=out,
-                    httptest.redactor.packages=current_packages
-                )
+                out <- default_redactor(current_packages)
+                options(httptest.redactor=out)
             }
         }
     }

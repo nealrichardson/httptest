@@ -103,7 +103,7 @@ start_capturing <- function (path,
         path <- NULL
     }
 
-    options(httptest.redactor.current=prepare_redactor(redact))
+    options(httptest.redactor=prepare_redactor(redact))
 
     ## Use "substitute" so that args get inserted. Code remains quoted.
     req_tracer <- substitute({
@@ -111,7 +111,9 @@ start_capturing <- function (path,
         redactor <- get_current_redactor()
         .resp <- redactor(returnValue())
         f <- save_response(.resp, simplify=simplify)
-        if (verbose) message("Writing ", normalizePath(f))
+        if (isTRUE(getOption("httptest.verbose", verbose))) {
+            message("Writing ", normalizePath(f))
+        }
     }, list(simplify=simplify, verbose=verbose))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
         trace_httr(verb, exit=req_tracer, print=FALSE)
