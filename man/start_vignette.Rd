@@ -5,11 +5,14 @@
 \alias{end_vignette}
 \title{Set mocking/capturing state for a vignette}
 \usage{
-start_vignette(...)
+start_vignette(path, ...)
 
 end_vignette()
 }
 \arguments{
+\item{path}{Root file path for the mocks for this vignette. A good idea is
+to use the file name of the vignette itself.}
+
 \item{...}{Optional arguments passed to \code{start_capturing()}}
 }
 \value{
@@ -29,12 +32,16 @@ before the first API request is made, and put
 want to make those R code chunks have \code{echo=FALSE} in order to hide the fact
 that you're calling them.
 
-The environment variable \code{RECORD} determines whether you're making real
-requests and capturing them or whether you're loading previously recorded
-mocks. If \code{RECORD} is \code{true} (or \code{TRUE}: it's case insensitive),
-\code{start_vignette()} calls \code{\link[=start_capturing]{start_capturing()}}. Otherwise (by default), it
-calls \code{\link[=use_mock_API]{use_mock_API()}}.
+The behavior changes based on the existence of the \code{path} directory. The
+first time you build the vignette, the directory won't exist yet, so it will
+make real requests and record them inside of \code{path}. On subsequent runs, the
+mocks will be used. To record fresh responses from the server, delete the
+\code{path} directory, and the responses will be recorded again the next time the
+vignette runs.
 }
 \seealso{
-\code{\link[=start_capturing]{start_capturing()}} \code{\link[=use_mock_API]{use_mock_API()}} \code{vignette("vignettes", package="httptest")}
+\code{\link[=start_capturing]{start_capturing()}} for how requests are recorded; \code{\link[=use_mock_API]{use_mock_API()}}
+for how previously recorded requests are loaded; \code{\link[=change_state]{change_state()}} for how to
+handle recorded requests when the server state is changing;
+\code{vignette("vignettes", package="httptest")} for an overview of all
 }
