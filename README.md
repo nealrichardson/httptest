@@ -77,7 +77,9 @@ Second, once you see where your mock files are, make sure that you've placed the
 
 **Q.** I have tests working nicely with `with_mock_API()` but `R CMD build` and `R CMD check` warn that my package has "non-portable file paths". How do I make legal file paths that my code and tests will recognize?
 
-**A.** Generally, this error means that there are file paths are longer than 100 characters. Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests. A big way to cut long file paths is by using a request preprocessor: a function that alters the content of your 'httr' `request` before mapping it to a mock file. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could set a request preprocessor like:
+**A.** Generally, this error means that there are file paths are longer than 100 characters. Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
+
+A big way to cut long file paths is by using a request preprocessor: a function that alters the content of your 'httr' `request` before mapping it to a mock file. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could set a request preprocessor like:
 
 ```r
 set_requester(function (request) {
@@ -85,11 +87,11 @@ set_requester(function (request) {
 })
 ```
 
-and then all mocked requests would have a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) 23 characters.
+and then all mocked requests would look for a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) 23 characters.
 
 You can also provide this function in `inst/httptest/request.R`, and any time your package is loaded (as when you run tests or build vignettes), this function will be called automatically.
 
-You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long entity ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
+You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
 
 Finally, if you have your tests inside a `tests/testthat/` directory, and your fixture files inside that, you can save 9 characters by moving the fixtures up to `tests/` and setting `.mockPaths("../")`.
 
