@@ -2,8 +2,7 @@ Package: httptest
 Type: Package
 Title: A Test Environment for HTTP Requests
 Description: Testing code and packages that communicate with remote servers can
-    be painful. Dealing with authentication, bootstrapping server state,
-    cleaning up objects that may get created during the test run, network
+    be painful. Dealing with authentication, server state, network
     flakiness, and other complications can make testing seem too costly to
     bother with. But it doesn't need to be that hard. This package enables one
     to test all of the logic on the R sides of the API in your package without
