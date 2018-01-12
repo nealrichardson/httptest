@@ -7,11 +7,24 @@
 set_requester(FUN)
 }
 \arguments{
-\item{FUN}{A function that modifies \code{request} objects}
+\item{FUN}{A function or expression that modifies \code{request} objects.
+Specifically, a valid input is one of:
+\itemize{
+\item A function taking a single argument, the \code{request}, and returning a valid
+\code{request} object.
+\item A formula as shorthand for an anonymous function with \code{.} as the
+"request" argument, as in the \code{purrr} package.
+\item A list of functions/formulas, which will be executed
+in sequence on the request.
+\item \code{NULL}, to override the default \code{redact_auth()}.
+}}
 }
 \value{
-Invisibly, the return of the call to \code{options()}
+Invisibly, \code{FUN}, validated and perhaps modified.
 }
 \description{
 Set a request preprocessor
+}
+\seealso{
+\code{\link[=set_redactor]{set_redactor()}}
 }

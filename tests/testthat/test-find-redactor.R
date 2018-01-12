@@ -66,11 +66,11 @@ with_mock_API({
         ## Great, but let's kill it when we're done
         on.exit(detach(package:testpkg))
         newmocks2 <- tempfile()
-        expect_message(
+        expect_warning(
             capture_while_mocking(simplify=FALSE, path=newmocks2, redact=NULL, {
                 a <- GET("api/", add_headers(`Authorization`="Bearer token"))
             }),
-            NA
+            "The 'redact' argument to start_capturing() is deprecated. Use 'set_redactor()' instead.", fixed=TRUE
         )
         expect_true(any(grepl("Bearer token", readLines(file.path(newmocks2, "api.R")))))
         skip_on_cran() ## They have a broken R-devel build that chokes on these
