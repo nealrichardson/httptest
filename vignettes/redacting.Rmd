@@ -50,7 +50,7 @@ alt_resp$request$options$cookie
 
 Some APIs use other methods for passing credentials. For example, the [API for Pivotal Tracker](https://www.pivotaltracker.com/help/api), the agile project management tool, uses a "X-TrackerToken" request header for passing an API token. Our standard redactor doesn't know about this header, so by default, this token would be written in our recorded responses.
 
-So, in the [pivotaltrackR](https://github.com/nealrichardson/pivotaltrackR) package, which wraps this API, if we want to record mocks to use in tests with this API, we need to tell `capture_requests` to scrub its special header. To do this, we'll set `redact=redact_headers("X-TrackerToken")` in the capture call.
+So, in the [pivotaltrackR](https://github.com/nealrichardson/pivotaltrackR) package, which wraps this API, if we want to record mocks to use in tests with this API, we need to tell `capture_requests` to scrub its special header. To do this, we'll set `redact=~ redact_headers(., "X-TrackerToken")` in the capture call.
 
 To illustrate, here's a recording of a GET on the `stories/` endpoint. We can see that the real token is included in the "X-TrackerToken" header in the real request:
 
@@ -59,7 +59,7 @@ library(httptest)
 library(pivotaltrackR)
 options(pivotal.project="my-project-name", pivotal.token="8fe3452ac4e3")
 
-capture_requests(redact=redact_headers("X-TrackerToken"), simplify=FALSE, {
+capture_requests(redact=~ redact_headers(., "X-TrackerToken"), simplify=FALSE, {
     active_stories <- getStories(state="started")
 })
 active_stories$request$headers
