@@ -108,10 +108,11 @@ public({
 
         test_that("Request preprocessing via set_requester: change the request URL", {
             g1 <- GET("http://example.com/get")
-            old <- set_requester(function (request) {
+            old <- getOption("httptest.requester")
+            on.exit(options(httptest.requester=old))
+            set_requester(function (request) {
                 gsub_request(request, "pythong.org", "example.com")
             })
-            on.exit(options(old))
             expect_identical(content(GET("http://pythong.org/get")),
                 content(g1))
         })

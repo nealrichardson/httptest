@@ -1,3 +1,23 @@
+#' Set a request preprocessor
+#'
+#' @param FUN A function or expression that modifies `request` objects.
+#' Specifically, a valid input is one of:
+#' * A function taking a single argument, the `request`, and returning a valid
+#' `request` object.
+#' * A formula as shorthand for an anonymous function with `.` as the
+#' "request" argument, as in the `purrr` package.
+#' * A list of functions/formulas, which will be executed
+#' in sequence on the request.
+#' * `NULL`, to override the default `redact_auth()`.
+#' @return Invisibly, `FUN`, validated and perhaps modified.
+#' @export
+#' @seealso [set_redactor()]
+set_requester <- function (FUN) {
+    FUN <- prepare_redactor(FUN)
+    options(httptest.requester=FUN)
+    invisible(FUN)
+}
+
 default_requester <- function (packages=get_attached_packages()) {
     ## Look for package-defined requesters
     func <- requester_from_packages(packages)
@@ -17,22 +37,12 @@ requester_from_packages <- function (packages) {
     return(out)
 }
 
-#' Set a request preprocessor
-#'
-#' @param FUN A function that modifies `request` objects
-#' @return Invisibly, the return of the call to `options()`
-#' @export
-set_requester <- function (FUN) {
-    options(httptest.requester=prepare_redactor(FUN))
-}
-
 get_current_requester <- function () {
     ## First, check where we've cached the current one
     out <- getOption("httptest.requester")
     if (is.null(out)) {
         ## Set the default
-        out <- default_requester()
-        options(httptest.requester=out)
+        out <- set_requester(default_requester())
     } else {
         ## See if default is based on packages and needs refreshing
         pkgs <- getOption("httptest.requester.packages")
@@ -42,8 +52,7 @@ get_current_requester <- function () {
             current_packages <- get_attached_packages()
             if (!identical(current_packages, pkgs)) {
                 ## Re-evaluate
-                out <- default_requester(current_packages)
-                options(httptest.requester=out)
+                out <- set_requester(default_requester(current_packages))
             }
         }
     }

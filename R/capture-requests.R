@@ -17,32 +17,6 @@
 #' such as when adding an additional attribute to an object, you can just touch
 #' up the mocks.
 #'
-#' @section Redacting:
-#'
-#' You can provide a function that alters the response content being written
-#' out, allowing you to remove sensitive values, such as authentication tokens,
-#' as well as any other modification or truncation of the response body. By
-#' default, the [redact_auth()] function will be used to purge standard
-#' auth methods, but you can provide an alternative redacting function in
-#' several ways. You can provide in the `redact` argument of
-#' `capture_requests`/`start_capturing`:
-#'
-#' * A function taking a single argument, the `response`, and returning a valid
-#' `response` object.
-#' * A formula as shorthand for an anonymous function with `.` as the
-#' "response" argument, as in the `purrr` package. That is, instead of
-#' `function (response) redact_headers(response, "X-Custom-Header")`, you can
-#' use `~ redact_headers(., "X-Custom-Header")`
-#' * A list of redacting functions/formulas, which will be executed
-#' in sequence on the response
-#'
-#' Alternatively, you can put a redacting function in `inst/httptest/redact.R`
-#' in your package, and
-#' any time your package is loaded (as in when running tests or building
-#' vignettes), this function will be used automatically.
-#'
-#' For further details on how to redact responses, see `vignette("redacting")`.
-#'
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the first directory in
 #' [.mockPaths()], which if not otherwise specified is the current working
@@ -56,7 +30,8 @@
 #' file. Useful for debugging if you're capturing but don't see the fixture
 #' files being written in the expected location. Default is `FALSE`.
 #' @param redact function to run to purge sensitive strings from the recorded
-#' response objects. See the "Redacting" section for details.
+#' response objects. This argument is deprecated: use [set_redactor()] or a
+#' package redactor instead. See `vignette("redacting")` for more details.
 #' @param ... Arguments passed through `capture_requests` to `start_capturing`
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
@@ -92,10 +67,7 @@ capture_requests <- function (expr, path, ...) {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path,
-                             simplify=TRUE,
-                             verbose=FALSE,
-                             redact=default_redactor()) {
+start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
     if (!missing(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
@@ -103,7 +75,11 @@ start_capturing <- function (path,
         path <- NULL
     }
 
-    options(httptest.redactor=prepare_redactor(redact))
+    if (!missing(redact)) {
+        warning("The 'redact' argument to start_capturing() is deprecated. ",
+            "Use 'set_redactor()' instead.", call.=FALSE)
+        set_redactor(redact)
+    }
 
     ## Use "substitute" so that args get inserted. Code remains quoted.
     req_tracer <- substitute({
