@@ -1,18 +1,18 @@
 Package: httptest
 Type: Package
 Title: A Test Environment for HTTP Requests
-Description: Testing code and packages that communicate with remote servers can
-    be painful. Dealing with authentication, server state, network
-    flakiness, and other complications can make testing seem too costly to
+Description: Testing and documenting code that communicates with remote servers
+    can be painful. Dealing with authentication, server state,
+    and other complications can make testing seem too costly to
     bother with. But it doesn't need to be that hard. This package enables one
     to test all of the logic on the R sides of the API in your package without
-    requiring access to the remote service. Importantly, it provides three test
-    contexts that mock the network connection in different ways, and it offers
-    additional expectations to assert that HTTP requests were--or were
-    not--made. It also allows you to record real API responses to use as mocks
-    in tests. With these tools, one can test that code is making the intended
-    requests and that it handles the expected responses correctly, all without
-    depending on a connection to a remote API.
+    requiring access to the remote service. Importantly, it provides three
+    contexts that mock the network connection in different ways, as well as
+    testing functions to assert that HTTP requests were---or were
+    not---made. It also allows one to safely record real API responses to use as
+    test fixture. The ability to save responses and load them offline also
+    enables one to write vignettes and other dynamic documents that can be
+    distributed without access to a live server.
 Version: 2.3.5
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: http://enpiar.com/r/httptest, https://github.com/nealrichardson/httptest

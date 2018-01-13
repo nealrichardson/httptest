@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest) [![Build status](https://ci.appveyor.com/api/projects/status/egrw65593iso21cu?svg=true)](https://ci.appveyor.com/project/nealrichardson/httptest) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
 [![cran](https://www.r-pkg.org/badges/version-last-release/httptest)](https://cran.r-project.org/package=httptest)
 
-Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package enables one to test all of the logic on the R sides of the API in your package without requiring access to the remote service.
+Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package enables you to test all of the logic on the R sides of the API in your package without requiring access to the remote service.
 
-Importantly, `httptest` provides three test **contexts** that mock the network connection in different ways, and it offers additional **expectations** to assert that HTTP requests were--or were not--made. The package also includes a context for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, one can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API.
+Importantly, `httptest` provides three **contexts** that mock the network connection in different ways, and it offers additional **expectations** to assert that HTTP requests were---or were not---made. The package also includes a context for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API. The ability to save responses and load them offline also enables you to write package vignettes and other dynamic documents that can be distributed without access to a live server.
 
 This package bridges the gap between two others: (1) [testthat](http://testthat.r-lib.org/), which provides a useful ([and fun](https://github.com/r-lib/testthat/blob/master/R/test-that.R#L171)) framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](http://httr.r-lib.org/), which [makes working with HTTP in R easy](https://github.com/r-lib/httr/blob/master/R/httr.r#L1) but doesn't make it simple to test the code that uses it. `httptest` brings the fun and simplicity together.
 
@@ -31,9 +31,9 @@ Wherever you normally load `testthat`, load `httptest` instead. It "requires" `t
 * the DESCRIPTION file, where `testthat` is typically referenced under "Suggests"
 * tests/testthat.R, which may otherwise begin with `library(testthat)`.
 
-Then, you're ready to start using the tools that `httptest` provides. The section below outlines the package's main functions. See the test suite and help pages for usage examples.
+Then, you're ready to start using the tools that `httptest` provides. See `vignette("httptest")` for guidance on how to get started.
 
-When unit-testing code that communicates with another service, you need to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct request(s) to that service; and (2) does my code correctly handle the types of responses that that service can return? The contexts and expectation functions provided by this package help you to test both sides.
+Here's an overview of the package's main functions.
 
 ### Contexts
 
@@ -56,9 +56,37 @@ A fourth context, **`capture_requests()`**, collects the responses from requests
 
 Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
 
+For convenience, you may find it easier in an interactive session to call `start_capturing()`, make requests, and then `stop_capturing()` when you're done. This:
+
+```r
+capture_requests({
+    GET("http://httpbin.org/get")
+    GET("http://httpbin.org/response-headers",
+        query=list(`Content-Type`="application/json"))
+})
+```
+
+is equivalent to this:
+
+```r
+start_capturing()
+GET("http://httpbin.org/get")
+GET("http://httpbin.org/response-headers",
+    query=list(`Content-Type`="application/json"))
+stop_capturing()
+```
+
+When recording requests, by default `httptest` looks for and redacts the standard ways that auth credentials are passed in requests: cookies, authorization headers, basic HTTP auth, and OAuth. This prevents you from accidentally publishing your personal tokens. The redacting behavior is fully customizable, either by providing a `function (response) {...}` to `set_redactor()`, or by placing a function in your package's `inst/httptest/redact.R` that will be used automatically any time you record requests with your package loaded. See `vignette("redacting")` for details.
+
+### Vignettes
+
+Package vignettes are a valuable way to show how to use your code, but when communicating with a remote API, it has been difficult to write useful vignettes. With `httptest`, however, by adding as little as one line of code to your vignette, you can safely record API responses from a live session, using your secret credentials. These API responses are scrubbed of sensitive personal information and stored in a subfolder in your `vignettes` directory. Subsequent vignette builds, including on continuous-integration services, CRAN, and your package users' computers, use these recorded responses, allowing the document to regenerate without a network connection or API credentials. To record fresh API responses, delete the subfolder of cached responses and re-run.
+
+To use `httptest` in your vignettes, add a code chunk with `start_vignette()` at the beginning, and for many use cases, that's the only thing you need. If you need to handle changes of server state, as when you make an API request that creates a record on the server, add a call to `change_state()`. See `vignette("vignettes")` for more discussion and links to examples.
+
 ### Other tools
 
-* **`skip_if_disconnected()`** skips following tests if you don't have a working internet connection or can't reach a given URL. This is useful for preventing spurious failures when doing integration tests with a real API.
+* **`skip_if_disconnected()`** skips following tests if you don't have a working internet connection or can't reach a given URL. This is useful for preventing spurious failures when doing integration tests with a real API. It also wraps `testthat::skip_on_cran()`, so network flakiness can't cause you to get a CRAN package submission rejected.
 * **`public()`** is another wrapper around test code that will cause tests to fail if they call functions that aren't "exported" in the package's namespace. Nothing HTTP specific about it, but it's something that I've found useful for preventing accidentally releasing a package without documenting and exporting new functions. While you can use "examples" in the man pages for ensuring that functions you're documenting are exported, code that communicates with remote APIs may not be easily set up to run in a help page example. This context allows you to make those assertions within your test suite.
 
 ### FAQ
@@ -89,7 +117,7 @@ set_requester(function (request) {
 
 and then all mocked requests would look for a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) 23 characters.
 
-You can also provide this function in `inst/httptest/request.R`, and any time your package is loaded (as when you run tests or build vignettes), this function will be called automatically.
+You can also provide this function in `inst/httptest/request.R`, and any time your package is loaded (as when you run tests or build vignettes), this function will be called automatically. See `vignette("redacting")` for more.
 
 You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
 
@@ -146,7 +174,7 @@ Suggestions and pull requests are more than welcome!
 
 ## For developers
 
-The repository includes a Makefile to facilitate some common tasks.
+The repository includes a Makefile to facilitate some common tasks, if you're into that sort of thing.
 
 ### Running tests
 
