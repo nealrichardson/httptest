@@ -1,4 +1,4 @@
-#' Make all HTTP requests return a fake 'response' object
+#' Make all HTTP requests return a fake response
 #'
 #' In this context, HTTP verb functions raise a 'message' so that test code can
 #' assert that the requests are made. As in [without_internet()], the message
@@ -40,7 +40,7 @@ with_fake_http <- function (expr) {
 #' @export
 with_fake_HTTP <- with_fake_http
 
-#' Return something that looks enough like an httr 'response'
+#' Return something that looks like an httr 'response'
 #'
 #' These functions allow mocking of HTTP requests without requiring an internet
 #' connection or server to run against. Their return shape is a 'httr'
@@ -49,9 +49,9 @@ with_fake_HTTP <- with_fake_http
 #'
 #' @param request An 'httr' `request`-class object. A character URL is also
 #' accepted, for which a fake request object will be created, using the `verb`
-#' argument as well. This behavior is deprecated.
-#' @param verb Character name for the HTTP verb. Default is "GET". This argument
-#' is deprecated; instead you should pass in a `request`
+#' argument as well.
+#' @param verb Character name for the HTTP verb, if `request` is a URL. Default
+#' is "GET".
 #' @param status_code Integer HTTP response status
 #' @param headers Optional list of additional response headers to return
 #' @param content If supplied, a JSON-serializable list that will be returned

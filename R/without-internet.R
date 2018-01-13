@@ -37,7 +37,7 @@ without_internet <- function (expr) {
 #' call [stop_mocking()] yourself---this function does not clean up after itself
 #' as 'without_internet` does.
 #' @return Nothing; called for its side effects.
-#' @seealso [without_internet()] [stop_mocking()] [use_mock_API()]
+#' @seealso [without_internet()] [stop_mocking()] [use_mock_api()]
 #' @export
 block_requests <- function () mock_perform(stop_request)
 

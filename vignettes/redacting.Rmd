@@ -146,10 +146,10 @@ s[[1]]$project_id
 ## [1] "my-project-name"
 ```
 
-However, the project id won't be found in the recorded file. If we load the recorded response in `with_mock_API`, we'll see the value we substituted in:
+However, the project id won't be found in the recorded file. If we load the recorded response in `with_mock_api`, we'll see the value we substituted in:
 
 ```r
-with_mock_API({
+with_mock_api({
     s <- getStories(search="mnt")
 })
 s[[1]]$project_id

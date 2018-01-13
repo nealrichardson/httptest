@@ -41,18 +41,18 @@ The package includes three test contexts, which you wrap around test code that w
 
 * **`without_internet()`** converts HTTP requests made through `httr` request functions into errors that print the request method, URL, and body payload, if provided. This is useful for asserting that a function call would make a correctly-formed HTTP request, as well as for asserting that a function does not make a request (because if it did, it would raise an error in this context).
 * **`with_fake_http()`** raises a "message" instead of an "error", and HTTP requests return a "response"-class object. Like `without_internet`, it allows you to assert that the correct requests were (or were not) made, but since it doesn't cause the code to exit with an error, you can test code in functions that comes after requests, provided that it doesn't expect a particular response to each request.
-* **`with_mock_API()`** lets you provide custom fixtures as responses to requests. It maps URLs, including query parameters, to files in your test directory, and it includes the file contents in the mocked "response" object. Request methods that do not have a corresponding fixture file raise errors the same way that `without_internet` does. This context allows you to test more complex R code that makes requests and does something with the response, simulating how the API should respond to specific requests.
+* **`with_mock_api()`** lets you provide custom fixtures as responses to requests. It maps URLs, including query parameters, to files in your test directory, and it includes the file contents in the mocked "response" object. Request methods that do not have a corresponding fixture file raise errors the same way that `without_internet` does. This context allows you to test more complex R code that makes requests and does something with the response, simulating how the API should respond to specific requests.
 
 ### Expectations
 
-* **`expect_GET()`**, **`expect_PUT()`**, **`expect_PATCH()`**, **`expect_POST()`**, and **`expect_DELETE()`** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_API` just proceed with their response content and don't trigger `expect_GET`, however.)
+* **`expect_GET()`**, **`expect_PUT()`**, **`expect_PATCH()`**, **`expect_POST()`**, and **`expect_DELETE()`** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_api` just proceed with their response content and don't trigger `expect_GET`, however.)
 * **`expect_no_request()`** is the inverse of those: it asserts that no error or message from a mocked HTTP service is raised.
 * **`expect_header()`** asserts that an HTTP request, mocked or not, contains a request header.
 * **`expect_json_equivalent()`** doesn't directly concern HTTP, but it is useful for working with JSON APIs. It checks that two R objects would generate equivalent JSON, taking into account how JSON objects are unordered whereas R named lists are ordered.
 
 ### Recording requests
 
-A fourth context, **`capture_requests()`**, collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_API`.
+A fourth context, **`capture_requests()`**, collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_api`.
 
 Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
 
@@ -93,7 +93,7 @@ To use `httptest` in your vignettes, add a code chunk with `start_vignette()` at
 
 #### Where are my mocks recorded?
 
-**Q.** I'm using `capture_requests()` but when I try to run tests with those fixtures in `with_mock_API()`, the tests are erroring and printing the request URLs. Why aren't the tests finding the mocks?
+**Q.** I'm using `capture_requests()` but when I try to run tests with those fixtures in `with_mock_api()`, the tests are erroring and printing the request URLs. Why aren't the tests finding the mocks?
 
 **A.** First, make sure that your recorded request files are where you think they are and where your tests think they should be. When recording fixtures, keep in mind that the destination path for `capture_requests` is relative to the current working directory of the process. If you're running `capture_requests` within a test suite in an installed package, the working directory may not be the same as your code repository. So either record the requests in an interactive session, or you may have to specify an absolute path if you want to record when running package tests.
 
@@ -103,7 +103,7 @@ Second, once you see where your mock files are, make sure that you've placed the
 
 #### How do I fix "non-portable file paths"?
 
-**Q.** I have tests working nicely with `with_mock_API()` but `R CMD build` and `R CMD check` warn that my package has "non-portable file paths". How do I make legal file paths that my code and tests will recognize?
+**Q.** I have tests working nicely with `with_mock_api()` but `R CMD build` and `R CMD check` warn that my package has "non-portable file paths". How do I make legal file paths that my code and tests will recognize?
 
 **A.** Generally, this error means that there are file paths are longer than 100 characters. Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
 
@@ -125,12 +125,12 @@ Finally, if you have your tests inside a `tests/testthat/` directory, and your f
 
 #### How do I switch between mocking and real requests?
 
-**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_API()` blocks?
+**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_api()` blocks?
 
-**A.** One way to do this is to set `with_mock_API()` to another function in your test file (or in `helper.R` if you want it to run for all test files). So
+**A.** One way to do this is to set `with_mock_api()` to another function in your test file (or in `helper.R` if you want it to run for all test files). So
 
 ```r
-with_mock_API({
+with_mock_api({
     a <- GET("https://httpbin.org/get")
     print(a)
 })
@@ -139,8 +139,8 @@ with_mock_API({
 looks for the mock file, but
 
 ```r
-with_mock_API <- force
-with_mock_API({
+with_mock_api <- force
+with_mock_api({
     a <- GET("https://httpbin.org/get")
     print(a)
 })
@@ -149,8 +149,8 @@ with_mock_API({
 just evaluates the code with no mocking and makes the request, and
 
 ```r
-with_mock_API <- capture_requests
-with_mock_API({
+with_mock_api <- capture_requests
+with_mock_api({
     a <- GET("https://httpbin.org/get")
     print(a)
 })
@@ -160,9 +160,9 @@ would make the request and record the response as a mock file. You could control
 
 ```r
 if (Sys.getenv("MOCK_BYPASS") == "true") {
-    with_mock_API <- force
+    with_mock_api <- force
 } else if (Sys.getenv("MOCK_BYPASS") == "capture") {
-    with_mock_API <- capture_requests
+    with_mock_api <- capture_requests
 }
 ```
 

@@ -9,6 +9,7 @@
 #' @param expr Code to run inside the context
 #' @return The result of `expr`
 #' @export
+#' @keywords internal
 with_trace <- function (x, where=topenv(parent.frame()), print=FALSE, ..., expr) {
     suppressMessages(trace(x, print=print, where=where, ...))
     on.exit(suppressMessages(untrace(x, where=where)))

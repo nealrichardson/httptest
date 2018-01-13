@@ -18,13 +18,13 @@ Testing code and packages that communicate with remote servers can be painful. D
 
 This vignette covers some of the core features of the `httptest` package, focusing on how to mock HTTP responses, how to make other assertions about requests, and how to record real requests for future use as mocks. Note that `httptest` requires the `testthat` package, and it follows the testing conventions and interfaces defined there, extending them with some additional wrappers and expectations. If you're not familiar with `testthat`, see the ["Testing" chapter](http://r-pkgs.had.co.nz/tests.html) chapter of Hadley Wickham's _R Packages_ book. Furthermore, `httptest` is designed for use with packages that rely on the [httr](http://httr.r-lib.org/) requests library—it is a bridge between `httr` and `testthat`.
 
-# The `with_mock_API` context
+# The `with_mock_api` context
 
-The package includes three contexts, which are "with"-style functions that you wrap around other code you want to execute. The most generally useful of the three is `with_mock_API`. In this context, HTTP requests are intercepted and mapped to local file paths. If the file exists, it is loaded and returned as the response; if it does not, an error with a message containing the request information is raised, and we can write tests that look for that error. These two different modes allow us to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct HTTP request(s); and (2) does my code correctly handle the types of responses that the server can return?
+The package includes three contexts, which are "with"-style functions that you wrap around other code you want to execute. The most generally useful of the three is `with_mock_api`. In this context, HTTP requests are intercepted and mapped to local file paths. If the file exists, it is loaded and returned as the response; if it does not, an error with a message containing the request information is raised, and we can write tests that look for that error. These two different modes allow us to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct HTTP request(s); and (2) does my code correctly handle the types of responses that the server can return?
 
 ## Example
 
-To illustrate the power of `with_mock_API`, let's try to add tests to an R package that wraps a prominent web API. The `twitteR` package is quite popular ([13k downloads per month](https://cranlogs.r-pkg.org/badges/twitteR), at the time of writing), but like most R packages, it doesn't have a test suite. Indeed, it is hard to test the querying of an API that requires OAuth authentication, and thus a user account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
+To illustrate the power of `with_mock_api`, let's try to add tests to an R package that wraps a prominent web API. The `twitteR` package is quite popular ([13k downloads per month](https://cranlogs.r-pkg.org/badges/twitteR), at the time of writing), but like most R packages, it doesn't have a test suite. Indeed, it is hard to test the querying of an API that requires OAuth authentication, and thus a user account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
 
 First, we need to set up some boilerplate for `testthat` testing, which `httptest` uses. Add a "tests" directory, and in that, a "testthat.R" with
 
@@ -39,12 +39,12 @@ Note that it says `library(httptest)` instead of the `library(testthat)` that yo
 use_oauth_token("foo")
 ```
 
-Now let's write a test. Add "test-user.R" and put a test for getting a user record, via the `getUser` function. According to the source code, this function should hit the "show user" Twitter API, documented [here](https://dev.twitter.com/rest/reference/get/users/show). But, we're going to prevent that request from actually happening by wrapping our test in the `with_mock_API`.
+Now let's write a test. Add "test-user.R" and put a test for getting a user record, via the `getUser` function. According to the source code, this function should hit the "show user" Twitter API, documented [here](https://dev.twitter.com/rest/reference/get/users/show). But, we're going to prevent that request from actually happening by wrapping our test in the `with_mock_api`.
 
 ```r
 context("Get a user")
 
-with_mock_API({
+with_mock_api({
     test_that("We can get a user object", {
         user <- getUser("twitterdev")
     })
@@ -59,18 +59,18 @@ Get a user: Error:
     (api.twitter.com/1.1/users/show.json-84627b.json)
 ```
 
-The error message reveals a few things about how `with_mock_API` works. First, it tells us what the request method and URL was, and if there had been a request body, it would have been part of the error message as well. Second, the final part of the error message is a file name. That's the mock file that the test context was looking for and didn't find. If the file had existed, it would have been loaded and the code would have continued executing *as if the server had returned it*.
+The error message reveals a few things about how `with_mock_api` works. First, it tells us what the request method and URL was, and if there had been a request body, it would have been part of the error message as well. Second, the final part of the error message is a file name. That's the mock file that the test context was looking for and didn't find. If the file had existed, it would have been loaded and the code would have continued executing *as if the server had returned it*.
 
 Requests are translated to mock file paths according to several rules that
 incorporate the request method, URL, query parameters, and body. Query parameters and request bodies are incorporated into the file path by hashing—hence the `84627b` in the `getUser` example. If a request method other than GET is used, it will be appended to the end of the end of the file name. Mock file paths also have an extension appended because in an HTTP API, a "directory" itself is a resource. The extension allows distinguishing directories and files in the file system. That is, a mocked `GET("http://example.com/api/")` may read a
 "example.com/api.json" file, while
 `GET("http://example.com/api/object1/")` reads "example.com/api/object1.json", and `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json". The file extension also gives information on content type. Two extensions are
 currently supported: .json and .R. JSON mocks can be stored in .json
-files, and when they are loaded by `with_mock_API`, relevant request
+files, and when they are loaded by `with_mock_api`, relevant request
 metadata (headers, status code, etc.) are inferred. If your API doesn't
 return JSON, or if you want to simulate requests with other behavior (201
 Location response, or 400 Bad Request, for example), you can store full
-`response` objects in .R files that `with_mock_API` will `source` to load.
+`response` objects in .R files that `with_mock_api` will `source` to load.
 Any request can be stored as a .R mock, but the .json mocks offer a
 simplified, more readable alternative.
 
@@ -92,7 +92,7 @@ Back to the `getUser` example. The error message tells us that the request it is
 }
 ```
 
-Let's copy that example response to the fixture file path that the message indicated, `api.twitter.com/1.1/users/show.json-84627b.json`. When we run the tests again, there's no more error. Great! This means that `with_mock_API` loaded our mock when it reached the GET request, and the rest of the code continued executing. `getUser` returns a "user" object, so let's now assert some things about it and test some of its methods:
+Let's copy that example response to the fixture file path that the message indicated, `api.twitter.com/1.1/users/show.json-84627b.json`. When we run the tests again, there's no more error. Great! This means that `with_mock_api` loaded our mock when it reached the GET request, and the rest of the code continued executing. `getUser` returns a "user" object, so let's now assert some things about it and test some of its methods:
 
 ```r
 test_that("We can get a user object", {
@@ -137,7 +137,7 @@ context("Get a user")
 
 use_oauth_token("foo") # Pulled here from helper.R for clarity
 
-with_mock_API({
+with_mock_api({
     test_that("We can get a user object", {
         user <- getUser("twitterdev")
         expect_is(user, "user")
@@ -154,13 +154,13 @@ with_mock_API({
 })
 ```
 
-Note that none of the test code inside the `with_mock_API` block looks any different from how you'd write it if you were testing against a live server using just `testthat`. The goal is to make your tests just as natural to write as if you were using your package normally. The `with_mock_API` context handles all of the HTTP mocking seamlessly.
+Note that none of the test code inside the `with_mock_api` block looks any different from how you'd write it if you were testing against a live server using just `testthat`. The goal is to make your tests just as natural to write as if you were using your package normally. The `with_mock_api` context handles all of the HTTP mocking seamlessly.
 
 # Recording mocks with `capture_requests`
 
-Using API documentation to build a library of fixtures is one way to set up testing using `with_mock_API`. Alternatively, you can collect real HTTP responses to use as test fixtures. `capture_requests` is a context that records the responses from requests you make and stores them as mock files. This enables you to perform a series
+Using API documentation to build a library of fixtures is one way to set up testing using `with_mock_api`. Alternatively, you can collect real HTTP responses to use as test fixtures. `capture_requests` is a context that records the responses from requests you make and stores them as mock files. This enables you to perform a series
 of requests against a live server once and then build your test suite using
-those mocks, running your tests in `with_mock_API`.
+those mocks, running your tests in `with_mock_api`.
 
 In an interactive session, it may be easier to use the functions `start_capturing` and `stop_capturing` rather than the context manager. You can set up your R session, call `start_capturing()`, and then do whatever commands or function calls that would make HTTP requests, and the responses will be grabbed.
 
@@ -231,7 +231,7 @@ Mocking API responses isn't the only thing you might want to do in order to test
 
 `without_internet` is a context that simulates the situation when any network request will
 fail, as in when you are without an internet connection. Any HTTP request will raise
-an error with a well-defined shape, the same as what `with_mock_API` returns when no mock file is found. The error message has three
+an error with a well-defined shape, the same as what `with_mock_api` returns when no mock file is found. The error message has three
 elements: the request
 method (e.g. "GET"), the request URL, and the request body, if present. The verb-expectation functions,
 such as `expect_GET` and `expect_POST`, look for this shape.
@@ -271,7 +271,7 @@ This tells us that our cache is working as expected: we can get results from cac
 
 Sometimes it is more clear what you're testing if you focus only on the requests. One case is when the response itself isn't that interesting or doesn't tell you that the request did the correct thing. For example, if you're testing a POST request that alters the state of something on the server and returns 204 No Content status on success, nothing in the response itself (which would be stored in the mock file) tells you that the request you made was shaped correctly—the response has no content. A more transparent, readable test would just assert that the POST request was made to the right URL and had the expected request body.
 
-Both `without_internet` and `with_mock_API` allow you to make assertions about requests—method, URL, and payload—that should be made. The various `expect_VERB` expectation functions facilitate this testing. In this example from the `crunch` package, inside the `with_mock_API` context, there is a catalog resource containing three entities, each of which has an "archived" attribute. The `is.archived` method returns the value of that attribute:
+Both `without_internet` and `with_mock_api` allow you to make assertions about requests—method, URL, and payload—that should be made. The various `expect_VERB` expectation functions facilitate this testing. In this example from the `crunch` package, inside the `with_mock_api` context, there is a catalog resource containing three entities, each of which has an "archived" attribute. The `is.archived` method returns the value of that attribute:
 
 ```r
 test_that("is.archived", {

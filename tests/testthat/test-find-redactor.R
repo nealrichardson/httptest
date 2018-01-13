@@ -31,7 +31,7 @@ test_that("get_current_redactor edge cases", {
     expect_identical(get_current_redactor(), redact_auth)
 })
 
-with_mock_API({
+with_mock_api({
     test_that("Reading redactors from within a package (and install that package)", {
         newmocks <- tempfile()
         expect_message(

@@ -12,7 +12,7 @@ If \pkg{httr} makes HTTP easy and \pkg{testthat} makes testing fun,
 \details{
 The \code{httptest} package lets you test R code that wraps an API without
 requiring access to the remote service. It provides three test \strong{contexts}
-that mock the network connection in different ways. \code{\link[=with_mock_API]{with_mock_API()}} lets
+that mock the network connection in different ways. \code{\link[=with_mock_api]{with_mock_api()}} lets
 you provide custom fixtures as responses to requests, stored as plain-text
 files in your test directory. \code{\link[=without_internet]{without_internet()}} converts HTTP requests
 into errors that print the request method, URL, and body payload, if
@@ -41,7 +41,7 @@ For an overview of testing with \code{httptest}, see \code{vignette("httptest")}
 The package also includes \code{\link[=capture_requests]{capture_requests()}}, a context that collects the
 responses from requests you make and stores them as mock files. This enables
 you to perform a series of requests against a live server once and then build
-your test suite using those mocks, running your tests in \code{with_mock_API}.
+your test suite using those mocks, running your tests in \code{with_mock_api}.
 
 When recording requests, by default \code{httptest} looks for and redacts the
 standard ways that auth credentials are passed in requests. This prevents you

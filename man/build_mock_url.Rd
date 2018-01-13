@@ -35,11 +35,11 @@ system. That is, a mocked \code{GET("http://example.com/api/")} may read a
 
 The extension also gives information on content type. Two extensions are
 currently supported: (1) .json and (2) .R. JSON mocks can be stored in .json
-files, and when they are loaded by \code{\link[=with_mock_API]{with_mock_API()}}, relevant request
+files, and when they are loaded by \code{\link[=with_mock_api]{with_mock_api()}}, relevant request
 metadata (headers, status code, etc.) are inferred. If your API doesn't
 return JSON, or if you want to simulate requests with other behavior (201
 Location response, or 400 Bad Request, for example), you can store full
-\code{response} objects in .R files that \code{with_mock_API} will \code{source} to load.
+\code{response} objects in .R files that \code{with_mock_api} will \code{source} to load.
 Any request can be stored as a .R mock, but the .json mocks offer a
 simplified, more readable alternative. (\code{\link[=capture_requests]{capture_requests()}} will record
 simplified .json files where appropriate and .R mocks otherwise by default.)
@@ -54,8 +54,8 @@ appended to the end of the end of the file name. For example,
 
 This function is exported so that other packages can construct similar mock
 behaviors or override specific requests at a higher level than
-\code{with_mock_API} mocks.
+\code{with_mock_api} mocks.
 }
 \seealso{
-\code{\link[=with_mock_API]{with_mock_API()}} \code{\link[=capture_requests]{capture_requests()}}
+\code{\link[=with_mock_api]{with_mock_api()}} \code{\link[=capture_requests]{capture_requests()}}
 }

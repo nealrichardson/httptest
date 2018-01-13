@@ -23,7 +23,7 @@ to \code{capture_requests()}.
 For example, \code{as.redactor(~ redact_headers(., "X-Custom-Header"))} is equivalent
 to \code{function (response) redact_headers(response, "X-Custom-Header")}. This
 allows you to do
-\code{capture_requests(redact = ~ redact_headers(., "X-Custom-Header"))}.
+\code{set_redactor(~ redact_headers(., "X-Custom-Header"))}.
 }
 \seealso{
 \code{\link[=capture_requests]{capture_requests()}}

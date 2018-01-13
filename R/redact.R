@@ -146,7 +146,7 @@ replace_in_fields <- function (x, FUN) {
 #' For example, `as.redactor(~ redact_headers(., "X-Custom-Header"))` is equivalent
 #' to `function (response) redact_headers(response, "X-Custom-Header")`. This
 #' allows you to do
-#' `capture_requests(redact = ~ redact_headers(., "X-Custom-Header"))`.
+#' `set_redactor(~ redact_headers(., "X-Custom-Header"))`.
 #' @param expr Partial expression to turn into a function of `response`
 #' @return A `function`.
 #' @rdname as-redactor
