@@ -26,38 +26,38 @@
 #'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'))
 #'     expect_no_request(rnorm(5))
 #' })
-#' @name expect-verb
+#' @name expect_verb
 #' @aliases expect_GET expect_POST expect_PUT expect_PATCH expect_DELETE expect_no_request
 #' @export
 expect_GET <- function (object, url="", ...) {
     expect_mock_request(object, "GET ", url)
 }
 
-#' @rdname expect-verb
+#' @rdname expect_verb
 #' @export
 expect_POST <- function (object, url="", ...) {
     expect_mock_request(object, "POST ", url, " ", ...)
 }
 
-#' @rdname expect-verb
+#' @rdname expect_verb
 #' @export
 expect_PATCH <- function (object, url="", ...) {
     expect_mock_request(object, "PATCH ", url, " ", ...)
 }
 
-#' @rdname expect-verb
+#' @rdname expect_verb
 #' @export
 expect_PUT <- function (object, url="", ...) {
     expect_mock_request(object, "PUT ", url, " ", ...)
 }
 
-#' @rdname expect-verb
+#' @rdname expect_verb
 #' @export
 expect_DELETE <- function (object, url="") {
     expect_mock_request(object, "DELETE ", url)
 }
 
-#' @rdname expect-verb
+#' @rdname expect_verb
 #' @export
 expect_no_request <- function (object, ...) {
     ## No request means no error/message thrown
