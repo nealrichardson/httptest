@@ -33,7 +33,7 @@ reference:
   - with_fake_http
 - title: Expectations
   contents:
-  - expect-verb
+  - expect_verb
   - expect_header
   - expect_json_equivalent
 - title: Mocking
