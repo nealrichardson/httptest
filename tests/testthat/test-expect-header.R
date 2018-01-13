@@ -1,7 +1,7 @@
 context("expect_header")
 
 public({
-    with_fake_HTTP({
+    with_fake_http({
         test_that("expect_header with fake HTTP", {
             expect_GET(expect_success(expect_header(GET("http://httpbin.org/",
                 config=add_headers(Accept="image/jpeg")),

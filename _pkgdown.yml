@@ -30,7 +30,7 @@ reference:
   contents:
   - with_mock_API
   - without_internet
-  - with_fake_HTTP
+  - with_fake_http
 - title: Expectations
   contents:
   - expect-verb

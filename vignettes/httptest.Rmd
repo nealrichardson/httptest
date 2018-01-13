@@ -236,10 +236,10 @@ elements: the request
 method (e.g. "GET"), the request URL, and the request body, if present. The verb-expectation functions,
 such as `expect_GET` and `expect_POST`, look for this shape.
 
-Here's a example of how `without_internet` can be used to assert that code that should not make network requests in fact does not. This is a simplified version of a test from the [httpcache](http://enpiar.com/r/httpcache) package, a library that implements a query cache for HTTP requests in R. The point of the query cache is that only the first time you make a certain GET request should it hit the remote API; subsequent requests should read from the cache and not make a request. The test first makes a request (artificially, using `with_fake_HTTP`, the third test context the package provides) to prime the cache.
+Here's a example of how `without_internet` can be used to assert that code that should not make network requests in fact does not. This is a simplified version of a test from the [httpcache](http://enpiar.com/r/httpcache) package, a library that implements a query cache for HTTP requests in R. The point of the query cache is that only the first time you make a certain GET request should it hit the remote API; subsequent requests should read from the cache and not make a request. The test first makes a request (artificially, using `with_fake_http`, the third test context the package provides) to prime the cache.
 
 ```r
-with_fake_HTTP({
+with_fake_http({
     test_that("Cache gets set on GET", {
         expect_length(cacheKeys(), 0)
         expect_GET(a <- GET("https://app.crunch.io/api/"),

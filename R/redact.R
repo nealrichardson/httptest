@@ -49,7 +49,7 @@ redact_from_header_list <- function (headers, to_redact=c()) {
 
 #' @rdname redact
 #' @export
-redact_HTTP_auth <- function (response) {
+redact_http_auth <- function (response) {
     if ("userpwd" %in% names(response$request$options)) {
         response$request$options$userpwd <- "REDACTED"
     }
@@ -169,7 +169,7 @@ as.redactor <- function (fmla) {
 #'
 #' `redact_cookies()` removes cookies from 'httr' `response` objects.
 #' `redact_headers()` lets you target selected request and response headers for
-#' redaction. `redact_HTTP_auth()` removes `username:password`-based HTTP auth
+#' redaction. `redact_http_auth()` removes `username:password`-based HTTP auth
 #' credentials. `redact_oauth()` removes the OAuth 'Token' object that 'httr'
 #' sticks in the request object. `redact_auth()` is a convenience wrapper around
 #' them for a useful default redactor in `capture_requests()`.
@@ -187,12 +187,12 @@ as.redactor <- function (fmla) {
 #' @return All redacting functions return a well-formed 'httr' `response`
 #' object.
 #' @name redact
-#' @aliases redact_auth redact_cookies redact_headers redact_HTTP_auth redact_oauth within_body_text
+#' @aliases redact_auth redact_cookies redact_headers redact_http_auth redact_oauth within_body_text
 #' @seealso `vignette("redacting", package="httptest")` for a detailed discussion of what these functions do and how to customize them. [gsub_response()] is another redactor.
 #' @export
 redact_auth <- chain_redactors(list(
     redact_cookies,
     ~ redact_headers(., c("Authorization", "Proxy-Authorization")),
-    redact_HTTP_auth,
+    redact_http_auth,
     redact_oauth
 ))

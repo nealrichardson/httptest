@@ -1,7 +1,7 @@
 context("Fake HTTP")
 
 public({
-    with_fake_HTTP({
+    with_fake_http({
         test_that("fakeGET", {
             expect_message(g <- GET("http://httpbin.org/get"),
                 "GET http://httpbin.org/get")

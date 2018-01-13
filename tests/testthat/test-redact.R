@@ -106,15 +106,15 @@ with_mock_API({
         expect_identical(loginb$cookies$value, "REDACTED")
     })
 
-    # redact_HTTP_auth from request
+    # redact_http_auth from request
     capture_while_mocking(simplify=FALSE, path=d, {
         pwauth <- GET("http://httpbin.org/basic-auth/user/passwd",
             authenticate("user", "passwd"))
     })
-    test_that("redact_HTTP_auth: the request has the user:pw set", {
+    test_that("redact_http_auth: the request has the user:pw set", {
         expect_identical(pwauth$request$options$userpwd, "user:passwd")
     })
-    test_that("redact_HTTP_auth removes user:pw from request in the mock file", {
+    test_that("redact_http_auth removes user:pw from request in the mock file", {
         expect_false(any(grepl("user:passwd",
             readLines(file.path(d, "httpbin.org", "basic-auth", "user", "passwd.R")))))
         expect_true(any(grepl("REDACTED",
@@ -214,7 +214,7 @@ with_mock_API({
     })
 })
 
-with_fake_HTTP({
+with_fake_http({
     test_that("gsub_request on non-JSON post fields", {
         expect_PUT(
             p <- PUT("http://httpbin.org/put",
