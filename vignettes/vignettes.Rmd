@@ -57,39 +57,13 @@ For a working example, see the `pivotaltrackR` vignette. It does a query, then c
 
 Because you're recording API responses for replay offline, there are a few additional considerations. First, you'll want to make sure not to expose your personal credentials or other private details in the cached API responses. `httptest` provides the ability to "redact" responses you record, and by default, all standard authentication methods are redacted from recorded responses.
 
-If there are other attributes of API responses that you want to modify, such as finding-and-replacing record ids with a shorter or obfuscated value, you can provide a custom redacting function. A good way to do this that works for both your test suite and your vignettes is to put your custom function in `inst/httptest/redact.R` in your package. Any time you record requests while your package is loaded, as when running tests or building vignettes, this function will be called on the `response` object before writing it to disk.
-
-For example, [here](https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/redact.R) is the one for `pivotaltrackR`:
-
-```r
-function (response) {
-    require(magrittr, quietly=TRUE)
-    response %>%
-        # Remove the auth token
-        redact_headers("X-TrackerToken") %>%
-        # Shorten the URL
-        gsub_response("https://www.pivotaltracker.com/services/v5/", "") %>%
-        # Remove my project ID
-        gsub_response(getOption("pivotal.project"), "123")
-}
-```
-
-See more about redacting in `vignette("redacting")`.
+If there are other attributes of API responses that you want to modify, such as finding-and-replacing record ids with a shorter or obfuscated value, you can provide a custom redacting function. A good way to do this that works for both your test suite and your vignettes is to put your custom function in `inst/httptest/redact.R` in your package. See more about redacting in `vignette("redacting")`.
 
 Second, depending on how long the URLs are in the API requests you make, you may need to programmatically shorten them if you're planning on submitting your package to CRAN because it requires file names to be 100 characters or less. Just as you can provide a custom function to modify responses that are recorded, you can provide a function to tweak the request being made in order to map the request to the right file in the mocked context. Importantly, this lets you truncate the URLs, which then map to files.
 
-To do this, similarly place a function in `inst/httptest/request.R`. Any time your package is loaded and you're reading mock (previously recorded) responses, this function will be called on the `request` object before mapping it to a file. For example, [here](https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/request.R) is the one from `pivotaltrackR`:
+To do this, similarly place a function in `inst/httptest/request.R`. Any time your package is loaded and you're reading mock (previously recorded) responses, this function will be called on the `request` object before mapping it to a file.
 
-```r
-function (request) {
-    require(magrittr, quietly=TRUE)
-    request %>%
-        gsub_request("https://www.pivotaltracker.com/services/v5/", "") %>%
-        gsub_request(getOption("pivotal.project"), "123")
-}
-```
-
-Alternatively, both of these functions (response redactor and request preprocessor) can be defined and set in your document's initial code chunk, using `set_redactor` and `set_requester`.
+Alternatively, both of these functions (response redactor and request preprocessor) can be defined and set in your document's initial code chunk, using `set_redactor` and `set_requester`, like this:
 
 ```r
 library(httptest)
