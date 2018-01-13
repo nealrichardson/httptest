@@ -25,7 +25,7 @@ you to assert that the correct requests were (or were not) made, but it
 doesn't cause the code to exit with an error.
 
 \code{httptest} offers additional \strong{expectations} to assert that HTTP requests
-were--or were not--made. \code{\link[=expect_GET]{expect_GET()}}, \code{\link[=expect_PUT]{expect_PUT()}}, \code{\link[=expect_PATCH]{expect_PATCH()}},
+were---or were not---made. \code{\link[=expect_GET]{expect_GET()}}, \code{\link[=expect_PUT]{expect_PUT()}}, \code{\link[=expect_PATCH]{expect_PATCH()}},
 \code{\link[=expect_POST]{expect_POST()}}, and \code{\link[=expect_DELETE]{expect_DELETE()}} assert that the specified HTTP request
 is made within one of the test contexts. They catch the error or message
 raised by the mocked HTTP service and check that the request URL and optional
@@ -36,12 +36,30 @@ request header. \code{\link[=expect_json_equivalent]{expect_json_equivalent()}} 
 generate equivalent JSON, taking into account how JSON objects are unordered
 whereas R named lists are ordered.
 
+For an overview of testing with \code{httptest}, see \code{vignette("httptest")}.
+
 The package also includes \code{\link[=capture_requests]{capture_requests()}}, a context that collects the
 responses from requests you make and stores them as mock files. This enables
 you to perform a series of requests against a live server once and then build
 your test suite using those mocks, running your tests in \code{with_mock_API}.
 
-Using these tools, you can test that code is making the intended requests and
-that it handles the expected responses correctly, all without depending on a
-connection to a remote API during the test run.
+When recording requests, by default \code{httptest} looks for and redacts the
+standard ways that auth credentials are passed in requests. This prevents you
+from accidentally publishing your personal tokens. The redacting behavior is
+fully customizable, either by providing a \code{function (response) {...}} to
+\code{set_redactor()}, or by placing a function in your package's
+\code{inst/httptest/redact.R} that will be used automatically any time you record
+requests with your package loaded. See \code{vignette("redacting")} for details.
+
+\code{httptest} also enables you to write package vignettes and other R Markdown
+documents that communicate with a remote API. By adding as little as
+\code{\link[=start_vignette]{start_vignette()}} to the beginning of your vignette, you can safely record
+API responses from a live session, using your secret credentials. These API
+responses are scrubbed of sensitive personal information and stored in a
+subfolder in your \code{vignettes} directory. Subsequent vignette builds,
+including on continuous-integration services, CRAN, and your package users'
+computers, use these recorded responses, allowing the document to regenerate
+without a network connection or API credentials. To record fresh API
+responses, delete the subfolder of cached responses and re-run. See
+\code{vignette("vignettes")} for more discussion and links to examples.
 }
