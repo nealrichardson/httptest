@@ -72,7 +72,7 @@ expect_mock_request <- function (object, ...) {
 
 ## Without internet, POST/PUT/PATCH throw errors with their request info
 ## With fake HTTP, POST/PUT/PATCH print messages with their request info.
-## with_fake_HTTP mocks request_happened to make it expect_message
+## with_fake_http mocks request_happened to make it expect_message
 #' @importFrom testthat expect_error expect_message
 request_happened <- function () {
     if (getOption("..httptest.request.errors", TRUE)) {

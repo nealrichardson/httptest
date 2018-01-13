@@ -23,7 +23,7 @@ requests.
 }
 \examples{
 library(httr)
-with_fake_HTTP({
+with_fake_http({
     expect_header(GET("http://example.com", config=add_headers(Accept="image/png")),
         "Accept: image/png")
 })

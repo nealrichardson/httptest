@@ -5,13 +5,13 @@ expect_redactor <- function (expr) {
 }
 
 test_that("prepare_redactor: function", {
-    expect_identical(prepare_redactor(redact_HTTP_auth), redact_HTTP_auth)
+    expect_identical(prepare_redactor(redact_http_auth), redact_http_auth)
 })
 
-multiredact <- list(redact_HTTP_auth, redact_cookies)
+multiredact <- list(redact_http_auth, redact_cookies)
 test_that("prepare_redactor: list/multiple", {
     expect_redactor(prepare_redactor(multiredact))
-    expect_identical(prepare_redactor(multiredact[1]), redact_HTTP_auth)
+    expect_identical(prepare_redactor(multiredact[1]), redact_http_auth)
 })
 
 test_that("prepare_redactor: NULL for no redacting", {

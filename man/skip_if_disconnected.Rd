@@ -21,7 +21,7 @@ Temporary connection trouble shouldn't fail your build.
 }
 \details{
 Note that if you call this from inside one of the mock contexts, it will
-follow the mock's behavior. That is, inside \code{\link[=with_fake_HTTP]{with_fake_HTTP()}},
+follow the mock's behavior. That is, inside \code{\link[=with_fake_http]{with_fake_http()}},
 the check will pass and the following tests will run, but inside
 \code{\link[=without_internet]{without_internet()}}, the following tests will be skipped.
 }

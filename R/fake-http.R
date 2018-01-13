@@ -17,7 +17,7 @@
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
 #' @examples
-#' with_fake_HTTP({
+#' with_fake_http({
 #'     expect_GET(req1 <- httr::GET("http://example.com"), "http://example.com")
 #'     req1$url
 #'     expect_POST(req2 <- httr::POST("http://example.com", body='{"a":1}'),
@@ -26,7 +26,7 @@
 #' })
 #' @export
 #' @importFrom testthat expect_message
-with_fake_HTTP <- function (expr) {
+with_fake_http <- function (expr) {
     old <- options(..httptest.request.errors=FALSE)
     mock_perform(fake_request)
     on.exit({
@@ -35,6 +35,10 @@ with_fake_HTTP <- function (expr) {
     })
     eval.parent(expr)
 }
+
+#' @rdname with_fake_http
+#' @export
+with_fake_HTTP <- with_fake_http
 
 #' Return something that looks enough like an httr 'response'
 #'
