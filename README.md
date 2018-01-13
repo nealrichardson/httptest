@@ -160,9 +160,9 @@ would make the request and record the response as a mock file. You could control
 
 ```r
 if (Sys.getenv("MOCK_BYPASS") == "true") {
-    with_mock_api <- force
+    with_mock_API <- force
 } else if (Sys.getenv("MOCK_BYPASS") == "capture") {
-    with_mock_api <- capture_requests
+    with_mock_API <- capture_requests
 }
 ```
 
