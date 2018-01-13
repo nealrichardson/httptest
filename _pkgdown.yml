@@ -42,7 +42,7 @@ reference:
   - redact
   - .mockPaths
   - buildMockURL
-  - fakeResponse
+  - fake_response
 - title: Other testing tools
   contents:
   - public

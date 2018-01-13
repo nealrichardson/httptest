@@ -14,6 +14,7 @@
 * `gsub_response()` is a new redactor that does regular-expression replacement (via `base::gsub()`) within a response's body text and URL.
 * `.mockPaths()` only keeps unique path values, consistent with `base::.libPaths()`.
 * Option `"httptest.verbose"` to govern some extra debug messaging (automatically turned off by `start_vignette()`)
+* Standardize exported functions on `snake_case` rather than `camelCase` to better align with `httr` and `testthat`.
 
 ### httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
@@ -47,7 +48,7 @@
 ## httptest 1.3.0
 * New context `capture_requests()` to collect the responses from real requests and store them as mock files
 * `with_trace()` convenience wrapper around `trace`/`untrace`
-* `mockDownload()` now processes request URLs as `mockRequest()` does
+* `mockDownload()` now processes request URLs as `mock_request()` does
 
 ## httptest 1.2.0
 * Add support in `with_mock_API()` for loading request fixtures for all HTTP verbs, not only GET ([#4](https://github.com/nealrichardson/httptest/pull/4)). Include request body in the mock file path hashing.

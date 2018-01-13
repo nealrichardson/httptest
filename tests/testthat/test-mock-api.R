@@ -147,10 +147,10 @@ test_that("buildMockURL returns file names that are valid on all R platforms", {
         "language.googleapis.com/v1/documents-annotateText.json")
 })
 
-test_that("mockRequest code paths are covered (outside of trace)", {
-    expect_is(mockRequest(list(method="GET", url="api/")),
+test_that("mock_request code paths are covered (outside of trace)", {
+    expect_is(mock_request(list(method="GET", url="api/")),
         "response")
-    expect_is(mockRequest(list(method="GET", url="http://example.com/html")),
+    expect_is(mock_request(list(method="GET", url="http://example.com/html")),
         "response")
-    expect_error(mockRequest(list(method="PUT", url="api/")))
+    expect_error(mock_request(list(method="PUT", url="api/")))
 })
