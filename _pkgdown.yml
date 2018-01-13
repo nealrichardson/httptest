@@ -16,6 +16,8 @@ navbar:
       href: articles/httptest.html
     - text: Redacting Sensitive Information
       href: articles/redacting.html
+    - text: Using with Vignettes
+      href: articles/vignettes.html
     - text: FAQ
       href: index.html#faq
   - text: News
@@ -28,21 +30,33 @@ navbar:
 reference:
 - title: Contexts
   contents:
-  - with_mock_API
+  - with_mock_api
+  - use_mock_api
   - without_internet
+  - block_requests
   - with_fake_http
+  - stop_mocking
 - title: Expectations
   contents:
   - expect_verb
   - expect_header
   - expect_json_equivalent
-- title: Mocking
+- title: Recording and redacting responses
   contents:
   - capture_requests
   - redact
+  - gsub_response
+  - set_redactor
+- title: Loading mock (recorded) fixtures
+  contents:
   - .mockPaths
-  - buildMockURL
+  - set_requester
+  - build_mock_url
   - fake_response
+- title: Vignettes
+  contents:
+  - start_vignette
+  - change_state
 - title: Other testing tools
   contents:
   - public

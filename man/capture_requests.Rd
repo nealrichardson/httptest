@@ -4,7 +4,7 @@
 \alias{capture_requests}
 \alias{start_capturing}
 \alias{stop_capturing}
-\title{Collect API Responses as Mock Files}
+\title{Record API responses as mock files}
 \usage{
 capture_requests(expr, path, ...)
 
@@ -44,7 +44,7 @@ it is called for its side effects.
 \code{capture_requests} is a context that collects the responses from requests
 you make and stores them as mock files. This enables you to perform a series
 of requests against a live server once and then build your test suite using
-those mocks, running your tests in \code{\link[=with_mock_API]{with_mock_API()}}.
+those mocks, running your tests in \code{\link[=with_mock_api]{with_mock_api()}}.
 }
 \details{
 \code{start_capturing} and \code{stop_capturing} allow you to turn on/off request

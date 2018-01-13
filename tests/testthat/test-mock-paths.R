@@ -12,7 +12,7 @@ public({
         expect_identical(.mockPaths(), ".")
     })
 
-    with_mock_API({
+    with_mock_api({
         test_that("GET with no query, default mock path", {
             b <- GET("api/object1/")
             expect_identical(content(b), list(object=TRUE))

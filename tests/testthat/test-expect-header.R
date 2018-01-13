@@ -18,7 +18,7 @@ public({
         })
     })
 
-    with_mock_API({
+    with_mock_api({
         test_that("expect_header with mock API", {
             expect_success(expect_header(GET("api/object1/",
                 config=add_headers(Accept="image/jpeg")),

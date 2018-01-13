@@ -25,3 +25,4 @@ The result of \code{expr}
 \description{
 Wrapper around 'trace' to untrace when finished
 }
+\keyword{internal}

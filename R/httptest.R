@@ -5,7 +5,7 @@
 #'
 #' The `httptest` package lets you test R code that wraps an API without
 #' requiring access to the remote service. It provides three test **contexts**
-#' that mock the network connection in different ways. [with_mock_API()] lets
+#' that mock the network connection in different ways. [with_mock_api()] lets
 #' you provide custom fixtures as responses to requests, stored as plain-text
 #' files in your test directory. [without_internet()] converts HTTP requests
 #' into errors that print the request method, URL, and body payload, if
@@ -34,7 +34,7 @@
 #' The package also includes [capture_requests()], a context that collects the
 #' responses from requests you make and stores them as mock files. This enables
 #' you to perform a series of requests against a live server once and then build
-#' your test suite using those mocks, running your tests in `with_mock_API`.
+#' your test suite using those mocks, running your tests in `with_mock_api`.
 #'
 #' When recording requests, by default `httptest` looks for and redacts the
 #' standard ways that auth credentials are passed in requests. This prevents you

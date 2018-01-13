@@ -2,7 +2,7 @@
 % Please edit documentation in R/mock-paths.R
 \name{.mockPaths}
 \alias{.mockPaths}
-\title{Set an alternate directory or directories for mock API fixtures}
+\title{Set an alternate directory for mock API fixtures}
 \usage{
 .mockPaths(new)
 }
@@ -16,7 +16,7 @@ a character vector. If \code{new} is provided, the updated value will be returne
 invisibly.
 }
 \description{
-By default, \code{with_mock_API} will look for mocks relative to the current
+By default, \code{with_mock_api} will look for mocks relative to the current
 working directory (the test directory). If you want to look in other places,
 you can call \code{.mockPaths} to add directories to the search path.
 }

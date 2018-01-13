@@ -23,7 +23,7 @@ library(httptest)
 start_vignette("vignette-name")
 ```
 
-changing `vignette-name` to something meaningful, such as the name of your `.Rmd` file. `start_vignette()` works by checking for the existence of a directory with the name you provided. If no directory exists, the vignette proceeds making real API requests and records the responses as fixtures inside the `vignette-name` directory (that is, it calls `start_capturing()`). If the directory does exists, great---you've previously recorded API responses, so it uses them, loading them with the same `use_mock_API()` mode you can use in your test suite.
+changing `vignette-name` to something meaningful, such as the name of your `.Rmd` file. `start_vignette()` works by checking for the existence of a directory with the name you provided. If no directory exists, the vignette proceeds making real API requests and records the responses as fixtures inside the `vignette-name` directory (that is, it calls `start_capturing()`). If the directory does exists, great---you've previously recorded API responses, so it uses them, loading them with the same `use_mock_api()` mode you can use in your test suite.
 
 Curious about how these recording and mocking contexts work? See `vignettes("httptest")` for an overview; it's focused on testing rather than vignettes, but the mechanics are the same.
 
@@ -68,15 +68,17 @@ Alternatively, both of these functions (response redactor and request preprocess
 ```r
 library(httptest)
 library(magrittr)
+
+api_root <- "https://www.pivotaltracker.com/services/v5/"
 set_redactor(function (response) {
     response %>%
         redact_headers("X-TrackerToken") %>%
-        gsub_response("https://www.pivotaltracker.com/services/v5/", "") %>%
+        gsub_response(api_root, "", fixed=TRUE) %>%
         gsub_response(getOption("pivotal.project"), "123")
 })
 set_requester(function (request) {
     request %>%
-        gsub_request("https://www.pivotaltracker.com/services/v5/", "") %>%
+        gsub_request(api_root, "", fixed=TRUE) %>%
         gsub_request(getOption("pivotal.project"), "123")
 })
 start_vignette("stories")

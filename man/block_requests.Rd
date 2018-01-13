@@ -20,5 +20,5 @@ call \code{\link[=stop_mocking]{stop_mocking()}} yourself---this function does n
 as 'without_internet` does.
 }
 \seealso{
-\code{\link[=without_internet]{without_internet()}} \code{\link[=stop_mocking]{stop_mocking()}} \code{\link[=use_mock_API]{use_mock_API()}}
+\code{\link[=without_internet]{without_internet()}} \code{\link[=stop_mocking]{stop_mocking()}} \code{\link[=use_mock_api]{use_mock_api()}}
 }

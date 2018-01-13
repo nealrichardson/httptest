@@ -1,6 +1,6 @@
-#' Set an alternate directory or directories for mock API fixtures
+#' Set an alternate directory for mock API fixtures
 #'
-#' By default, `with_mock_API` will look for mocks relative to the current
+#' By default, `with_mock_api` will look for mocks relative to the current
 #' working directory (the test directory). If you want to look in other places,
 #' you can call `.mockPaths` to add directories to the search path.
 #'

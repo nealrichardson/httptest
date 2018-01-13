@@ -20,3 +20,4 @@ The character file name that was written out
 \description{
 Write out a captured response
 }
+\keyword{internal}

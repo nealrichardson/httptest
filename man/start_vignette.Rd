@@ -40,7 +40,7 @@ mocks will be used. To record fresh responses from the server, delete the
 vignette runs.
 }
 \seealso{
-\code{\link[=start_capturing]{start_capturing()}} for how requests are recorded; \code{\link[=use_mock_API]{use_mock_API()}}
+\code{\link[=start_capturing]{start_capturing()}} for how requests are recorded; \code{\link[=use_mock_api]{use_mock_api()}}
 for how previously recorded requests are loaded; \code{\link[=change_state]{change_state()}} for how to
 handle recorded requests when the server state is changing;
 \code{vignette("vignettes", package="httptest")} for an overview of all

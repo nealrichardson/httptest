@@ -8,7 +8,7 @@
 #'
 #' Requests are translated to mock file paths according to several rules that
 #' incorporate the request method, URL, query parameters, and body. See
-#' [buildMockURL()] for details.
+#' [build_mock_url()] for details.
 #'
 #' File paths for API fixture files may be relative to the 'tests/testthat'
 #' directory, i.e. relative to the .R test files themselves. This is the default
@@ -17,27 +17,31 @@
 #'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
-#' @seealso [use_mock_API()] to enable mocking on its own (not in a context); [buildMockURL()]; [.mockPaths()]
+#' @seealso [use_mock_api()] to enable mocking on its own (not in a context); [build_mock_url()]; [.mockPaths()]
 #' @export
-with_mock_API <- function (expr) {
-    use_mock_API()
+with_mock_api <- function (expr) {
+    use_mock_api()
     on.exit(stop_mocking())
     eval.parent(expr)
 }
 
+#' @rdname with_mock_api
+#' @export
+with_mock_API <- with_mock_api
+
 #' Turn on API mocking
 #'
 #' This function intercepts HTTP requests made through `httr` and serves mock
-#' file responses instead. It is what [with_mock_API()] does, minus the
+#' file responses instead. It is what [with_mock_api()] does, minus the
 #' automatic disabling of mocking when the context finishes.
 #'
 #' Note that you in order to resume normal request behavior, you will need to
 #' call [stop_mocking()] yourself---this function does not clean up after itself
-#' as 'with_mock_API` does.
+#' as 'with_mock_api` does.
 #' @return Nothing; called for its side effects.
-#' @seealso [with_mock_API()] [stop_mocking()] [block_requests()]
+#' @seealso [with_mock_api()] [stop_mocking()] [block_requests()]
 #' @export
-use_mock_API <- function () mock_perform(mock_request)
+use_mock_api <- function () mock_perform(mock_request)
 
 mock_request <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
@@ -81,11 +85,11 @@ mock_request <- function (req, handle, refresh) {
 #'
 #' The extension also gives information on content type. Two extensions are
 #' currently supported: (1) .json and (2) .R. JSON mocks can be stored in .json
-#' files, and when they are loaded by [with_mock_API()], relevant request
+#' files, and when they are loaded by [with_mock_api()], relevant request
 #' metadata (headers, status code, etc.) are inferred. If your API doesn't
 #' return JSON, or if you want to simulate requests with other behavior (201
 #' Location response, or 400 Bad Request, for example), you can store full
-#' `response` objects in .R files that `with_mock_API` will `source` to load.
+#' `response` objects in .R files that `with_mock_api` will `source` to load.
 #' Any request can be stored as a .R mock, but the .json mocks offer a
 #' simplified, more readable alternative. ([capture_requests()] will record
 #' simplified .json files where appropriate and .R mocks otherwise by default.)
@@ -100,14 +104,14 @@ mock_request <- function (req, handle, refresh) {
 #'
 #' This function is exported so that other packages can construct similar mock
 #' behaviors or override specific requests at a higher level than
-#' `with_mock_API` mocks.
+#' `with_mock_api` mocks.
 #' @param req A `request` object, or a character "URL" to convert
 #' @param method character HTTP method. If `req` is a 'request' object,
 #' its request method will override this argument
 #' @return A file path and name, with .json extension. The file may or may not
 #' exist: existence is not a concern of this function.
 #' @importFrom digest digest
-#' @seealso [with_mock_API()] [capture_requests()]
+#' @seealso [with_mock_api()] [capture_requests()]
 #' @export
 build_mock_url <- function (req, method="GET") {
     if (is.character(req)) {

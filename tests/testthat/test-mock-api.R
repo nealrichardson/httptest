@@ -1,7 +1,7 @@
 context("Mock API")
 
 public({
-    with_mock_API({
+    with_mock_api({
         test_that("Can load an object and file extension is added", {
             a <- GET("api/")
             expect_identical(content(a), list(value="api/object1/"))
@@ -119,31 +119,31 @@ public({
     })
 })
 
-test_that("buildMockURL file path construction with character URL", {
+test_that("build_mock_url file path construction with character URL", {
     # GET (default) method
-    file <- buildMockURL("http://www.test.com/api/call")
+    file <- build_mock_url("http://www.test.com/api/call")
     expect <- "www.test.com/api/call.json"
     expect_identical(file, expect, label = "Get method without query string")
 
     # GET method with query in URL
-    file <- buildMockURL("http://www.test.com/api/call?q=1")
+    file <- build_mock_url("http://www.test.com/api/call?q=1")
     expect <- "www.test.com/api/call-a3679d.json"
     expect_identical(file, expect, label = "Get method with query string")
 
     # POST method
-    file <- buildMockURL("http://www.test.com/api/call", method = "POST")
+    file <- build_mock_url("http://www.test.com/api/call", method = "POST")
     expect <- "www.test.com/api/call-POST.json"
     expect_identical(file, expect, "POST method without query string")
 
     # POST method with query in URL
-    file <- buildMockURL("http://www.test.com/api/call?q=1", method = "POST")
+    file <- build_mock_url("http://www.test.com/api/call?q=1", method = "POST")
     expect <- "www.test.com/api/call-a3679d-POST.json"
     expect_identical(file, expect, "POST method with query string")
 })
 
-test_that("buildMockURL returns file names that are valid on all R platforms", {
+test_that("build_mock_url returns file names that are valid on all R platforms", {
     u <- "https://language.googleapis.com/v1/documents:annotateText/"
-    expect_identical(buildMockURL(u),
+    expect_identical(build_mock_url(u),
         "language.googleapis.com/v1/documents-annotateText.json")
 })
 

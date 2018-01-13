@@ -3,7 +3,7 @@
 \name{with_fake_http}
 \alias{with_fake_http}
 \alias{with_fake_HTTP}
-\title{Make all HTTP requests return a fake 'response' object}
+\title{Make all HTTP requests return a fake response}
 \usage{
 with_fake_http(expr)
 

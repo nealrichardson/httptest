@@ -2,7 +2,7 @@ context("Redaction")
 
 d <- tempfile()
 
-with_mock_API({
+with_mock_api({
     # redact_headers (in redact_auth)
     capture_while_mocking(simplify=FALSE, path=d, {
         a <- GET("api/", add_headers(`Authorization`="Bearer token"))

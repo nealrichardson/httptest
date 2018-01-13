@@ -56,7 +56,7 @@ test_that("We can then load the mocks it stores", {
         content_r7 <- content(r7)
         file.remove(webp_file)
 
-        with_mock_API({
+        with_mock_api({
             m1 <- GET("http://httpbin.org/get")
             m2 <- GET("http://httpbin.org")
             m3 <- GET("http://httpbin.org/status/418")
@@ -78,7 +78,7 @@ test_that("We can then load the mocks it stores", {
     expect_identical(content(m7), content_r7)
 })
 
-with_mock_API({
+with_mock_api({
     test_that("Recording requests even with the mock API", {
         skip_on_cran() ## They have a broken R-devel build that chokes on these
         d2 <- tempfile()

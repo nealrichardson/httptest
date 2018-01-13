@@ -1,9 +1,9 @@
-#' Collect API Responses as Mock Files
+#' Record API responses as mock files
 #'
 #' `capture_requests` is a context that collects the responses from requests
 #' you make and stores them as mock files. This enables you to perform a series
 #' of requests against a live server once and then build your test suite using
-#' those mocks, running your tests in [with_mock_API()].
+#' those mocks, running your tests in [with_mock_api()].
 #'
 #' `start_capturing` and `stop_capturing` allow you to turn on/off request
 #' recording for more convenient use in an interactive session.
@@ -106,6 +106,7 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
 #' a .R file using [base::dput()].
 #' @return The character file name that was written out
 #' @export
+#' @keywords internal
 save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
     filename <- file.path(.mockPaths()[1], buildMockURL(response$request))

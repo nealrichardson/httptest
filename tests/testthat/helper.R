@@ -10,7 +10,7 @@ capture_while_mocking <- function (..., path) {
         tracer <- quote({
             .mockPaths <- function () getOption("httptest.mock.paths")[-1]
         })
-        with_trace("find_mock_file", where=with_mock_API, tracer=tracer,
+        with_trace("find_mock_file", where=with_mock_api, tracer=tracer,
             expr=capture_requests(...))
     })
 }

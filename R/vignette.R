@@ -24,7 +24,7 @@
 #' @return Nothing; called for its side effect of starting/ending
 #' response recording or mocking.
 #' @export
-#' @seealso [start_capturing()] for how requests are recorded; [use_mock_API()]
+#' @seealso [start_capturing()] for how requests are recorded; [use_mock_api()]
 #' for how previously recorded requests are loaded; [change_state()] for how to
 #' handle recorded requests when the server state is changing;
 #' `vignette("vignettes", package="httptest")` for an overview of all
@@ -39,7 +39,7 @@ start_vignette <- function (path, ...) {
     .mockPaths(file.path(path, "0"))
     if (dir.exists(path)) {
         ## We already have recorded, so use the fixtures
-        use_mock_API()
+        use_mock_api()
     } else {
         ## Record!
         start_capturing(...)

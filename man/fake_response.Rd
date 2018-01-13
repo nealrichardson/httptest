@@ -3,7 +3,7 @@
 \name{fake_response}
 \alias{fake_response}
 \alias{fakeResponse}
-\title{Return something that looks enough like an httr 'response'}
+\title{Return something that looks like an httr 'response'}
 \usage{
 fake_response(request, verb = "GET", status_code = 200, headers = list(),
   content = NULL)
@@ -14,10 +14,10 @@ fakeResponse(request, verb = "GET", status_code = 200, headers = list(),
 \arguments{
 \item{request}{An 'httr' \code{request}-class object. A character URL is also
 accepted, for which a fake request object will be created, using the \code{verb}
-argument as well. This behavior is deprecated.}
+argument as well.}
 
-\item{verb}{Character name for the HTTP verb. Default is "GET". This argument
-is deprecated; instead you should pass in a \code{request}}
+\item{verb}{Character name for the HTTP verb, if \code{request} is a URL. Default
+is "GET".}
 
 \item{status_code}{Integer HTTP response status}
 
