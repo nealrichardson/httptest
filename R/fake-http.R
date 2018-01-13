@@ -28,7 +28,7 @@
 #' @importFrom testthat expect_message
 with_fake_HTTP <- function (expr) {
     old <- options(..httptest.request.errors=FALSE)
-    mock_perform(fakeRequest)
+    mock_perform(fake_request)
     on.exit({
         do.call(options, old)
         stop_mocking()
@@ -58,10 +58,9 @@ with_fake_HTTP <- function (expr) {
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
-fakeResponse <- function (request, verb="GET", status_code=200, headers=list(), content=NULL) {
+fake_response <- function (request, verb="GET", status_code=200, headers=list(), content=NULL) {
     if (is.character(request)) {
-        ## To-be-deprecated behavior of passing in a URL. Fake a request.
-        ## TODO: give deprecation warning
+        ## To-be-deprecated(?) behavior of passing in a URL. Fake a request.
         request <- structure(list(method=verb, url=request), class="request")
     }
     ## TODO: if the request says `write_disk`, should we copy the mock file to
@@ -93,15 +92,19 @@ fakeResponse <- function (request, verb="GET", status_code=200, headers=list(), 
     ), class="response")
 }
 
-fakeRequest <- function (req, handle, refresh) {
+#' @rdname fake_response
+#' @export
+fakeResponse <- fake_response
+
+fake_request <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
-    body <- requestBody(req)
+    body <- request_body(req)
     headers <- list(`Content-Type`="application/json") ## TODO: don't assume content-type
     status_code <- ifelse(is.null(body) && req$method != "GET", 204, 200)
     if (!is.null(body)) {
         out <- paste(out, body)
     }
     message(out)
-    return(fakeResponse(req, content=body, status_code=status_code,
+    return(fake_response(req, content=body, status_code=status_code,
         headers=headers))
 }

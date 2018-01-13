@@ -39,16 +39,16 @@ without_internet <- function (expr) {
 #' @return Nothing; called for its side effects.
 #' @seealso [without_internet()] [stop_mocking()] [use_mock_API()]
 #' @export
-block_requests <- function () mock_perform(stopRequest)
+block_requests <- function () mock_perform(stop_request)
 
-stopRequest <- function (req, handle, refresh) {
+stop_request <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
-    body <- requestBody(req)
+    body <- request_body(req)
     if (!is.null(body)) {
         out <- paste(out, body)
     }
     if (!is.null(req$mockfile)) {
-        ## Poked in here by mockRequest for ease of debugging
+        ## Poked in here by mock_request for ease of debugging
         ## Append it to the end.
         out <- paste0(out, " (", req$mockfile, ")")
     }

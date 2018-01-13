@@ -22,7 +22,7 @@ redact_cookies <- function (response) {
     response <- redact_headers(response, "Set-Cookie")
     if (!is.null(response$cookies) && nrow(response$cookies)) {
         ## is.null check is for reading mocks.
-        ## possible TODO: add $cookies to fakeResponse, then !is.null isn't needed
+        ## possible TODO: add $cookies to fake_response, then !is.null isn't needed
         response$cookies$value <- "REDACTED"
     }
     return(response)

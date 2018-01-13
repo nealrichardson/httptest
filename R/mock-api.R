@@ -37,14 +37,14 @@ with_mock_API <- function (expr) {
 #' @return Nothing; called for its side effects.
 #' @seealso [with_mock_API()] [stop_mocking()] [block_requests()]
 #' @export
-use_mock_API <- function () mock_perform(mockRequest)
+use_mock_API <- function () mock_perform(mock_request)
 
-mockRequest <- function (req, handle, refresh) {
+mock_request <- function (req, handle, refresh) {
     ## If there's a query, then req$url has been through build_url(parse_url())
     ## and if it's a file and not URL, it has grown a ":///" prefix. Prune that.
     req$url <- sub("^:///", "", req$url)
     f <- buildMockURL(get_current_requester()(req))
-    mockfile <- findMockFile(f)
+    mockfile <- find_mock_file(f)
     if (!is.null(mockfile)) {
         if (grepl("\\.R$", mockfile)) {
             ## It's a full "response". Source it.
@@ -53,7 +53,7 @@ mockRequest <- function (req, handle, refresh) {
             ## TODO: don't assume content-type
             headers <- list(`Content-Type`="application/json")
             cont <- readBin(mockfile, "raw", n=file.size(mockfile))
-            resp <- fakeResponse(req, content=cont, status_code=200L,
+            resp <- fake_response(req, content=cont, status_code=200L,
                 headers=headers)
             return(resp)
         }
@@ -62,7 +62,7 @@ mockRequest <- function (req, handle, refresh) {
     ## For ease of debugging if a file isn't found, include it in the
     ## error that gets printed.
     req$mockfile <- f
-    return(stopRequest(req))
+    return(stop_request(req))
 }
 
 #' Convert a request to a mock file path
@@ -109,7 +109,7 @@ mockRequest <- function (req, handle, refresh) {
 #' @importFrom digest digest
 #' @seealso [with_mock_API()] [capture_requests()]
 #' @export
-buildMockURL <- function (req, method="GET") {
+build_mock_url <- function (req, method="GET") {
     if (is.character(req)) {
         ## A URL/file download
         url <- req
@@ -117,7 +117,7 @@ buildMockURL <- function (req, method="GET") {
     } else {
         url <- req$url
         method <- req$method
-        body <- requestBody(req)
+        body <- request_body(req)
     }
 
     ## Remove protocol
@@ -148,7 +148,11 @@ buildMockURL <- function (req, method="GET") {
     return(f)
 }
 
-findMockFile <- function (file) {
+#' @rdname build_mock_url
+#' @export
+buildMockURL <- build_mock_url
+
+find_mock_file <- function (file) {
     ## Go through .mockPaths() to find the local mockfile location.
     ## Return NULL if none found.
     for (path in .mockPaths()) {
@@ -166,8 +170,11 @@ findMockFile <- function (file) {
     return(NULL)
 }
 
-requestBody <- function (req) {
-    ## requestBody returns a string if the request has a body, NULL otherwise
+## TODO: remove
+findMockFile <- find_mock_file
+
+request_body <- function (req) {
+    ## request_body returns a string if the request has a body, NULL otherwise
     b <- request_postfields(req)
     if (is.null(b)) {
         b <- req$fields
