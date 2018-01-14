@@ -30,7 +30,9 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
+    spelling,
     xml2
+Language: en-US
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

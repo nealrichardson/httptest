@@ -1,4 +1,4 @@
-#' Expecations for mocked HTTP requests
+#' Expectations for mocked HTTP requests
 #'
 #' The mock contexts in `httptest` can raise errors or messages when requests
 #' are made, and those (error) messages have three

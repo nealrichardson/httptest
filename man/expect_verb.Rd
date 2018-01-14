@@ -13,7 +13,7 @@
 \alias{expect_PUT}
 \alias{expect_DELETE}
 \alias{expect_no_request}
-\title{Expecations for mocked HTTP requests}
+\title{Expectations for mocked HTTP requests}
 \usage{
 expect_GET(object, url = "", ...)
 

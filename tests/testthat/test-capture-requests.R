@@ -78,6 +78,7 @@ test_that("We can then load the mocks it stores", {
 })
 
 test_that("write_disk mocks can be reloaded even if the mock directory moves", {
+    skip_if_disconnected()
     ## This is an edge case caught because `crunch` package puts fixtures in
     ## `inst/`, so you record to one place but when you read them from the
     ## installed package, it's a different directory.
