@@ -67,7 +67,10 @@ To illustrate, here's a recording of a GET on the `stories/` endpoint. We can se
 ```r
 library(httptest)
 library(pivotaltrackR)
-options(pivotal.project="my-project-name", pivotal.token="8fe3452ac4e3")
+options(
+    pivotal.project="my-project-name",
+    pivotal.token="8fe3452ac4e3"
+)
 
 set_redactor(~ redact_headers(., "X-TrackerToken"))
 capture_requests(simplify=FALSE, {

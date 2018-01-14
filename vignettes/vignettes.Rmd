@@ -18,10 +18,10 @@ This vignette shows you how. To see an example in the wild, see `pivotaltrackR` 
 
 Getting started is easy. At the beginning of your R Markdown document, add this code chunk:
 
-`r ''````{r, include=FALSE}
-library(httptest)
-start_vignette("vignette-name")
-```
+    `​``{r, include=FALSE}
+    library(httptest)
+    start_vignette("vignette-name")
+    ```
 
 changing `vignette-name` to something meaningful, such as the name of your `.Rmd` file. `start_vignette()` works by checking for the existence of a directory with the name you provided. If no directory exists, the vignette proceeds making real API requests and records the responses as fixtures inside the `vignette-name` directory (that is, it calls `start_capturing()`). If the directory does exists, great---you've previously recorded API responses, so it uses them, loading them with the same `use_mock_api()` mode you can use in your test suite.
 
@@ -29,9 +29,9 @@ Curious about how these recording and mocking contexts work? See `vignettes("htt
 
 That's about it! It is a good idea to add an `end_vignette()` at the end of the document, like
 
-`r ''````{r, include=FALSE}
-end_vignette()
-```
+    `​``{r, include=FALSE}
+    end_vignette()
+    ```
 
 This turns off the request recording or mocking and cleans up the R session state. It's not necessary if you build each vignette in a clean R process and quit on completion (everything is cleaned up when R exits), but having the `end_vignette()` call is good in case you build your documents in an interactive session.
 
@@ -45,9 +45,9 @@ Sometimes, though, the purpose of your code is to alter server state: you are cr
 
 `httptest` can handle this scenario too. Before any code chunk that will alter server state, just call `change_state()`:
 
-`r ''````{r, include=FALSE}
-change_state()
-```
+    `​``{r, include=FALSE}
+    change_state()
+    ```
 
 When recording, this adds a new "layer" of recorded responses, and when reading previously recorded responses, it changes to the next layer.  
 
