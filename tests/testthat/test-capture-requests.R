@@ -30,7 +30,6 @@ test_that("We can record a series of requests (a few ways)", {
           "httpbin.org/response-headers-ac4928.json",
           "httpbin.org/status/418.R" ## Not 200 response, so .R
           ))
-
     ## Test the contents of the .R files
     teapot <- source(file.path(d, "httpbin.org/status/418.R"))$value
     expect_is(teapot, "response")
@@ -42,20 +41,20 @@ test_that("We can record a series of requests (a few ways)", {
     expect_true(any(grepl("</body>", readLines(file.path(d, "httpbin.org.R")))))
 })
 
+## Because the place we wrote out the file in our real request might not
+## naturally be in our mock directory, assume that that file doesn't exist
+## when we load our mocks.
+content_r6 <- content(r6)
+file.remove(dl_file)
+content_r7 <- content(r7)
+file.remove(webp_file)
+
 test_that("We can then load the mocks it stores", {
     skip_if_disconnected()
     ## Look for mocks in our temp dir
     with_mock_path(d, {
         mock_dl_file <- tempfile()
         mock_webp_file <- tempfile()
-        ## Because the place we wrote out the file in our real request might not
-        ## naturally be in our mock directory, assume that that file doesn't exist
-        ## when we load our mocks.
-        content_r6 <- content(r6)
-        file.remove(dl_file)
-        content_r7 <- content(r7)
-        file.remove(webp_file)
-
         with_mock_api({
             m1 <- GET("http://httpbin.org/get")
             m2 <- GET("http://httpbin.org")
@@ -76,6 +75,24 @@ test_that("We can then load the mocks it stores", {
     expect_identical(content(m5), content(r5))
     expect_identical(content(m6), content_r6)
     expect_identical(content(m7), content_r7)
+})
+
+test_that("write_disk mocks can be reloaded even if the mock directory moves", {
+    ## This is an edge case caught because `crunch` package puts fixtures in
+    ## `inst/`, so you record to one place but when you read them from the
+    ## installed package, it's a different directory.
+    d2 <- tempfile()
+    dir.create(file.path(d2, "httpbin.org", "image"), recursive=TRUE)
+    for (f in c("httpbin.org/image/webp.R", "httpbin.org/image/webp.R-FILE")) {
+        file.rename(file.path(d, f), file.path(d2, f))
+    }
+    with_mock_path(d2, {
+        with_mock_api({
+            m7b <- GET("http://httpbin.org/image/webp",
+                config=write_disk(tempfile()))
+        })
+    })
+    expect_identical(content(m7b), content_r7)
 })
 
 with_mock_api({

@@ -15,6 +15,7 @@
 * `gsub_response()` is a new redactor that does regular-expression replacement (via `base::gsub()`) within a response's body text and URL.
 * `.mockPaths()` only keeps unique path values, consistent with `base::.libPaths()`.
 * Option `"httptest.verbose"` to govern some extra debug messaging (automatically turned off by `start_vignette()`)
+* Fix a bug where `write_disk` responses that were recorded in one location and moved to another directory could not be loaded
 
 ### httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
