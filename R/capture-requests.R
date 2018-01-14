@@ -109,7 +109,8 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
 #' @keywords internal
 save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
-    filename <- file.path(.mockPaths()[1], buildMockURL(response$request))
+    mapped_file <- buildMockURL(response$request)
+    filename <- file.path(.mockPaths()[1], mapped_file)
     dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
 
     ## Omit curl handle C pointer, which doesn't serialize meaningfully
@@ -127,6 +128,7 @@ save_response <- function (response, simplify=TRUE) {
 
         ## Change the file extension to .R
         filename <- sub("json$", "R", filename)
+        mapped_file <- sub("json$", "R", mapped_file)
 
         ## If content is text, rawToChar it and dput it as charToRaw(that)
         ## so that it loads correctly but is also readable
@@ -148,7 +150,9 @@ save_response <- function (response, simplify=TRUE) {
             ## negates the "download" behavior for the recorded response.
             downloaded_file <- paste0(filename, "-FILE")
             file.copy(response$content, downloaded_file)
-            response$content <- structure(downloaded_file, class="path")
+            mapped_file <- paste0(mapped_file, "-FILE")
+            response$content <- substitute(structure(find_mock_file(mapped_file),
+                class="path"))
         }
         dput(response, file=filename)
     }
