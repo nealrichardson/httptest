@@ -41,18 +41,18 @@ test_that("We can record a series of requests (a few ways)", {
     expect_true(any(grepl("</body>", readLines(file.path(d, "httpbin.org.R")))))
 })
 
-## Because the place we wrote out the file in our real request might not
-## naturally be in our mock directory, assume that that file doesn't exist
-## when we load our mocks.
-content_r6 <- content(r6)
-file.remove(dl_file)
-content_r7 <- content(r7)
-file.remove(webp_file)
-
 test_that("We can then load the mocks it stores", {
     skip_if_disconnected()
     ## Look for mocks in our temp dir
     with_mock_path(d, {
+        ## Because the place we wrote out the file in our real request might not
+        ## naturally be in our mock directory, assume that that file doesn't exist
+        ## when we load our mocks.
+        content_r6 <<- content(r6)
+        file.remove(dl_file)
+        content_r7 <<- content(r7)
+        file.remove(webp_file)
+
         mock_dl_file <- tempfile()
         mock_webp_file <- tempfile()
         with_mock_api({
