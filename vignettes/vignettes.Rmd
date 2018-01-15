@@ -12,7 +12,7 @@ Package vignettes (like this!) are a valuable way to show how to use your code. 
 
 `httptest` solves these problems. By adding as little as one line of code to your vignette, you can safely record API responses from a live session, using your secret credentials. These API responses are scrubbed of sensitive personal information and stored in a subfolder in your `vignettes` directory. Subsequent vignette builds, including on continuous-integration services, CRAN, and your package users' computers, use these recorded responses, allowing the document to regenerate without a network connection or API credentials. To record fresh API responses, delete the subfolder of cached responses and re-run.
 
-This vignette shows you how. To see an example in the wild, see `pivotaltrackR` (result, [source](https://github.com/nealrichardson/pivotaltrackR/blob/master/vignettes/pivotaltrackR.Rmd)). While this discussion is focused on package vignettes, the same behavior should work in any R Markdown document.
+This vignette shows you how. To see an example in the wild, see the [introduction vignette to `pivotaltrackR`](http://enpiar.com/r/pivotaltrackR/articles/pivotaltrackR.html) ([source](https://github.com/nealrichardson/pivotaltrackR/blob/master/vignettes/pivotaltrackR.Rmd)). While this discussion is focused on package vignettes, the same behavior should work in any R Markdown document.
 
 # The basics: `start_vignette()`
 
