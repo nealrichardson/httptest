@@ -73,7 +73,6 @@ with_mock_api({
             "The 'redact' argument to start_capturing() is deprecated. Use 'set_redactor()' instead.", fixed=TRUE
         )
         expect_true(any(grepl("Bearer token", readLines(file.path(newmocks2, "api.R")))))
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(newmocks2, {
             b <- GET("api/", add_headers(`Authorization`="Bearer token"))
         })
