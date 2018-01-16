@@ -55,6 +55,9 @@ appended to the end of the end of the file name. For example,
 This function is exported so that other packages can construct similar mock
 behaviors or override specific requests at a higher level than
 \code{with_mock_api} mocks.
+
+In the interest of standardizing naming conventions, \code{build_mock_url()} is
+the preferred name for this context; \code{buildMockURL()} is being deprecated.
 }
 \seealso{
 \code{\link[=with_mock_api]{with_mock_api()}} \code{\link[=capture_requests]{capture_requests()}}
