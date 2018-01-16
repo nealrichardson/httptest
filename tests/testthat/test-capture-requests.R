@@ -98,7 +98,6 @@ test_that("write_disk mocks can be reloaded even if the mock directory moves", {
 
 with_mock_api({
     test_that("Recording requests even with the mock API", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d2 <- tempfile()
         capture_while_mocking(path=d2, {
             GET("http://example.com/get/")
@@ -110,7 +109,6 @@ with_mock_api({
     })
 
     test_that("Using simplify=FALSE (and setting .mockPaths)", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d3 <- tempfile()
         with_mock_path(d3, {
             capture_while_mocking(simplify=FALSE, {
@@ -126,7 +124,6 @@ with_mock_api({
     })
 
     test_that("Using verbose=TRUE (and .mockPaths)", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         d4 <- tempfile()
         with_mock_path(d4, {
             capture_while_mocking(verbose=TRUE, {

@@ -14,7 +14,6 @@ with_mock_api({
         expect_false(any(grepl("Bearer token", readLines(file.path(d, "api.R")))))
     })
     test_that("And the redacted .R mock can be loaded", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             b <- GET("api/", add_headers(`Authorization`="Bearer token"))
         })
@@ -34,7 +33,6 @@ with_mock_api({
         expect_true(any(grepl("REDACTED", cooksfile)))
     })
     test_that("And the redacted .R mock can be loaded", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             cooksb <- GET("http://httpbin.org/cookies", set_cookies(token="12345"))
         })
@@ -64,7 +62,6 @@ with_mock_api({
             2)
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             c2b <- GET("http://httpbin.org/cookies/set", query=list(token=12345))
         })
@@ -95,7 +92,6 @@ with_mock_api({
             3)
     })
     test_that("And when loading that .R mock, the redacted value doesn't appear", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             loginb <- POST("http://example.com/login",
                 body=list(username="password"), encode="json")
@@ -121,7 +117,6 @@ with_mock_api({
             readLines(file.path(d, "httpbin.org", "basic-auth", "user", "passwd.R")))))
     })
     test_that("And the redacted .R mock can be loaded", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             pwauthb <- GET("http://httpbin.org/basic-auth/user/passwd",
                 authenticate("user", "passwd"))
@@ -150,7 +145,6 @@ with_mock_api({
         expect_false(any(grepl("auth_token", oauthfile)))
     })
     test_that("And the .R mock can be loaded", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         with_mock_path(d, {
             oauthb <- GET("api/object1/", config(token = token))
         })
@@ -177,7 +171,6 @@ with_mock_api({
         expect_identical(content(r), list(loaded=TRUE))
     })
     test_that("But the mock file gets written to the modified path with altered content", {
-        skip_on_cran() ## They have a broken R-devel build that chokes on these
         options(httptest.mock.paths=d)  ## Do this way to make sure "." isn't in
                                         ## the search path. We're checking that
                                         ## the original request doesn't have a
