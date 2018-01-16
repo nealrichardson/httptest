@@ -31,6 +31,9 @@ the HTTP functions do not error and halt execution, instead returning a
 proceed with its response handling logic and itself be tested. The response
 it returns echoes back most of the request itself, similar to how some
 endpoints on \url{http://httpbin.org} do.
+
+In the interest of standardizing naming conventions, \code{with_fake_http()} is
+the preferred name for this context; \code{with_fake_HTTP()} is being deprecated.
 }
 \examples{
 with_fake_http({

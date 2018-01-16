@@ -13,7 +13,7 @@ Description: Testing and documenting code that communicates with remote servers
     test fixture. The ability to save responses and load them offline also
     enables one to write vignettes and other dynamic documents that can be
     distributed without access to a live server.
-Version: 2.3.5
+Version: 3.0.0
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: http://enpiar.com/r/httptest, https://github.com/nealrichardson/httptest
 BugReports: https://github.com/nealrichardson/httptest/issues
