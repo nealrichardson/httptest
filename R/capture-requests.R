@@ -113,9 +113,6 @@ save_response <- function (response, simplify=TRUE) {
     filename <- file.path(.mockPaths()[1], mapped_file)
     dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
 
-    ## Omit curl handle C pointer, which doesn't serialize meaningfully
-    response$handle <- NULL
-
     ## Get the Content-Type
     ct <- unlist(response$headers[tolower(names(response$headers)) == "content-type"])
     is_json <- any(grepl("application/json", ct))
@@ -154,9 +151,12 @@ save_response <- function (response, simplify=TRUE) {
             response$content <- substitute(structure(find_mock_file(mapped_file),
                 class="path"))
         }
+
+        ## Omit curl handle C pointer, which doesn't serialize meaningfully
+        response$handle <- NULL
         ## Drop request since httr:::request_perform will fill it in when loading
         response$request <- NULL
-        
+
         dput(response, file=filename)
     }
     return(filename)
