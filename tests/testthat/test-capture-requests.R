@@ -136,4 +136,25 @@ with_mock_api({
         expect_identical(readLines(file.path(d4, "example.com/get.json")),
             readLines("example.com/get.json"))
     })
+
+    test_that("Request object isn't recorded at all", {
+        d5 <- tempfile()
+        with_mock_path(d5, {
+            capture_while_mocking({
+                POST("http://example.com/login", body=list(username="password"),
+                    encode="json")
+            })
+            no_payload <- source(file.path(d5,
+                "example.com", "login-712027-POST.R"))$value
+            expect_null(no_payload$request)
+            with_mock_api({
+                reloaded <- POST("http://example.com/login",
+                    body=list(username="password"),
+                    encode="json"
+                )
+            })
+            expect_identical(rawToChar(reloaded$request$options[["postfields"]]),
+                '{"username":"password"}')
+        })
+    })
 })

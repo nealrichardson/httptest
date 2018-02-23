@@ -3,7 +3,7 @@ context("Redaction")
 d <- tempfile()
 
 with_mock_api({
-    # redact_headers (in redact_auth)
+    # Auth headers aren't recorded
     capture_while_mocking(simplify=FALSE, path=d, {
         a <- GET("api/", add_headers(`Authorization`="Bearer token"))
     })
@@ -20,7 +20,7 @@ with_mock_api({
         expect_equal(content(b), content(a))
     })
 
-    # redact_cookies from request
+    # Request cookies aren't recorded
     capture_while_mocking(simplify=FALSE, path=d, {
         cooks <- GET("http://httpbin.org/cookies", set_cookies(token="12345"))
     })
@@ -30,7 +30,6 @@ with_mock_api({
     test_that("redact_cookies removes cookies from request in the mock file", {
         cooksfile <- readLines(file.path(d, "httpbin.org", "cookies.R"))
         expect_false(any(grepl("token=12345", cooksfile)))
-        expect_true(any(grepl("REDACTED", cooksfile)))
     })
     test_that("And the redacted .R mock can be loaded", {
         with_mock_path(d, {
@@ -102,7 +101,7 @@ with_mock_api({
         expect_identical(loginb$cookies$value, "REDACTED")
     })
 
-    # redact_http_auth from request
+    # HTTP auth credentials aren't recorded
     capture_while_mocking(simplify=FALSE, path=d, {
         pwauth <- GET("http://httpbin.org/basic-auth/user/passwd",
             authenticate("user", "passwd"))
@@ -113,8 +112,6 @@ with_mock_api({
     test_that("redact_http_auth removes user:pw from request in the mock file", {
         expect_false(any(grepl("user:passwd",
             readLines(file.path(d, "httpbin.org", "basic-auth", "user", "passwd.R")))))
-        expect_true(any(grepl("REDACTED",
-            readLines(file.path(d, "httpbin.org", "basic-auth", "user", "passwd.R")))))
     })
     test_that("And the redacted .R mock can be loaded", {
         with_mock_path(d, {
@@ -124,7 +121,7 @@ with_mock_api({
         expect_equal(content(pwauthb), content(pwauth))
     })
 
-    # redact oauth
+    # OAuth credentials aren't recorded
     # Example token copied from a test in httr
     token <- Token2.0$new(
         app = oauth_app("x", "y", "z"),
@@ -141,7 +138,6 @@ with_mock_api({
 
     test_that("But the mock doesn't have the auth_token", {
         oauthfile <- readLines(file.path(d, "api", "object1.R"))
-        expect_true(any(grepl("REDACTED", oauthfile)))
         expect_false(any(grepl("auth_token", oauthfile)))
     })
     test_that("And the .R mock can be loaded", {
@@ -184,38 +180,27 @@ with_mock_api({
     })
 
     a <- GET("api/", add_headers(`Authorization`="Bearer token"))
-    test_that("as.redactor", {
-        a1 <- redact_headers(a, "Authorization")
-        a2 <- prepare_redactor(~ redact_headers(., "Authorization"))(a)
-        expect_identical(a1, a2)
-        expect_identical(a1$request$headers[["Authorization"]], "REDACTED")
-    })
-
     test_that("gsub_response", {
         asub <- gsub_response(a, "api", "OTHER")
         expect_identical(asub$url, "OTHER/")
-        expect_identical(asub$request$url, "OTHER/")
         expect_identical(content(asub), list(value="OTHER/object1/"))
     })
-
-    postcreds <- POST("http://example.com/login",
-        body=list(username="password"), encode="json")
-    test_that("gsub_response gets request body too", {
-        postcreds_sub <- gsub_response(postcreds, "password", "SECRET")
-        expect_identical(rawToChar(postcreds_sub$request$options$postfields),
-            '{"username":"SECRET"}')
+    test_that("as.redactor", {
+        a2 <- prepare_redactor(~ gsub_response(., "api", "OTHER"))(a)
+        expect_identical(content(a2), list(value="OTHER/object1/"))
     })
 })
 
 with_fake_http({
-    test_that("gsub_request on non-JSON post fields", {
-        expect_PUT(
-            p <- PUT("http://httpbin.org/put",
-                body = list(x = "A string", string = "Something else")
-            )
+    expect_PUT(
+        p <- PUT("http://httpbin.org/put",
+            body = list(x = "A string", string = "Something else")
         )
-        psub <- gsub_response(p, "string", "SECRET")
-        expect_identical(psub$request$fields,
+    )
+    req <- p$request
+    ## TODO: more gsub_request tests
+    test_that("gsub_request on non-JSON post fields", {
+        expect_identical(gsub_request(req, "string", "SECRET")$fields,
             list(x = "A SECRET", SECRET = "Something else"))
     })
 })
