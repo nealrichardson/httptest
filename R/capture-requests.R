@@ -154,6 +154,9 @@ save_response <- function (response, simplify=TRUE) {
             response$content <- substitute(structure(find_mock_file(mapped_file),
                 class="path"))
         }
+        ## Drop request since httr:::request_perform will fill it in when loading
+        response$request <- NULL
+        
         dput(response, file=filename)
     }
     return(filename)
