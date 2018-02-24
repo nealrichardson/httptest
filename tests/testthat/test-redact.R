@@ -189,7 +189,27 @@ with_mock_api({
         a2 <- prepare_redactor(~ gsub_response(., "api", "OTHER"))(a)
         expect_identical(content(a2), list(value="OTHER/object1/"))
     })
+
+    loc <- GET("http://httpbin.org/response-headers",
+        query=list(Location="http://httpbin.org/status/201"))
+    loc_sub <- gsub_response(loc, "http://httpbin.org/status/201",
+        "http://httpbin.org/status/404")
+    test_that("gsub_response touches Location header", {
+        expect_identical(loc_sub$headers$location,
+            "http://httpbin.org/status/404")
+        expect_identical(loc_sub$all_headers[[1]]$headers$location,
+            "http://httpbin.org/status/404")
+        expect_identical(content(loc_sub)$Location,
+            "http://httpbin.org/status/404")
+    })
+    test_that("gsub_response handles URL encoding", {
+        skip("TODO: handle URL escaping")
+        expect_identical(loc_sub$url,
+            "http://httpbin.org/response-headers?Location=http%3A%2F%2Fhttpbin.org%2Fstatus%2F404")
+    })
+
 })
+
 
 with_fake_http({
     expect_PUT(

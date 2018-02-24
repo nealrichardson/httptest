@@ -26,18 +26,27 @@ redact_cookies <- function (response) {
 #' @rdname redact
 #' @export
 redact_headers <- function (response, headers=c()) {
-    response$headers <- redact_from_header_list(response$headers, headers)
-    response$all_headers <- lapply(response$all_headers, function (h) {
-        h$headers <- redact_from_header_list(h$headers, headers)
-        return(h)
-    })
+    header_apply(response, headers, function (x) "REDACTED")
+}
+
+header_apply <- function (response, headers, FUN, ...) {
+    ## Apply some function over a set of named headers, anywhere they may
+    ## appear in a response or request object
+    response$headers <- happly(response$headers, headers, FUN, ...)
+    if (!is.null(response$all_headers)) {
+        response$all_headers <- lapply(response$all_headers, function (h) {
+            h$headers <- happly(h$headers, headers, FUN, ...)
+            return(h)
+        })
+    }
     return(response)
 }
 
-redact_from_header_list <- function (headers, to_redact=c()) {
-    bad <- tolower(names(headers)) %in% tolower(to_redact)
-    headers[bad] <- "REDACTED"
-    return(headers)
+happly <- function (header_list, headers, FUN, ...) {
+    ## Called from header_apply, actually does the applying on a header list
+    todo <- tolower(names(header_list)) %in% tolower(headers)
+    header_list[todo] <- lapply(header_list[todo], FUN, ...)
+    return(header_list)
 }
 
 #' @rdname redact
@@ -79,6 +88,7 @@ within_body_text <- function (response, FUN) {
 gsub_response <- function (response, pattern, replacement, ...) {
     replacer <- function (x) gsub(pattern, replacement, x, ...)
     response$url <- replacer(response$url)
+    response <- header_apply(response, "location", replacer)
     response <- within_body_text(response, replacer)
     ## Modify the request too because this affects where we write the mock file to
     response$request <- gsub_request(response$request, pattern, replacement, ...)

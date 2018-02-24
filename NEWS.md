@@ -1,5 +1,6 @@
 # httptest 3.0.1 (under development)
 * `capture_requests()` no longer includes the "request" object inside the recorded response when writing `.R` verbose responses. As of 3.0.0, `with_mock_api()` inserts the current request when loading mock files, so it was being overwritten anyway. This eliminates some (though not all) of the need for redacting responses. As a result, the redacting functions `redact_oauth()` and `redact_http_auth()` have been removed because they only acted on the `response$request`, which is now dropped entirely.
+* `gsub_response()` now applies over the URL in a `Location` header, if found.
 
 # httptest 3.0.0
 
