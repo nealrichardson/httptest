@@ -133,7 +133,7 @@ save_response <- function (response, simplify=TRUE) {
             "application/x-www-form-urlencoded", "application/xml",
             "text/csv", "text/html", "text/plain",
             "text/tab-separated-values", "text/xml")
-        is_text <- length(ct) && any(unlist(strsplit(ct, "; ")) %in% text_types)
+        is_text <- length(ct) && any(unlist(strsplit(ct, "; ?")) %in% text_types)
         ## strsplit on ; because "charset" may be appended
         if (is_text) {
             ## Squelch the "No encoding supplied: defaulting to UTF-8."
