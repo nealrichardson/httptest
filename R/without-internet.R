@@ -45,8 +45,11 @@ stop_request <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
     body <- request_body(req)
     if (!is.null(body)) {
+        ## Max print option for debugging large payloads
+        body <- substr(body, 1, getOption("httptest.max.print", nchar(body)))
         out <- paste(out, body)
     }
+
     if (!is.null(req$mockfile)) {
         ## Poked in here by mock_request for ease of debugging
         ## Append it to the end.

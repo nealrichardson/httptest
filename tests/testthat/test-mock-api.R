@@ -36,6 +36,14 @@ public({
                                 "Content-Type" = "application/json")),
                 'api/object1 {"b":2} (api/object1-3e8d9a-POST.json)')
         })
+        test_that("max.print option", {
+            options(httptest.max.print=3)
+            on.exit(options(httptest.max.print=NULL))
+            expect_PUT(PUT("http://httpbin.org/get", body='{"test":true}'),
+                "http://httpbin.org/get",
+                '{"t ',
+                '(httpbin.org/get-')
+        })
         test_that("Request body and query", {
             expect_PATCH(PATCH("api/object2?d=1", body='{"arg":45}'),
                 'api/object2?d=1 {"arg":45} (api/object2-899b0e-3d8d62-PATCH.json)')
