@@ -119,7 +119,7 @@ save_response <- function (response, simplify=TRUE) {
     if (simplify && response$status_code == 200 && is_json) {
         ## Squelch the "No encoding supplied: defaulting to UTF-8."
         ## TODO: support other text content-types than JSON
-        cat(suppressMessages(content(response, "text")), file=filename)
+        cat(suppressMessages(jsonlite::prettify(content(response, "text"))), file=filename)
     } else {
         ## Dump an object that can be sourced
 
@@ -138,6 +138,10 @@ save_response <- function (response, simplify=TRUE) {
         if (is_text) {
             ## Squelch the "No encoding supplied: defaulting to UTF-8."
             cont <- suppressMessages(content(response, "text"))
+            if (is_json) {
+                ## TODO: "parse error: premature EOF"
+                # cont <- jsonlite::prettify(cont)
+            }
             response$content <- substitute(charToRaw(cont))
         } else if (inherits(response$request$output, "write_disk")) {
             ## Copy real file and substitute the response$content "path".

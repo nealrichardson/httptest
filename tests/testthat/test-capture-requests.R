@@ -97,30 +97,39 @@ test_that("write_disk mocks can be reloaded even if the mock directory moves", {
 })
 
 with_mock_api({
+    d2 <- tempfile()
     test_that("Recording requests even with the mock API", {
-        d2 <- tempfile()
         capture_while_mocking(path=d2, {
             GET("http://example.com/get/")
+            GET("api/object1/")
         })
         expect_true(setequal(dir(d2, recursive=TRUE),
-            c("example.com/get.json")))
+            c("example.com/get.json", "api/object1.json")))
         expect_identical(readLines(file.path(d2, "example.com/get.json")),
             readLines("example.com/get.json"))
     })
 
+    d3 <- tempfile()
     test_that("Using simplify=FALSE (and setting .mockPaths)", {
-        d3 <- tempfile()
         with_mock_path(d3, {
             capture_while_mocking(simplify=FALSE, {
                 GET("http://example.com/get/")
+                GET("api/object1/")
             })
         })
         expect_true(setequal(dir(d3, recursive=TRUE),
-            c("example.com/get.R")))
+            c("example.com/get.R", "api/object1.R")))
         response <- source(file.path(d3, "example.com/get.R"))$value
         expect_is(response, "response")
         expect_identical(content(response),
             content(GET("http://example.com/get/")))
+    })
+
+    test_that("Recorded JSON is prettified", {
+        expect_length(readLines(file.path(d2, "example.com/get.json")),
+            3L)
+        skip("TODO: prettify when simplify=FALSE")
+        response <- readLines(file.path(d3, "api/object1.R"))
     })
 
     test_that("Using verbose=TRUE (and .mockPaths)", {
