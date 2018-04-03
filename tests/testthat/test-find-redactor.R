@@ -37,10 +37,7 @@ with_mock_api({
         expect_message(
             capture_while_mocking(path=newmocks, {
                 ## Install the "testpkg" to a temp lib.loc _after_ we've already started recording
-                lib <- tempfile()
-                dir.create(lib)
-                Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
-                    stdout=NULL, stderr=NULL)
+                lib <- install_testpkg("testpkg")
                 library(testpkg, lib.loc=lib)
                 expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
 
