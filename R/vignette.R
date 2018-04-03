@@ -35,6 +35,9 @@ start_vignette <- function (path, ...) {
         httptest.mock.paths.old=getOption("httptest.mock.paths"),
         httptest.verbose=FALSE
     )
+    ## This actually sources the files, if they exist
+    find_package_functions(get_attached_packages(), "start-vignette.R")
+
     ## Set the starting mockPath
     .mockPaths(file.path(path, "0"))
     if (dir.exists(path)) {
@@ -80,6 +83,9 @@ end_vignette <- function () {
     stop_mocking()
     ## TODO: compress recorded mocks (in case change_state() was called but
     ## state didn't actually change) if we were recording
+
+    ## This actually sources the files, if they exist
+    find_package_functions(get_attached_packages(), "end-vignette.R")
 
     ## Restore original .mockPaths
     options(
