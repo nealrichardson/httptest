@@ -10,17 +10,19 @@ vignette: >
 
 `httptest` makes it easy for you to write tests that don't require a network connection. With `capture_requests()`, you can record responses from real requests so that you can use them later in tests. A further benefit of testing with mocks is that you don't have to deal with authentication and authorization on the server in your tests---you don't need to supply real login credentials for your test suite to run. You can have full test coverage of your code, both on public continuous-integration services like Travis-CI and when you submit packages to CRAN, all without having to publish secret tokens or passwords.
 
-It is important to ensure that the mocks you include in your test suite do not inadvertently reveal private information as well. For many requests and responses, the default behavior of `capture_requests` is to write out only the response body, which makes for clean, easy-to-read test fixtures. For other responses, however---those returning non-JSON content or an error status---it writes a `.R` file containing a `httr` "response" object. This response contains all of the headers and cookies that the server returns, and it also has a copy of your "request" object, with the headers, tokens, and other configuration you sent to the server. If not addressed, this would mean that you might be exposing your personal credentials publicly.
+It is important to ensure that the mocks you include in your test suite do not inadvertently reveal private information as well. For many requests and responses, the default behavior of `capture_requests` is to write out only the response body, which makes for clean, easy-to-read test fixtures. For other responses, however---those returning non-JSON content or an error status---it writes a `.R` file containing a `httr` "response" object. This response contains all of the headers and cookies that the server returns, and if not addressed, it could publicly expose your personal credentials.
 
-`httptest` provides a framework for sanitizing the responses that `capture_requests` records. By default, it redacts the standard ways that auth credentials are passed in requests: cookies, authorization headers, basic HTTP auth, and OAuth. The framework is extensible and allows you to specify custom redaction policies that match how your API accepts and returns sensitive information. Common redacting functions are configurable and natural to adapt to your needs, while the workflow also supports custom redacting functions that can alter the recorded requests however you want, including altering the response content and URL.
+`httptest` provides a framework for sanitizing the responses that `capture_requests` records. By default, it redacts the standard ways that auth credentials are passed in responses. The framework is extensible and allows you to specify custom redaction policies that match how your API accepts and returns sensitive information. Common redacting functions are configurable and natural to adapt to your needs, while the workflow also supports custom redacting functions that can alter the recorded requests however you want, including altering the response content and URL.
 
 ## Default: redact standard auth methods
 
-By default, the `capture_requests` context evaluates the `redact_auth()` function on a response object before writing it to disk. `redact_auth` wraps a few smaller redacting functions that (1) sanitize any cookies in the request and response; (2) redact common headers including "Authorization", if present; and (3) if using basic HTTP authentication with username and password, removes those credentials.
+By default, the `capture_requests` context evaluates the `redact_auth()` function on a response object before writing it to disk. `redact_auth` wraps more specific redacting functions that do things like sanitize any cookies in the server response. Note that request parameters that communicate your credentials to the API, including cookies, authorization headers, basic HTTP auth, and OAuth, are also purged from the recorded response file: `capture_requests()` only records the response, not the request, even though an `httr` response object generally includes the request object.
 
 What does "redacting" entail? We aren't the CIA working with classified reports, taking a heavy black marker over certain details. In our case, redacting means replacing the sensitive content with the string "REDACTED". Your recorded responses will be as "real" as possible: if, for example, you have an "Authorization" header in your request, the header will remain in your test fixture, but real token value will be replaced with "REDACTED". And only the recorded responses will be affected---the actual response you're capturing in your active R session is not modified, only the mock that is written out.
 
 To illustrate, if you make a request that includes a cookie, that cookie will also be included in the `response` object that is returned.
+
+<!-- TODO: rewrite using a set-cookie response header -->
 
 ```r
 capture_requests(simplify=FALSE, {
@@ -43,17 +45,23 @@ mock$request$options$cookie
 
 (Side note: the example uses the `simplify=FALSE` option to `capture_requests` for illustration purposes. With the default `simplify=TRUE`, only the response body would be written to a mock file because this particular GET request returns JSON content. Thus, there would be no cookie present anyway. `simplify=FALSE` forces `capture_requests` to write the verbose .R response object file for every request, not just those that don't return JSON content.)
 
-## Handling other auth methods
+## Writing custom redacting functions
 
-Some APIs use other methods for passing credentials. For example, the [API for Pivotal Tracker](https://www.pivotaltracker.com/help/api), the agile project management tool, uses a "X-TrackerToken" request header for passing an API token. Our standard redactor doesn't know about this header, so by default, this token would be written in our recorded responses.
+Sensitive or personal information is not limited to response cookies or headers. Sometimes personal identifiers are built into URLs or response bodies. These may be less sensitive than auth tokens, but you probably want to conceal or anonymize your data that is included in test fixtures.
 
-So, in the [pivotaltrackR](http://enpiar.com/r/pivotaltrackR/) package, which wraps this API, if we want to record mocks to use in tests with this API, we need to tell `capture_requests` to scrub its special header. To do this, we'll use `set_redactor()` to supply a custom function.
+Redacting functions can help with this personal information as well. You can use redactors on any part of the response object, not just the headers and cookies. A redactor is just a function that takes a response as input and returns a response object, so anything is possible if you write a custom redactor.
+
+For example, in the [API for Pivotal Tracker](https://www.pivotaltracker.com/help/api), the agile project management tool, the Pivotal project id is built into many of its URLs. As a result, it would appear in mock file paths you record. The id is also often included in the response body.
+
+We'd rather not have that information leak in our test fixtures, so in the [pivotaltrackR](http://enpiar.com/r/pivotaltrackR/) package, which wraps this API, we need to tell `capture_requests` to scrub this id when we record mocks.
+
+To do this, we'll use `set_redactor()` to supply a custom function. The project id is stored in the R session in `options(pivotal.project)`, so we can identify it and find-and-replace it with `gsub_response()`. The function takes `response` as its first argument and then passes the rest to `gsub()`, which is called on both the response URL and the response body.
 
 ```r
-set_redactor(~ redact_headers(., "X-TrackerToken"))
+set_redactor(~ gsub_response(., getOption("pivotal.project"), "123"))
 ```
 
-Note the formula shorthand: this follows the syntax in the [`purrr`](purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function (response) redact_headers(response, "X-TrackerToken")`.
+Note the formula shorthand: this follows the syntax in the [`purrr`](purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function (response) gsub_response(response, getOption("pivotal.project"), "123")`.
 
 Valid inputs to `set_redactor()` include:
 
@@ -61,76 +69,6 @@ Valid inputs to `set_redactor()` include:
 * A formula as shorthand for an anonymous function with `.` as the "response" argument
 * A list of redacting functions/formulas, which will be executed in sequence on the response
 * `NULL`, to override the default `redact_auth()` and do no redacting
-
-To illustrate, here's a recording of a GET on the `stories/` endpoint. We can see that the real token is included in the "X-TrackerToken" header in the real request:
-
-```r
-library(httptest)
-library(pivotaltrackR)
-options(
-    pivotal.project="my-project-name",
-    pivotal.token="8fe3452ac4e3"
-)
-
-set_redactor(~ redact_headers(., "X-TrackerToken"))
-capture_requests(simplify=FALSE, {
-    active_stories <- getStories(state="started")
-})
-active_stories$request$headers
-
-##                                                   Accept
-##       "application/json, text/xml, application/xml, */*"
-##                                               user-agent
-## "libcurl/7.51.0 curl/2.3 httr/1.2.1 pivotaltrackR/0.1.0"
-##                                           X-TrackerToken
-##                                           "8fe3452ac4e3"
-```
-
-Because we set `~ redact_headers(., "X-TrackerToken")` as the redactor, it should have been removed from the mock file that was written out. Let's read in that file and inspect it.
-
-```r
-mockfile <- "www.pivotaltracker.com/services/v5/projects/my-project-name/stories-c0a029.R"
-mock <- source(mockfile)$value
-mock$request$headers
-
-##                                                   Accept
-##       "application/json, text/xml, application/xml, */*"
-##                                               user-agent
-## "libcurl/7.51.0 curl/2.3 httr/1.2.1 pivotaltrackR/0.1.0"
-##                                           X-TrackerToken
-##                                               "REDACTED"
-```
-
-The actual token was removed, and in its place is the string "REDACTED". I am now safe to commit this mock file to my repository and publish it without exposing my real credentials.
-
-## Writing custom redacting functions
-
-Sensitive or personal information can also found in other parts of the request and response. Sometimes personal identifiers are built into URLs or response bodies. These may be less sensitive than auth tokens, but you probably want to conceal or anonymize your data that is included in test fixtures.
-
-Redacting functions can help with this personal information as well. You can use redactors on any part of the response object, not just the headers and cookies. A redactor is just a function that takes a response as input and returns a response object, so anything is possible if you write a custom redactor.
-
-Keeping with the `pivotaltrackR` example, note that the Pivotal project id, stored in `options(pivotal.project)` in the R session, appears in the mock file path. It's in the file path because it's in the request URL, and it turns out that many API responses also include it in the response body. We'd rather not have that information leak in our test fixtures, so let's write a function to remove it.
-
-All of the redactors in `httptest` take the "response" object as their first argument and return the response object modified in some way. This lends them to pipelining, as with the [`magrittr`](http://magrittr.tidyverse.org/) package. Let's use that, and let's start our function with that "X-TrackerToken" header redacting:
-
-```r
-redact_pivotal <- function (response) {
-    require(magrittr)
-    response %>%
-        redact_headers("X-TrackerToken")
-}
-```
-
-To remove the project ID, we can use the `gsub_response()` function, which takes `response` as its first argument and then passes the rest to `gsub()`, which is called on the response URL, the response body, and the request object as well (because `response`s include the `request` object in them):
-
-```r
-redact_pivotal <- function (response) {
-    require(magrittr)
-    response %>%
-        redact_headers("X-TrackerToken") %>%
-        gsub_response(getOption("pivotal.project"), "123")
-}
-```
 
 To see this in action, let's record a request:
 
@@ -161,6 +99,21 @@ s[[1]]$project_id
 
 Nor will the project id appear in the file path: since the redactor is evaluated before determining the file path to write to, if you alter the response URL, the destination file path will be generated based on the modified URL. In this case, our mock is written to ".../projects/123/stories-fb1776.json", not ".../projects/my-project-name/stories-fb1776.json".
 
+We can do more response cleaning with custom functions. All of the redactors in `httptest` take the "response" object as their first argument and return the response object modified in some way. This lends them to pipelining, as with the [`magrittr`](http://magrittr.tidyverse.org/) package.
+
+Continuing with the `pivotaltrackR` example, let's also prune the domain and API root path from the URLs we're recording so that we're making shorter file paths:
+
+```r
+function (response) {
+    require(magrittr, quietly=TRUE)
+    response %>%
+        # Shorten the URL
+        gsub_response("https://www.pivotaltracker.com/services/v5/", "", fixed=TRUE) %>%
+        # Remove my project ID
+        gsub_response(getOption("pivotal.project"), "123")
+}
+```
+
 ## Setting a package-level redactor
 
 If you're writing a package that wraps an API and you need a custom redactor to safely record API responses, you'll want to make sure that you _always_ record with that redactor. You don't want to forget to call `set_redactor()` in your R session and end up recording fixtures that contain your auth secrets.
@@ -168,19 +121,6 @@ If you're writing a package that wraps an API and you need a custom redactor to 
 To make sure that your redactor is "always on" for your package, `httptest` enables you to define a package-level redactor. To do this, put a redacting function in `inst/httptest/redact.R` in your package. Any time you record requests while your package is loaded, as when running tests or building vignettes, this function will be called on the `response` object before writing it to disk. It's automatic: set it there once and you never have to remember.
 
 For example, [here](https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/redact.R) is the one for `pivotaltrackR`:
-
-```r
-function (response) {
-    require(magrittr, quietly=TRUE)
-    response %>%
-        # Remove the auth token
-        redact_headers("X-TrackerToken") %>%
-        # Shorten the URL
-        gsub_response("https://www.pivotaltracker.com/services/v5/", "", fixed=TRUE) %>%
-        # Remove my project ID
-        gsub_response(getOption("pivotal.project"), "123")
-}
-```
 
 ## Request preprocessing
 
