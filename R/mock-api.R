@@ -145,7 +145,8 @@ build_mock_url <- function (req, method="GET") {
     }
 
     ## Add file extension
-    f <- paste0(f, ".json")  ## TODO: don't assume content-type
+    ## TODO: Don't. We don't assume .json anywhere else
+    f <- paste0(f, ".json")
     return(f)
 }
 
@@ -186,19 +187,24 @@ findMockFile <- find_mock_file
 
 #' @importFrom utils tail
 load_response <- function (file, req) {
+    ## TODO: support other content-types
+    known_contents <- list(
+        "json"="application/json"
+    )
     ext <- tail(unlist(strsplit(file, ".", fixed=TRUE)), 1)
     if (ext == "R") {
         ## It's a full "response". Source it.
         return(source(file)$value)
-    } else if (ext == "json") {
-        headers <- list(`Content-Type`="application/json")
-        cont <- readBin(file, "raw", n=file.size(file))
-        return(fake_response(req, content=cont, status_code=200L,
-            headers=headers))
+    } else if (ext %in% names(known_contents)) {
+        return(fake_response(
+            req,
+            content=readBin(file, "raw", n=file.size(file)),
+            status_code=200L,
+            headers=list(`Content-Type`=known_contents[[ext]])
+        ))
     } else if (ext == "204") {
         return(fake_response(req, status_code=204L))
     } else {
-        ## TODO: other content-types
         stop("Unsupported mock file extension: ", ext, call.=FALSE)
     }
 }
