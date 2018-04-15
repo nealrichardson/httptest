@@ -10,14 +10,14 @@ change_state()
 Invisibly, the return of \code{.mockPaths()} with the new path added.
 }
 \description{
-Changes to server state can be handled by setting a new \code{\link[=.mockPaths]{.mockPaths()}}. In
-vignettes, these are handled by creating subdirectories with integer names.
-This function increments that integer subdirectory and adds it to
-\code{.mockPaths()} so that changed server state can be captured and loaded.
-}
-\details{
-In a vignette,
-put a call to \code{change_state()} before any code block that makes a change on
+In a vignette, put a call to \code{change_state()} before any code block that
+makes a change on
 the server, or rather, before any code block that might repeat the same
 request previously done and expect a different result.
+}
+\details{
+\code{change_state()} works by layering a new directory on top of the existing
+\code{\link[=.mockPaths]{.mockPaths()}}, so fixures are recorded/loaded there, masking rather than
+overwriting previously recorded responses for the same request. In
+vignettes, these mock layers are subdirectories with integer names.
 }
