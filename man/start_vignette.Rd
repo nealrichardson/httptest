@@ -20,9 +20,8 @@ Nothing; called for its side effect of starting/ending
 response recording or mocking.
 }
 \description{
-Use \code{start_vignette()} to either use previously recorded responses or capture
-real responses for future use, depending on the value of the \code{RECORD}
-environment variable.
+Use \code{start_vignette()} to either use previously recorded responses, if they
+exist, or capture real responses for future use.
 }
 \details{
 In a vignette or other R Markdown or Sweave document, place
@@ -38,6 +37,13 @@ make real requests and record them inside of \code{path}. On subsequent runs, th
 mocks will be used. To record fresh responses from the server, delete the
 \code{path} directory, and the responses will be recorded again the next time the
 vignette runs.
+
+If you have additional setup code that you'd like available across all of
+your package's vignettes, put it in \code{inst/httptest/start-vignette.R} in your
+package, and it will be called in \code{start_vignette()} before the mock/record
+context is set. Similarly, teardown code can go in
+\code{inst/httptest/end-vignette.R}, evaluated in \code{end_vignette()} after mocking
+is stopped.
 }
 \seealso{
 \code{\link[=start_capturing]{start_capturing()}} for how requests are recorded; \code{\link[=use_mock_api]{use_mock_api()}}
