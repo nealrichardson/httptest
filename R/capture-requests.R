@@ -131,6 +131,7 @@ save_response <- function (response, simplify=TRUE) {
         ## Dump an object that can be sourced
 
         ## Change the file extension to .R
+        ## TODO: build_mock_url should stop appending an extension
         dst_file <- sub("json$", "R", dst_file)
         mock_file <- sub("json$", "R", mock_file)
 
