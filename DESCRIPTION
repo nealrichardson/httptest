@@ -25,7 +25,8 @@ Imports:
     digest,
     httr,
     jsonlite,
-    stats
+    stats,
+    utils
 Suggests:
     covr,
     knitr,

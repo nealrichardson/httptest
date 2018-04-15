@@ -53,17 +53,7 @@ mock_request <- function (req, handle, refresh) {
     f <- buildMockURL(get_current_requester()(req))
     mockfile <- find_mock_file(f)
     if (!is.null(mockfile)) {
-        if (grepl("\\.R$", mockfile)) {
-            ## It's a full "response". Source it.
-            return(source(mockfile)$value)
-        } else {
-            ## TODO: don't assume content-type
-            headers <- list(`Content-Type`="application/json")
-            cont <- readBin(mockfile, "raw", n=file.size(mockfile))
-            resp <- fake_response(req, content=cont, status_code=200L,
-                headers=headers)
-            return(resp)
-        }
+        return(load_response(mockfile, req))
     }
     ## Else: fail.
     ## For ease of debugging if a file isn't found, include it in the
@@ -171,15 +161,21 @@ buildMockURL <- build_mock_url
 #' @export
 find_mock_file <- function (file) {
     for (path in .mockPaths()) {
-        mockfile <- file.path(path, file)
-        if (file.exists(mockfile)) {
-            return(mockfile)
-        }
-        ## Else, see if there is a .R file "response" with the same path
-        ## TODO: don't assume content-type
-        mockfile <- sub("\\.json$", ".R", mockfile)
-        if (file.exists(mockfile)) {
-            return(mockfile)
+        ## Look for files of any .extension in the indicated directory,
+        ## be they .R, .json, ...
+        ## TODO: build_mock_url shouldn't add an extension
+        mp <- file.path(path, file)
+        ## Turn the basename into a regular expression that will match it (and
+        ## only it) with any .extension
+        mockbasename <- paste0("^",
+            sub("\\.[[:alnum:]]*$", ".[[:alnum:]]*$", basename(mp)))
+        mockfiles <- dir(dirname(mp), pattern=mockbasename, all.files=TRUE,
+            full.names=TRUE)
+        ## Remove directories
+        mockfiles <- setdiff(mockfiles, list.dirs(dirname(mp), full.names=TRUE))
+        if (length(mockfiles)) {
+            ## TODO: check for length > 1
+            return(mockfiles[1])
         }
     }
     return(NULL)
@@ -187,6 +183,25 @@ find_mock_file <- function (file) {
 
 ## TODO: remove
 findMockFile <- find_mock_file
+
+#' @importFrom utils tail
+load_response <- function (file, req) {
+    ext <- tail(unlist(strsplit(file, ".", fixed=TRUE)), 1)
+    if (ext == "R") {
+        ## It's a full "response". Source it.
+        return(source(file)$value)
+    } else if (ext == "json") {
+        headers <- list(`Content-Type`="application/json")
+        cont <- readBin(file, "raw", n=file.size(file))
+        return(fake_response(req, content=cont, status_code=200L,
+            headers=headers))
+    } else if (ext == "204") {
+        return(fake_response(req, status_code=204L))
+    } else {
+        ## TODO: other content-types
+        stop("Unsupported mock file extension: ", ext, call.=FALSE)
+    }
+}
 
 request_body <- function (req) {
     ## request_body returns a string if the request has a body, NULL otherwise

@@ -102,11 +102,23 @@ with_mock_api({
         capture_while_mocking(path=d2, {
             GET("http://example.com/get/")
             GET("api/object1/")
+            GET("http://httpbin.org/status/204/")
         })
         expect_true(setequal(dir(d2, recursive=TRUE),
-            c("example.com/get.json", "api/object1.json")))
+            c("example.com/get.json", "api/object1.json", "httpbin.org/status/204.204")))
         expect_identical(readLines(file.path(d2, "example.com/get.json")),
             readLines("example.com/get.json"))
+    })
+
+    test_that("Loading 204 response status recorded with simplify=TRUE", {
+        original <- GET("http://httpbin.org/status/204/")
+        expect_null(content(original))
+        expect_length(readLines(file.path(d2, "httpbin.org/status/204.204")),
+            0)
+        with_mock_path(d2, {
+            mocked <- GET("http://httpbin.org/status/204/")
+            expect_null(content(mocked))
+        }, replace=TRUE)
     })
 
     d3 <- tempfile()
@@ -115,10 +127,11 @@ with_mock_api({
             capture_while_mocking(simplify=FALSE, {
                 GET("http://example.com/get/")
                 GET("api/object1/")
+                GET("http://httpbin.org/status/204/")
             })
         })
         expect_true(setequal(dir(d3, recursive=TRUE),
-            c("example.com/get.R", "api/object1.R")))
+            c("example.com/get.R", "api/object1.R", "httpbin.org/status/204.R")))
         response <- source(file.path(d3, "example.com/get.R"))$value
         expect_is(response, "response")
         expect_identical(content(response),
@@ -152,7 +165,7 @@ with_mock_api({
             capture_while_mocking({
                 POST("http://example.com/login", body=list(username="password"),
                     encode="json")
-            })
+            }, simplify=FALSE)
             no_payload <- source(file.path(d5,
                 "example.com", "login-712027-POST.R"))$value
             expect_null(no_payload$request)
