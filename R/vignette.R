@@ -1,8 +1,7 @@
 #' Set mocking/capturing state for a vignette
 #'
-#' Use `start_vignette()` to either use previously recorded responses or capture
-#' real responses for future use, depending on the value of the `RECORD`
-#' environment variable.
+#' Use `start_vignette()` to either use previously recorded responses, if they
+#' exist, or capture real responses for future use.
 #'
 #' In a vignette or other R Markdown or Sweave document, place
 #' `start_vignette()` in an R code block at the beginning,
@@ -17,6 +16,13 @@
 #' mocks will be used. To record fresh responses from the server, delete the
 #' `path` directory, and the responses will be recorded again the next time the
 #' vignette runs.
+#'
+#' If you have additional setup code that you'd like available across all of
+#' your package's vignettes, put it in `inst/httptest/start-vignette.R` in your
+#' package, and it will be called in `start_vignette()` before the mock/record
+#' context is set. Similarly, teardown code can go in
+#' `inst/httptest/end-vignette.R`, evaluated in `end_vignette()` after mocking
+#' is stopped.
 #'
 #' @param path Root file path for the mocks for this vignette. A good idea is
 #' to use the file name of the vignette itself.
@@ -35,6 +41,9 @@ start_vignette <- function (path, ...) {
         httptest.mock.paths.old=getOption("httptest.mock.paths"),
         httptest.verbose=FALSE
     )
+    ## This actually sources the files, if they exist
+    find_package_functions(get_attached_packages(), "start-vignette.R")
+
     ## Set the starting mockPath
     .mockPaths(file.path(path, "0"))
     if (dir.exists(path)) {
@@ -48,15 +57,15 @@ start_vignette <- function (path, ...) {
 
 #' Handle a change of server state
 #'
-#' Changes to server state can be handled by setting a new [.mockPaths()]. In
-#' vignettes, these are handled by creating subdirectories with integer names.
-#' This function increments that integer subdirectory and adds it to
-#' `.mockPaths()` so that changed server state can be captured and loaded.
-#'
-#' In a vignette,
-#' put a call to `change_state()` before any code block that makes a change on
+#' In a vignette, put a call to `change_state()` before any code block that
+#' makes a change on
 #' the server, or rather, before any code block that might repeat the same
 #' request previously done and expect a different result.
+#'
+#' `change_state()` works by layering a new directory on top of the existing
+#' [.mockPaths()], so fixures are recorded/loaded there, masking rather than
+#' overwriting previously recorded responses for the same request. In
+#' vignettes, these mock layers are subdirectories with integer names.
 #'
 #' @return Invisibly, the return of `.mockPaths()` with the new path added.
 #' @export
@@ -80,6 +89,9 @@ end_vignette <- function () {
     stop_mocking()
     ## TODO: compress recorded mocks (in case change_state() was called but
     ## state didn't actually change) if we were recording
+
+    ## This actually sources the files, if they exist
+    find_package_functions(get_attached_packages(), "end-vignette.R")
 
     ## Restore original .mockPaths
     options(

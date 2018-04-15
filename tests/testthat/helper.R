@@ -29,6 +29,9 @@ if ("Rcmd" %in% ls(envir=asNamespace("tools"))) {
     }
 }
 
-install_testpkg <- function (pkg) {
-    Rcmd(c("INSTALL", pkg))
+install_testpkg <- function (pkg, lib=tempfile()) {
+    dir.create(lib)
+    Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
+        stdout=NULL, stderr=NULL)
+    return(lib)
 }
