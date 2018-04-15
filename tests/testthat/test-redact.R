@@ -207,7 +207,6 @@ with_mock_api({
         expect_identical(loc_sub$url,
             "http://httpbin.org/response-headers?Location=http%3A%2F%2Fhttpbin.org%2Fstatus%2F404")
     })
-
 })
 
 
@@ -223,4 +222,13 @@ with_fake_http({
         expect_identical(gsub_request(req, "string", "SECRET")$fields,
             list(x = "A SECRET", SECRET = "Something else"))
     })
+})
+
+test_that("chain_redactors", {
+    f1 <- function (x) x * 4
+    f2 <- ~ sum(c(., 3))
+    f12 <- chain_redactors(list(f1, f2))
+    f21 <- chain_redactors(list(f2, f1))
+    expect_equal(f12(5), 23)
+    expect_equal(f21(5), 32)
 })

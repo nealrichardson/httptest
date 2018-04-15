@@ -42,9 +42,14 @@
     }
 }
 
-with_mock_path <- function (path, expr) {
+with_mock_path <- function (path, expr, replace=FALSE) {
     oldmp <- .mockPaths()
-    .mockPaths(path)
+    if (replace) {
+        options(httptest.mock.paths=path)
+    } else {
+        ## Append
+        .mockPaths(path)
+    }
     on.exit(options(httptest.mock.paths=oldmp))
     eval.parent(expr)
 }

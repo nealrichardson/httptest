@@ -110,23 +110,29 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
 #' @importFrom jsonlite prettify
 save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
-    mapped_file <- buildMockURL(response$request)
-    filename <- file.path(.mockPaths()[1], mapped_file)
-    dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
+    mock_file <- buildMockURL(response$request)
+    ## Track separately the actual full path we're going to write to
+    dst_file <- file.path(.mockPaths()[1], mock_file)
+    dir.create(dirname(dst_file), showWarnings=FALSE, recursive=TRUE)
 
     ## Get the Content-Type
     ct <- unlist(response$headers[tolower(names(response$headers)) == "content-type"])
     is_json <- any(grepl("application/json", ct))
-    if (simplify && response$status_code == 200 && is_json) {
+    status <- response$status_code
+    if (simplify && status == 200 && is_json) {
         ## Squelch the "No encoding supplied: defaulting to UTF-8."
         ## TODO: support other text content-types than JSON
-        cat(suppressMessages(prettify(content(response, "text"))), file=filename)
+        cat(suppressMessages(prettify(content(response, "text"))), file=dst_file)
+    } else if (simplify && status == 204) {
+        ## "touch" a file with extension .204
+        dst_file <- sub("json$", "204", dst_file)
+        cat("", file=dst_file)
     } else {
         ## Dump an object that can be sourced
 
         ## Change the file extension to .R
-        filename <- sub("json$", "R", filename)
-        mapped_file <- sub("json$", "R", mapped_file)
+        dst_file <- sub("json$", "R", dst_file)
+        mock_file <- sub("json$", "R", mock_file)
 
         ## If content is text, rawToChar it and dput it as charToRaw(that)
         ## so that it loads correctly but is also readable
@@ -150,10 +156,10 @@ save_response <- function (response, simplify=TRUE) {
             ## make the mock file readable call `content()`, which reads
             ## in the file that has been written to disk, so it effectively
             ## negates the "download" behavior for the recorded response.
-            downloaded_file <- paste0(filename, "-FILE")
+            downloaded_file <- paste0(dst_file, "-FILE")
             file.copy(response$content, downloaded_file)
-            mapped_file <- paste0(mapped_file, "-FILE")
-            response$content <- substitute(structure(find_mock_file(mapped_file),
+            mock_file <- paste0(mock_file, "-FILE")
+            response$content <- substitute(structure(find_mock_file(mock_file),
                 class="path"))
         }
 
@@ -162,9 +168,9 @@ save_response <- function (response, simplify=TRUE) {
         ## Drop request since httr:::request_perform will fill it in when loading
         response$request <- NULL
 
-        dput(response, file=filename)
+        dput(response, file=dst_file)
     }
-    return(filename)
+    return(dst_file)
 }
 
 #' @rdname capture_requests

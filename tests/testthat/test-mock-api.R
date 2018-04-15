@@ -155,6 +155,11 @@ test_that("build_mock_url returns file names that are valid on all R platforms",
         "language.googleapis.com/v1/documents-annotateText.json")
 })
 
+test_that("load_response invalid extension handling", {
+    expect_error(load_response("foo.qwert"),
+        "Unsupported mock file extension: qwert")
+})
+
 test_that("mock_request code paths are covered (outside of trace)", {
     expect_is(mock_request(list(method="GET", url="api/")),
         "response")
