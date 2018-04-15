@@ -17,7 +17,7 @@ request previously done and expect a different result.
 }
 \details{
 \code{change_state()} works by layering a new directory on top of the existing
-\code{\link[=.mockPaths]{.mockPaths()}}, so fixures are recorded/loaded there, masking rather than
+\code{\link[=.mockPaths]{.mockPaths()}}, so fixtures are recorded/loaded there, masking rather than
 overwriting previously recorded responses for the same request. In
 vignettes, these mock layers are subdirectories with integer names.
 }

@@ -107,6 +107,7 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
 #' @return The character file name that was written out
 #' @export
 #' @keywords internal
+#' @importFrom jsonlite prettify
 save_response <- function (response, simplify=TRUE) {
     ## Construct the mock file path
     mapped_file <- buildMockURL(response$request)
@@ -119,7 +120,7 @@ save_response <- function (response, simplify=TRUE) {
     if (simplify && response$status_code == 200 && is_json) {
         ## Squelch the "No encoding supplied: defaulting to UTF-8."
         ## TODO: support other text content-types than JSON
-        cat(suppressMessages(jsonlite::prettify(content(response, "text"))), file=filename)
+        cat(suppressMessages(prettify(content(response, "text"))), file=filename)
     } else {
         ## Dump an object that can be sourced
 

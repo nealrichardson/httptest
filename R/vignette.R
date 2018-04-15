@@ -63,7 +63,7 @@ start_vignette <- function (path, ...) {
 #' request previously done and expect a different result.
 #'
 #' `change_state()` works by layering a new directory on top of the existing
-#' [.mockPaths()], so fixures are recorded/loaded there, masking rather than
+#' [.mockPaths()], so fixtures are recorded/loaded there, masking rather than
 #' overwriting previously recorded responses for the same request. In
 #' vignettes, these mock layers are subdirectories with integer names.
 #'

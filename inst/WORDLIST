@@ -23,8 +23,8 @@ rmarkdown
 serializable
 subdocuments
 subfolder
+teardown
 testthat
-TrackerToken
 untrace
 untraces
 VignetteEncoding
