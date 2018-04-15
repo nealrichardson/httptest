@@ -54,7 +54,7 @@ The package includes three test contexts, which you wrap around test code that w
 
 A fourth context, **`capture_requests()`**, collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_api`.
 
-Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them. If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
+Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them (though it is easy enough to delete and recapture). If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
 
 For convenience, you may find it easier in an interactive session to call `start_capturing()`, make requests, and then `stop_capturing()` when you're done. This:
 
@@ -76,7 +76,7 @@ GET("http://httpbin.org/response-headers",
 stop_capturing()
 ```
 
-When recording requests, by default `httptest` looks for and redacts the standard ways that auth credentials are passed in requests: cookies, authorization headers, basic HTTP auth, and OAuth. This prevents you from accidentally publishing your personal tokens. The redacting behavior is fully customizable, either by providing a `function (response) {...}` to `set_redactor()`, or by placing a function in your package's `inst/httptest/redact.R` that will be used automatically any time you record requests with your package loaded. See `vignette("redacting")` for details.
+When recording requests, by default `httptest` looks for and redacts the standard ways that auth credentials are returned in responses, so you won't accidentally publish your personal tokens. The redacting behavior is fully customizable, either by providing a `function (response) {...}` to `set_redactor()`, or by placing a function in your package's `inst/httptest/redact.R` that will be used automatically any time you record requests with your package loaded. See `vignette("redacting")` for details.
 
 ### Vignettes
 
@@ -166,7 +166,9 @@ if (Sys.getenv("MOCK_BYPASS") == "true") {
 }
 ```
 
-to your `helper.R`.
+to your `helper.R` or `setup.R`.
+
+You could also experiment with using `start_vignette()`, which switches behavior based on the existence of the specified mock directory.
 
 ## Contributing
 
@@ -174,7 +176,7 @@ Suggestions and pull requests are more than welcome!
 
 ## For developers
 
-The repository includes a Makefile to facilitate some common tasks, if you're into that sort of thing.
+The repository includes a Makefile to facilitate some common tasks from the command line, if you're into that sort of thing.
 
 ### Running tests
 
