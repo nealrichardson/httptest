@@ -3,9 +3,12 @@
 [![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest) [![Build status](https://ci.appveyor.com/api/projects/status/egrw65593iso21cu?svg=true)](https://ci.appveyor.com/project/nealrichardson/httptest) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
 [![cran](https://www.r-pkg.org/badges/version-last-release/httptest)](https://cran.r-project.org/package=httptest)
 
-Testing code and packages that communicate with remote servers can be painful. Dealing with authentication, bootstrapping server state, cleaning up objects that may get created during the test run, network flakiness, and other complications can make testing seem too costly to bother with. But it doesn't need to be that hard. The `httptest` package enables you to test all of the logic on the R sides of the API in your package without requiring access to the remote service.
+`httptest` makes it easy to write tests for code and packages that wrap web APIs.
+Testing code that communicates with remote servers can otherwise be painful: things like authentication, server state, and network flakiness can make testing seem too costly to bother with. The `httptest` package enables you to test all of the logic on the R sides of the API in your package without requiring access to the remote service.
 
-Importantly, `httptest` provides three **contexts** that mock the network connection in different ways, and it offers additional **expectations** to assert that HTTP requests were---or were not---made. The package also includes a context for recording the responses of real requests and storing them as fixtures that you can later load in a test run. Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API. The ability to save responses and load them offline also enables you to write package vignettes and other dynamic documents that can be distributed without access to a live server.
+Importantly, it provides multiple **contexts** that mock the network connection and tools for **recording** real requests for future offline use as fixtures, both in tests and in vignettes. The package also includes additional **expectations** to assert that HTTP requests were---or were not---made.
+
+Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API. The ability to save responses and load them offline also enables you to write package vignettes and other dynamic documents that can be distributed without access to a live server.
 
 This package bridges the gap between two others: (1) [testthat](http://testthat.r-lib.org/), which provides a useful ([and fun](https://github.com/r-lib/testthat/blob/master/R/test-that.R#L171)) framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](http://httr.r-lib.org/), which [makes working with HTTP in R easy](https://github.com/r-lib/httr/blob/master/R/httr.r#L1) but doesn't make it simple to test the code that uses it. `httptest` brings the fun and simplicity together.
 
@@ -39,22 +42,15 @@ Here's an overview of the package's main functions.
 
 The package includes three test contexts, which you wrap around test code that would otherwise make network requests.
 
+* **`with_mock_api()`** lets you provide custom fixtures as responses to requests. It maps URLs, including query parameters, to files in your test directory, and it includes the file contents in the mocked "response" object. Request methods that do not have a corresponding fixture file raise errors the same way that `without_internet` does. This context allows you to test more complex R code that makes requests and does something with the response, simulating how the API should respond to specific requests.
 * **`without_internet()`** converts HTTP requests made through `httr` request functions into errors that print the request method, URL, and body payload, if provided. This is useful for asserting that a function call would make a correctly-formed HTTP request, as well as for asserting that a function does not make a request (because if it did, it would raise an error in this context).
 * **`with_fake_http()`** raises a "message" instead of an "error", and HTTP requests return a "response"-class object. Like `without_internet`, it allows you to assert that the correct requests were (or were not) made, but since it doesn't cause the code to exit with an error, you can test code in functions that comes after requests, provided that it doesn't expect a particular response to each request.
-* **`with_mock_api()`** lets you provide custom fixtures as responses to requests. It maps URLs, including query parameters, to files in your test directory, and it includes the file contents in the mocked "response" object. Request methods that do not have a corresponding fixture file raise errors the same way that `without_internet` does. This context allows you to test more complex R code that makes requests and does something with the response, simulating how the API should respond to specific requests.
-
-### Expectations
-
-* **`expect_GET()`**, **`expect_PUT()`**, **`expect_PATCH()`**, **`expect_POST()`**, and **`expect_DELETE()`** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_api` just proceed with their response content and don't trigger `expect_GET`, however.)
-* **`expect_no_request()`** is the inverse of those: it asserts that no error or message from a mocked HTTP service is raised.
-* **`expect_header()`** asserts that an HTTP request, mocked or not, contains a request header.
-* **`expect_json_equivalent()`** doesn't directly concern HTTP, but it is useful for working with JSON APIs. It checks that two R objects would generate equivalent JSON, taking into account how JSON objects are unordered whereas R named lists are ordered.
 
 ### Recording requests
 
 A fourth context, **`capture_requests()`**, collects the responses from requests you make and stores them as mock files. This enables you to perform a series of requests against a live server once and then build your test suite using those mocks, running your tests in `with_mock_api`.
 
-Mocks stored by `capture_requests` are written out as plain-text files, either with extension `.json` if the request returned JSON content or with extension `.R` otherwise. The `.R` files contain syntax that when executed recreates the `httr` "response" object. By storing fixtures as plain-text files, you can more easily confirm that your mocks look correct, and you can more easily maintain them without having to re-record them (though it is easy enough to delete and recapture). If the API changes subtly, such as when adding an additional attribute to an object, you can just touch up the mocks.
+Mocks stored by `capture_requests` are written out as plain-text files. By storing fixtures as human-readable files, you can more easily confirm that your mocks look correct, and you can more easily maintain them if the API changes subtly without having to re-record them (though it is easy enough to delete and recapture). Text files also play well with version control systems, such as git.
 
 For convenience, you may find it easier in an interactive session to call `start_capturing()`, make requests, and then `stop_capturing()` when you're done. This:
 
@@ -77,6 +73,13 @@ stop_capturing()
 ```
 
 When recording requests, by default `httptest` looks for and redacts the standard ways that auth credentials are returned in responses, so you won't accidentally publish your personal tokens. The redacting behavior is fully customizable, either by providing a `function (response) {...}` to `set_redactor()`, or by placing a function in your package's `inst/httptest/redact.R` that will be used automatically any time you record requests with your package loaded. See `vignette("redacting")` for details.
+
+### Expectations
+
+* **`expect_GET()`**, **`expect_PUT()`**, **`expect_PATCH()`**, **`expect_POST()`**, and **`expect_DELETE()`** assert that the specified HTTP request is made within one of the test contexts. They catch the error or message raised by the mocked HTTP service and check that the request URL and optional body match the expectation. (Mocked responses in `with_mock_api` just proceed with their response content and don't trigger `expect_GET`, however.)
+* **`expect_no_request()`** is the inverse of those: it asserts that no error or message from a mocked HTTP service is raised.
+* **`expect_header()`** asserts that an HTTP request, mocked or not, contains a request header.
+* **`expect_json_equivalent()`** doesn't directly concern HTTP, but it is useful for working with JSON APIs. It checks that two R objects would generate equivalent JSON, taking into account how JSON objects are unordered whereas R named lists are ordered.
 
 ### Vignettes
 

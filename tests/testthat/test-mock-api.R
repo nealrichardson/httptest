@@ -130,29 +130,29 @@ public({
 test_that("build_mock_url file path construction with character URL", {
     # GET (default) method
     file <- build_mock_url("http://www.test.com/api/call")
-    expect <- "www.test.com/api/call.json"
+    expect <- "www.test.com/api/call"
     expect_identical(file, expect, label = "Get method without query string")
 
     # GET method with query in URL
     file <- build_mock_url("http://www.test.com/api/call?q=1")
-    expect <- "www.test.com/api/call-a3679d.json"
+    expect <- "www.test.com/api/call-a3679d"
     expect_identical(file, expect, label = "Get method with query string")
 
     # POST method
     file <- build_mock_url("http://www.test.com/api/call", method = "POST")
-    expect <- "www.test.com/api/call-POST.json"
+    expect <- "www.test.com/api/call-POST"
     expect_identical(file, expect, "POST method without query string")
 
     # POST method with query in URL
     file <- build_mock_url("http://www.test.com/api/call?q=1", method = "POST")
-    expect <- "www.test.com/api/call-a3679d-POST.json"
+    expect <- "www.test.com/api/call-a3679d-POST"
     expect_identical(file, expect, "POST method with query string")
 })
 
 test_that("build_mock_url returns file names that are valid on all R platforms", {
     u <- "https://language.googleapis.com/v1/documents:annotateText/"
     expect_identical(build_mock_url(u),
-        "language.googleapis.com/v1/documents-annotateText.json")
+        "language.googleapis.com/v1/documents-annotateText")
 })
 
 test_that("load_response invalid extension handling", {

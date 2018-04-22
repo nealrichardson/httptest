@@ -122,18 +122,18 @@ save_response <- function (response, simplify=TRUE) {
     if (simplify && status == 200 && is_json) {
         ## Squelch the "No encoding supplied: defaulting to UTF-8."
         ## TODO: support other text content-types than JSON
+        dst_file <- paste0(dst_file, ".json")
         cat(suppressMessages(prettify(content(response, "text"))), file=dst_file)
     } else if (simplify && status == 204) {
         ## "touch" a file with extension .204
-        dst_file <- sub("json$", "204", dst_file)
+        dst_file <- paste0(dst_file, ".204")
         cat("", file=dst_file)
     } else {
         ## Dump an object that can be sourced
 
         ## Change the file extension to .R
-        ## TODO: build_mock_url should stop appending an extension
-        dst_file <- sub("json$", "R", dst_file)
-        mock_file <- sub("json$", "R", mock_file)
+        dst_file <- paste0(dst_file, ".R")
+        mock_file <- paste0(mock_file, ".R")
 
         ## If content is text, rawToChar it and dput it as charToRaw(that)
         ## so that it loads correctly but is also readable

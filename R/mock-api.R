@@ -143,10 +143,6 @@ build_mock_url <- function (req, method="GET") {
         ## Append method to the file name for non GET requests
         f <- paste0(f, "-", method)
     }
-
-    ## Add file extension
-    ## TODO: Don't. We don't assume .json anywhere else
-    f <- paste0(f, ".json")
     return(f)
 }
 
@@ -164,12 +160,10 @@ find_mock_file <- function (file) {
     for (path in .mockPaths()) {
         ## Look for files of any .extension in the indicated directory,
         ## be they .R, .json, ...
-        ## TODO: build_mock_url shouldn't add an extension
         mp <- file.path(path, file)
         ## Turn the basename into a regular expression that will match it (and
         ## only it) with any .extension
-        mockbasename <- paste0("^",
-            sub("\\.[[:alnum:]]*$", ".[[:alnum:]]*$", basename(mp)))
+        mockbasename <- paste0("^", basename(mp), ".[[:alnum:]]*$")
         mockfiles <- dir(dirname(mp), pattern=mockbasename, all.files=TRUE,
             full.names=TRUE)
         ## Remove directories
