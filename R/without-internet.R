@@ -53,7 +53,8 @@ stop_request <- function (req, handle, refresh) {
     if (!is.null(req$mockfile)) {
         ## Poked in here by mock_request for ease of debugging
         ## Append it to the end.
-        out <- paste0(out, " (", req$mockfile, ")")
+        ## TODO: remove .json if/when possible; there for backwards compat
+        out <- paste0(out, " (", req$mockfile, ".json)")
     }
     stop(out, call.=FALSE)
 }
