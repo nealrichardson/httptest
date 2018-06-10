@@ -176,9 +176,6 @@ find_mock_file <- function (file) {
     return(NULL)
 }
 
-## TODO: remove
-findMockFile <- find_mock_file
-
 #' @importFrom utils tail
 load_response <- function (file, req) {
     ## TODO: support other content-types
