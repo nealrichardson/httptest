@@ -100,10 +100,6 @@ fake_response <- function (request, verb="GET", status_code=200, headers=list(),
     ), class="response")
 }
 
-#' @rdname fake_response
-#' @export
-fakeResponse <- fake_response
-
 fake_request <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
     body <- request_body(req)
