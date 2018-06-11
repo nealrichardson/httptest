@@ -161,6 +161,12 @@ find_mock_file <- function (file) {
         ## Look for files of any .extension in the indicated directory,
         ## be they .R, .json, ...
         mp <- file.path(path, file)
+        if (file.exists(mp) && !dir.exists(mp) && grepl("\\.", basename(mp))) {
+            ## With write_disk() downloading, 'file' may reference a specific
+            ## file and include the extension .R-FILE. So if that file exists,
+            ## no need to search for it. Just return it.
+            return(mp)
+        }
         ## Turn the basename into a regular expression that will match it (and
         ## only it) with any .extension
         mockbasename <- paste0("^", basename(mp), ".[[:alnum:]]*$")
