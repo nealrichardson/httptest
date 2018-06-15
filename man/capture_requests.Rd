@@ -8,7 +8,7 @@
 \usage{
 capture_requests(expr, path, ...)
 
-start_capturing(path, simplify = TRUE, verbose = FALSE, redact)
+start_capturing(path, simplify = TRUE, verbose, redact)
 
 stop_capturing()
 }
@@ -17,7 +17,8 @@ stop_capturing()
 
 \item{path}{Where to save the mock files. Default is the first directory in
 \code{\link[=.mockPaths]{.mockPaths()}}, which if not otherwise specified is the current working
-directory.}
+directory. It is generally better to call \code{.mockPaths()} directly if you
+want to write to a different path, rather than using the \code{path} argument.}
 
 \item{...}{Arguments passed through \code{capture_requests} to \code{start_capturing}}
 
@@ -29,7 +30,9 @@ a .R file using \code{\link[base:dput]{base::dput()}}.}
 \item{verbose}{logical: if \code{TRUE}, a \code{message} is printed for every file
 that is written when capturing requests containing the absolute path of the
 file. Useful for debugging if you're capturing but don't see the fixture
-files being written in the expected location. Default is \code{FALSE}.}
+files being written in the expected location. Default is \code{FALSE}. This
+parameter is deprecated; it is instead recommended that you set
+\code{options(httptest.verbose=TRUE)} to enable.}
 
 \item{redact}{function to run to purge sensitive strings from the recorded
 response objects. This argument is deprecated: use \code{\link[=set_redactor]{set_redactor()}} or a

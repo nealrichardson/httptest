@@ -20,7 +20,8 @@
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the first directory in
 #' [.mockPaths()], which if not otherwise specified is the current working
-#' directory.
+#' directory. It is generally better to call `.mockPaths()` directly if you
+#' want to write to a different path, rather than using the `path` argument.
 #' @param simplify logical: if `TRUE` (default), JSON responses with status 200
 #' will be written as just the text of the response body. In all other cases,
 #' and when `simplify` is `FALSE`, the "response" object will be written out to
@@ -28,7 +29,9 @@
 #' @param verbose logical: if `TRUE`, a `message` is printed for every file
 #' that is written when capturing requests containing the absolute path of the
 #' file. Useful for debugging if you're capturing but don't see the fixture
-#' files being written in the expected location. Default is `FALSE`.
+#' files being written in the expected location. Default is `FALSE`. This
+#' parameter is deprecated; it is instead recommended that you set
+#' `options(httptest.verbose=TRUE)` to enable.
 #' @param redact function to run to purge sensitive strings from the recorded
 #' response objects. This argument is deprecated: use [set_redactor()] or a
 #' package redactor instead. See `vignette("redacting")` for more details.
@@ -67,12 +70,18 @@ capture_requests <- function (expr, path, ...) {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
+start_capturing <- function (path, simplify=TRUE, verbose, redact) {
     if (!missing(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
     } else {
         path <- NULL
+    }
+    if (!missing(verbose)) {
+        ## Note that this changes state and doesn't reset it
+        warning("The 'verbose' argument to capture_requests() is deprecated; ",
+            "Set options(httptest.verbose=TRUE) instead.", call.=FALSE)
+        options(httptest.verbose=verbose)
     }
 
     if (!missing(redact)) {
@@ -86,13 +95,10 @@ start_capturing <- function (path, simplify=TRUE, verbose=FALSE, redact) {
         ## Get the value returned from the function, and sanitize it
         redactor <- get_current_redactor()
         .resp <- redactor(returnValue())
-        f <- save_response(.resp, simplify=simplify)
-        if (isTRUE(getOption("httptest.verbose", verbose))) {
-            message("Writing ", normalizePath(f))
-        }
-    }, list(simplify=simplify, verbose=verbose))
+        save_response(.resp, simplify=simplify)
+    }, list(simplify=simplify))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
-        trace_httr(verb, exit=req_tracer, print=FALSE)
+        trace_httr(verb, exit=req_tracer)
     }
     invisible(path)
 }
@@ -170,6 +176,9 @@ save_response <- function (response, simplify=TRUE) {
         response$request <- NULL
 
         dput(response, file=dst_file)
+    }
+    if (isTRUE(getOption("httptest.verbose", FALSE))) {
+        message("Writing ", normalizePath(dst_file))
     }
     return(dst_file)
 }

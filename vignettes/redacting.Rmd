@@ -127,7 +127,7 @@ function (response) {
 
 If you're writing a package that wraps an API and you need a custom redactor to safely record API responses, you'll want to make sure that you _always_ record with that redactor. You don't want to forget to call `set_redactor()` in your R session and end up recording fixtures that contain your auth secrets.
 
-To make sure that your redactor is "always on" for your package, `httptest` enables you to define a package-level redactor. To do this, put a redacting function in `inst/httptest/redact.R` in your package. (In fact, the function in the above example is in [`inst/httptest/redact.R` in the `pivotaltrackR` package]((https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/redact.R)).)
+To make sure that your redactor is "always on" for your package, `httptest` enables you to define a package-level redactor. To do this, put a redacting function in `inst/httptest/redact.R` in your package. (In fact, the function in the above example is in [`inst/httptest/redact.R` in the `pivotaltrackR` package](https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/redact.R).)
 
 Any time you record requests while your package is loaded, as when running tests or building vignettes, this function will be called on the `response` object before writing it to disk. It's automatic: set it there once and you never have to remember.
 

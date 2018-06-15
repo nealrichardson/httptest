@@ -10,18 +10,29 @@
 #' @return The result of `expr`
 #' @export
 #' @keywords internal
-with_trace <- function (x, where=topenv(parent.frame()), print=FALSE, ..., expr) {
-    suppressMessages(trace(x, print=print, where=where, ...))
-    on.exit(suppressMessages(untrace(x, where=where)))
+with_trace <- function (x, where=topenv(parent.frame()), print=getOption("httptest.debug", FALSE), ..., expr) {
+    quietly(trace(x, print=print, where=where, ...))
+    on.exit(quietly(untrace(x, where=where)))
     eval.parent(expr)
 }
 
-mock_perform <- function (mocker, print=FALSE, ...) {
+mock_perform <- function (mocker, ...) {
     tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
-    invisible(trace_httr("request_perform", print=print, tracer=tracer, ...))
+    invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
 
-trace_httr <- function (...) suppressMessages(trace(..., where=add_headers))
+trace_httr <- function (..., print=getOption("httptest.debug", FALSE)) {
+    quietly(trace(..., print=print, where=add_headers))
+}
+
+quietly <- function (expr) {
+    env <- parent.frame()
+    if (getOption("httptest.debug", FALSE)) {
+        eval(expr, env)
+    } else {
+        suppressMessages(eval(expr, env))
+    }
+}
 
 #' Turn off request mocking
 #'
@@ -36,7 +47,7 @@ safe_untrace <- function (what, where) {
     ## whatever namespace it lives in and (2) that isn't currently traced,
     ## it errors. This prevents that so that it's always safe to call `untrace`
     if (inherits(get(what, environment(where)), "functionWithTrace")) {
-        suppressMessages(untrace(what, where=where))
+        quietly(untrace(what, where=where))
     }
 }
 
