@@ -145,14 +145,21 @@ with_mock_api({
         response <- readLines(file.path(d3, "api/object1.R"))
     })
 
-    test_that("Using verbose=TRUE (and .mockPaths)", {
+    test_that("Using verbose=TRUE works (and warns)", {
         d4 <- tempfile()
-        with_mock_path(d4, {
-            capture_while_mocking(verbose=TRUE, {
-                expect_message(GET("http://example.com/get/"),
-                    "Writing .*example.com.get.json")
-            })
-        })
+        expect_warning(
+            with_mock_path(d4, {
+                capture_while_mocking(verbose=TRUE, {
+                    expect_message(
+                        GET("http://example.com/get/"),
+                        "Writing .*example.com.get.json"
+                    )
+                })
+            }),
+            "The 'verbose' argument to capture_requests() is deprecated",
+            fixed=TRUE
+        )
+        options(httptest.verbose=NULL) ## bc capture_requests doesn't unset
         expect_true(setequal(dir(d4, recursive=TRUE),
             c("example.com/get.json")))
         expect_identical(readLines(file.path(d4, "example.com/get.json")),

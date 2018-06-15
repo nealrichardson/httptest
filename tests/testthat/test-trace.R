@@ -13,3 +13,10 @@ public({
         expect_error(stop_capturing(), NA)
     })
 })
+
+test_that("quietly muffles messages, conditional on httptest.debug", {
+    expect_message(quietly(message("A message!")), NA)
+    options(httptest.debug=TRUE)
+    on.exit(options(httptest.debug=NULL))
+    expect_message(quietly(message("A message!")), "A message!")
+})
