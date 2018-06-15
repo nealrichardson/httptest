@@ -22,7 +22,7 @@ skip_if_disconnected <- function (message=paste("Offline: cannot reach", url),
     invisible(TRUE)
 }
 
-#' @importFrom httr GET PUT POST PATCH DELETE VERB
+#' @importFrom httr GET PUT POST PATCH DELETE VERB RETRY
 currently_offline <- function (url="http://httpbin.org/") {
     inherits(try(httr::GET(url), silent=TRUE), "try-error")
 }

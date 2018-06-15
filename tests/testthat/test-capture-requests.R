@@ -18,6 +18,7 @@ test_that("We can record a series of requests (a few ways)", {
             query=list(`Content-Type`="application/json"))
         r6 <<- GET("http://httpbin.org/anything", config=write_disk(dl_file))
         r7 <<- GET("http://httpbin.org/image/webp", config=write_disk(webp_file))
+        r8 <<- RETRY("GET", "http://httpbin.org/status/202")
     stop_capturing()
     .mockPaths(NULL) ## because start_capturing with path modifies global state
     expect_identical(sort(dir(d, recursive=TRUE)),
@@ -28,6 +29,7 @@ test_that("We can record a series of requests (a few ways)", {
           "httpbin.org/image/webp.R-FILE", ## The `write_disk` location
           "httpbin.org/put-PUT.json", ## Not a GET, but returns 200
           "httpbin.org/response-headers-ac4928.json",
+          "httpbin.org/status/202.R", ## Not 200 response, so .R
           "httpbin.org/status/418.R" ## Not 200 response, so .R
           ))
     ## Test the contents of the .R files
@@ -64,6 +66,7 @@ test_that("We can then load the mocks it stores", {
                 query=list(`Content-Type`="application/json"))
             m6 <- GET("http://httpbin.org/anything", config=write_disk(mock_dl_file))
             m7 <- GET("http://httpbin.org/image/webp", config=write_disk(mock_webp_file))
+            m8 <- RETRY("GET", "http://httpbin.org/status/202")
         })
     })
     expect_identical(content(m1), content(r1))
@@ -75,6 +78,7 @@ test_that("We can then load the mocks it stores", {
     expect_identical(content(m5), content(r5))
     expect_identical(content(m6), content_r6)
     expect_identical(content(m7), content_r7)
+    expect_equal(m8$status_code, 202)
 })
 
 test_that("write_disk mocks can be reloaded even if the mock directory moves", {

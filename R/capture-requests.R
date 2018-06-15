@@ -97,7 +97,7 @@ start_capturing <- function (path, simplify=TRUE, verbose, redact) {
         .resp <- redactor(returnValue())
         save_response(.resp, simplify=simplify)
     }, list(simplify=simplify))
-    for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET")) {
+    for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET", "RETRY")) {
         trace_httr(verb, exit=req_tracer)
     }
     invisible(path)
@@ -186,7 +186,7 @@ save_response <- function (response, simplify=TRUE) {
 #' @rdname capture_requests
 #' @export
 stop_capturing <- function () {
-    for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB")) {
+    for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB", "RETRY")) {
         safe_untrace(verb, add_headers)
     }
 }

@@ -7,6 +7,7 @@
 * Bare JSON files written by `capture_requests()` are now "prettified" (i.e. multiline, nice indentation).
 * Add `options(httptest.debug)`, which if `TRUE` prints more details about which functions are being traced (by `base::trace()`) and when they're called.
 * Deprecate the "verbose" argument to `capture_requests()`: use `options(httptest.verbose)` instead.
+* `capture_requests()` now records responses from `httr::RETRY()` (#13)
 
 # httptest 3.0.0
 

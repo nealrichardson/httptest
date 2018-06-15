@@ -1,6 +1,9 @@
 Sys.setlocale("LC_COLLATE", "C") ## What CRAN does
 set.seed(999)
-options(warn=1, httptest.verbose=TRUE)
+options(
+    warn=1,
+    httptest.debug=FALSE
+)
 
 library(httr)
 
