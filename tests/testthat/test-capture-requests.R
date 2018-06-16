@@ -22,10 +22,10 @@ test_that("We can record a series of requests (a few ways)", {
     stop_capturing()
     .mockPaths(NULL) ## because start_capturing with path modifies global state
     expect_identical(sort(dir(d, recursive=TRUE)),
-        c("httpbin.org.R", ## it's HTML, so .R
+        c("httpbin.org.html", ## it's HTML, and we now support that simplified
           "httpbin.org/anything.json",
           "httpbin.org/get.json",
-          "httpbin.org/image/webp.R",
+          "httpbin.org/image/webp.R", ## Not a simplifiable format, so .R
           "httpbin.org/image/webp.R-FILE", ## The `write_disk` location
           "httpbin.org/put-PUT.json", ## Not a GET, but returns 200
           "httpbin.org/response-headers-ac4928.json",
@@ -36,11 +36,9 @@ test_that("We can record a series of requests (a few ways)", {
     teapot <- source(file.path(d, "httpbin.org/status/418.R"))$value
     expect_is(teapot, "response")
     expect_identical(teapot$status_code, 418L)
-
-    html <- source(file.path(d, "httpbin.org.R"))$value
-    expect_true(grepl("</body>", content(html, "text")))
-    ## Also test that the .R file itself has text in it
-    expect_true(any(grepl("</body>", readLines(file.path(d, "httpbin.org.R")))))
+    ## Make sure that our .html file has HTML
+    expect_true(any(grepl("</body>",
+        suppressWarnings(readLines(file.path(d, "httpbin.org.html"))))))
 })
 
 test_that("We can then load the mocks it stores", {
@@ -73,6 +71,7 @@ test_that("We can then load the mocks it stores", {
     ## Compare the HTML as text because the parsed HTML (XML) object has a
     ## C pointer that is different between the two objects.
     expect_identical(content(m2, "text"), content(r2, "text"))
+    expect_true(grepl("</body>", content(m2, "text")))
     expect_identical(content(m3), content(r3))
     expect_identical(content(m4), content(r4))
     expect_identical(content(m5), content(r5))

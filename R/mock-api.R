@@ -184,20 +184,16 @@ find_mock_file <- function (file) {
 
 #' @importFrom utils tail
 load_response <- function (file, req) {
-    ## TODO: support other content-types
-    known_contents <- list(
-        "json"="application/json"
-    )
     ext <- tail(unlist(strsplit(file, ".", fixed=TRUE)), 1)
     if (ext == "R") {
         ## It's a full "response". Source it.
         return(source(file)$value)
-    } else if (ext %in% names(known_contents)) {
+    } else if (ext %in% names(EXT_TO_CONTENT_TYPE)) {
         return(fake_response(
             req,
             content=readBin(file, "raw", n=file.size(file)),
             status_code=200L,
-            headers=list(`Content-Type`=known_contents[[ext]])
+            headers=list(`Content-Type`=EXT_TO_CONTENT_TYPE[[ext]])
         ))
     } else if (ext == "204") {
         return(fake_response(req, status_code=204L))

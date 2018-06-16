@@ -122,14 +122,17 @@ save_response <- function (response, simplify=TRUE) {
     dir.create(dirname(dst_file), showWarnings=FALSE, recursive=TRUE)
 
     ## Get the Content-Type
-    ct <- unlist(response$headers[tolower(names(response$headers)) == "content-type"])
-    is_json <- any(grepl("application/json", ct))
+    ct <- get_content_type(response)
     status <- response$status_code
-    if (simplify && status == 200 && is_json) {
+    if (simplify && status == 200 && ct %in% names(CONTENT_TYPE_TO_EXT)) {
         ## Squelch the "No encoding supplied: defaulting to UTF-8."
-        ## TODO: support other text content-types than JSON
-        dst_file <- paste0(dst_file, ".json")
-        cat(suppressMessages(prettify(content(response, "text"))), file=dst_file)
+        cont <- suppressMessages(content(response, "text"))
+        if (ct == "application/json") {
+            ## Prettify
+            cont <- prettify(cont)
+        }
+        dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep=".")
+        cat(cont, file=dst_file)
     } else if (simplify && status == 204) {
         ## "touch" a file with extension .204
         dst_file <- paste0(dst_file, ".204")
@@ -147,15 +150,13 @@ save_response <- function (response, simplify=TRUE) {
             "application/x-www-form-urlencoded", "application/xml",
             "text/csv", "text/html", "text/plain",
             "text/tab-separated-values", "text/xml")
-        is_text <- length(ct) && any(unlist(strsplit(ct, "; ?")) %in% text_types)
-        ## strsplit on ; because "charset" may be appended
-        if (is_text) {
+        if (ct %in% text_types) {
             ## Squelch the "No encoding supplied: defaulting to UTF-8."
             cont <- suppressMessages(content(response, "text"))
-            if (is_json) {
-                ## TODO: "parse error: premature EOF"
-                # cont <- jsonlite::prettify(cont)
-            }
+            # if (ct == "application/json") {
+            #     ## TODO: "parse error: premature EOF"
+            #     cont <- jsonlite::prettify(cont)
+            # }
             response$content <- substitute(charToRaw(cont))
         } else if (inherits(response$request$output, "write_disk")) {
             ## Copy real file and substitute the response$content "path".
