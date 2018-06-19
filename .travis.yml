@@ -1,7 +1,5 @@
 language: r
 cache: packages
-# Temporary workaround for R-devel nonsense...
-warnings_are_errors: false
 r:
   - oldrel
   - release

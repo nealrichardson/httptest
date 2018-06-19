@@ -1,15 +1,24 @@
-# httptest 3.0.1 (under development)
-* Store package-level vignette setup and teardown code, called inside `start_vignette()` and `end_vignette()`, in `inst/httptest/start-vignette.R` and `inst/httptest/end-vignette.R`, respectively. Like with the package redactors and request preprocessors, these are automatically executed whenever your package is loaded and `start/end_vignette` is called. This makes it easy to write multiple vignettes without having to copy and paste as much setup code. See `vignette("vignettes")` for details.
+## httptest 3.1.0
+
+### Better, more efficient response recording
+
 * `capture_requests()` no longer includes the "request" object inside the recorded response when writing `.R` verbose responses. As of 3.0.0, `with_mock_api()` inserts the current request when loading mock files, so it was being overwritten anyway. This eliminates some (though not all) of the need for redacting responses. As a result, the redacting functions `redact_oauth()` and `redact_http_auth()` have been removed because they only acted on the `response$request`, which is now dropped entirely.
-* `with_mock_api()` now can read a range of new file types, including `.html`, `.xml`, `.txt`, `.csv`, and `.tsv`, as mock responses. Previously, only `.json` was supported.
-* Similarly, `capture_requests()` will record responses with the associated Content-Types (e.g. `text/html` for `.html`) as simple text files with those extensions when `simplify=TRUE` (the default).
-* When recording, HTTP responses with `204 No Content` status are now written as empty files with `.204` extension (if `simplify=TRUE`, the default). This saves around 2K of disk space per file.
+* `capture_requests()` will record simplified response bodies for a range of Content-Types when `simplify=TRUE` (the default). Previously, only `.json` (`Content-Type: application/json`) was recorded as a simple text files; now, `.html`, `.xml`, `.txt`, `.csv`, and `.tsv` are supported.
+* When recording with `simplify=TRUE`, HTTP responses with `204 No Content` status are now written as empty files with `.204` extension. This saves around 2K of disk space per file.
+* `with_mock_api()` now can also load these newly supported file types.
+* Bare JSON files written by `capture_requests()` are now "prettified" (i.e. multiline, nice indentation).
+* `capture_requests()` now records responses from `httr::RETRY()` (#13)
+
+### Vignette setup and teardown
+
+* Store package-level vignette setup and teardown code, called inside `start_vignette()` and `end_vignette()`, in `inst/httptest/start-vignette.R` and `inst/httptest/end-vignette.R`, respectively. Like with the package redactors and request preprocessors, these are automatically executed whenever your package is loaded and `start/end_vignette` is called. This makes it easy to write multiple vignettes without having to copy and paste as much setup code. See `vignette("vignettes")` for details.
+
+### Other enhancements and options
+
 * `gsub_response()` now applies over the URL in a `Location` header, if found.
 * Add `options(httptest.max.print)` to allow you the ability to specify a length to which to truncate the request body printed in the error message for requests in `with_mock_api()`. Useful for debugging mock files not found when there are large request bodies.
-* Bare JSON files written by `capture_requests()` are now "prettified" (i.e. multiline, nice indentation).
 * Add `options(httptest.debug)`, which if `TRUE` prints more details about which functions are being traced (by `base::trace()`) and when they're called.
 * Deprecate the "verbose" argument to `capture_requests()`: use `options(httptest.verbose)` instead.
-* `capture_requests()` now records responses from `httr::RETRY()` (#13)
 
 # httptest 3.0.0
 

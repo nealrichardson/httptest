@@ -2,7 +2,7 @@
 % Please edit documentation in R/fake-http.R
 \name{fake_response}
 \alias{fake_response}
-\title{Return something that looks like an httr 'response'}
+\title{Return something that looks like a 'response'}
 \usage{
 fake_response(request, verb = "GET", status_code = 200, headers = list(),
   content = NULL)
