@@ -20,7 +20,7 @@ In this context, HTTP verb functions raise a 'message' so that test code can
 assert that the requests are made. As in \code{\link[=without_internet]{without_internet()}}, the message
 raised has a well-defined shape, made of three
 elements, separated by space: (1) the request
-method (e.g. "GET", or for downloading, "DOWNLOAD"); (2) the request URL; and
+method (e.g. "GET" or "POST"); (2) the request URL; and
 (3) the request body, if present. The verb-expectation functions,
 such as \code{expect_GET} and \code{expect_POST}, look for this shape.
 }
@@ -33,7 +33,7 @@ it returns echoes back most of the request itself, similar to how some
 endpoints on \url{http://httpbin.org} do.
 
 In the interest of standardizing naming conventions, \code{with_fake_http()} is
-the preferred name for this context; \code{with_fake_HTTP()} is being deprecated.
+the preferred name for this context; \code{with_fake_HTTP()} is deprecated.
 }
 \examples{
 with_fake_http({

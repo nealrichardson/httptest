@@ -8,14 +8,21 @@
 #' `start_capturing` and `stop_capturing` allow you to turn on/off request
 #' recording for more convenient use in an interactive session.
 #'
-#' Mocks stored by this context are written out as plain-text files, either with
-#' extension `.json` if the request returned JSON content or with extension `.R`
-#' otherwise. The `.R` files contain syntax that when executed recreates the
-#' `httr` "response" object. By storing fixtures as plain-text files, you can
+#' Recorded responses are written out as plain-text files. By storing fixtures
+#' as plain-text files, you can
 #' more easily confirm that your mocks look correct, and you can more easily
 #' maintain them without having to re-record them. If the API changes subtly,
 #' such as when adding an additional attribute to an object, you can just touch
 #' up the mocks.
+#'
+#' If the response has status `200 OK` and the `Content-Type`
+#' maps to a supported file extension---currently `.json`,
+#' `.html`, `.xml`, `.txt`, `.csv`, and `.tsv`---just the response body will be
+#' written out, using the appropriate extension. `204 No Content` status
+#' responses will be stored as an empty file with extension `.204`. Otherwise,
+#' the response will be written as a `.R` file containing syntax that, when
+#' executed, recreates the
+#' `httr` "response" object.
 #'
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the first directory in
@@ -57,6 +64,7 @@
 #' }
 #' @importFrom httr content
 #' @export
+#' @seealso [build_mock_url()] for how requests are translated to file paths
 capture_requests <- function (expr, path, ...) {
     start_capturing(...)
     on.exit(stop_capturing())
@@ -107,6 +115,7 @@ start_capturing <- function (path, simplify=TRUE, verbose, redact) {
 #'
 #' @param response An 'httr' `response` object
 #' @param simplify logical: if `TRUE` (default), JSON responses with status 200
+#' and a supported `Content-Type`
 #' will be written as just the text of the response body. In all other cases,
 #' and when `simplify` is `FALSE`, the "response" object will be written out to
 #' a .R file using [base::dput()].

@@ -10,10 +10,10 @@ Description: Testing and documenting code that communicates with remote servers
     contexts that mock the network connection in different ways, as well as
     testing functions to assert that HTTP requests were---or were
     not---made. It also allows one to safely record real API responses to use as
-    test fixture. The ability to save responses and load them offline also
+    test fixtures. The ability to save responses and load them offline also
     enables one to write vignettes and other dynamic documents that can be
     distributed without access to a live server.
-Version: 3.0.1
+Version: 3.1.0
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: http://enpiar.com/r/httptest, https://github.com/nealrichardson/httptest
 BugReports: https://github.com/nealrichardson/httptest/issues

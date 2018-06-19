@@ -10,6 +10,7 @@ save_response(response, simplify = TRUE)
 \item{response}{An 'httr' \code{response} object}
 
 \item{simplify}{logical: if \code{TRUE} (default), JSON responses with status 200
+and a supported \code{Content-Type}
 will be written as just the text of the response body. In all other cases,
 and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
 a .R file using \code{\link[base:dput]{base::dput()}}.}

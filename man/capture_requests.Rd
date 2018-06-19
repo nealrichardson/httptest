@@ -53,14 +53,21 @@ those mocks, running your tests in \code{\link[=with_mock_api]{with_mock_api()}}
 \code{start_capturing} and \code{stop_capturing} allow you to turn on/off request
 recording for more convenient use in an interactive session.
 
-Mocks stored by this context are written out as plain-text files, either with
-extension \code{.json} if the request returned JSON content or with extension \code{.R}
-otherwise. The \code{.R} files contain syntax that when executed recreates the
-\code{httr} "response" object. By storing fixtures as plain-text files, you can
+Recorded responses are written out as plain-text files. By storing fixtures
+as plain-text files, you can
 more easily confirm that your mocks look correct, and you can more easily
 maintain them without having to re-record them. If the API changes subtly,
 such as when adding an additional attribute to an object, you can just touch
 up the mocks.
+
+If the response has status \code{200 OK} and the \code{Content-Type}
+maps to a supported file extension---currently \code{.json},
+\code{.html}, \code{.xml}, \code{.txt}, \code{.csv}, and \code{.tsv}---just the response body will be
+written out, using the appropriate extension. \code{204 No Content} status
+responses will be stored as an empty file with extension \code{.204}. Otherwise,
+the response will be written as a \code{.R} file containing syntax that, when
+executed, recreates the
+\code{httr} "response" object.
 }
 \examples{
 \dontrun{
@@ -78,4 +85,7 @@ GET("http://httpbin.org/response-headers",
     query=list(`Content-Type`="application/json"))
 stop_capturing()
 }
+}
+\seealso{
+\code{\link[=build_mock_url]{build_mock_url()}} for how requests are translated to file paths
 }

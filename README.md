@@ -118,11 +118,14 @@ By default, the destination path for `capture_requests()` is relative to the cur
 
 If you're running `capture_requests` within a test suite in an installed package, or if you're running interactively from a different directory, the working directory may not be the same as your code repository. If you aren't sure where the files are going, set `options(httptest.verbose=TRUE)`, and it will message the absolute path of the files as it writes them.
 
-To change where files are being written, use `.mockPaths()` (like `base::.libPaths()`) to specify a different directory.
+To change where files are being written or read from, use `.mockPaths()` (like `base::.libPaths()`) to specify a different directory.
 
 #### How do I fix "non-portable file paths"?
 
-If you see this error in `R CMD build` or `R CMD check`, it means that there are file paths are longer than 100 characters, which can sometimes happen when you record requests. Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
+If you see this error in `R CMD build` or `R CMD check`, it means that there are file paths are longer than 100 characters, which can sometimes happen when you record requests. `httptest` preserves the URL structure of mocks in file paths to improve the readability and maintainability of your tests, as well as to make visible the properties of your API.
+Indeed, the file-system tree view of the mock files gives a visual representation of your API. This value comes with a tradeoff: sometimes URLs can be long, and R doesn't like that. 
+
+Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
 
 A big way to cut long file paths is by using a request preprocessor: a function that alters the content of your 'httr' `request` before mapping it to a mock file. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could set a request preprocessor like:
 

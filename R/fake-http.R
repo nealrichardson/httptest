@@ -4,7 +4,7 @@
 #' assert that the requests are made. As in [without_internet()], the message
 #' raised has a well-defined shape, made of three
 #' elements, separated by space: (1) the request
-#' method (e.g. "GET", or for downloading, "DOWNLOAD"); (2) the request URL; and
+#' method (e.g. "GET" or "POST"); (2) the request URL; and
 #' (3) the request body, if present. The verb-expectation functions,
 #' such as `expect_GET` and `expect_POST`, look for this shape.
 #'
@@ -16,7 +16,7 @@
 #' endpoints on \url{http://httpbin.org} do.
 #'
 #' In the interest of standardizing naming conventions, `with_fake_http()` is
-#' the preferred name for this context; `with_fake_HTTP()` is being deprecated.
+#' the preferred name for this context; `with_fake_HTTP()` is deprecated.
 #'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
@@ -44,7 +44,7 @@ with_fake_http <- function (expr) {
 #' @export
 with_fake_HTTP <- with_fake_http
 
-#' Return something that looks like an httr 'response'
+#' Return something that looks like a 'response'
 #'
 #' These functions allow mocking of HTTP requests without requiring an internet
 #' connection or server to run against. Their return shape is a 'httr'
@@ -103,7 +103,7 @@ fake_response <- function (request, verb="GET", status_code=200, headers=list(),
 fake_request <- function (req, handle, refresh) {
     out <- paste(req$method, req$url)
     body <- request_body(req)
-    headers <- list(`Content-Type`="application/json") ## TODO: don't assume content-type
+    headers <- list(`Content-Type`="application/json")
     status_code <- ifelse(is.null(body) && req$method != "GET", 204, 200)
     if (!is.null(body)) {
         out <- paste(out, body)

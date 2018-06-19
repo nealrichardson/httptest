@@ -20,7 +20,7 @@ This vignette covers some of the core features of the `httptest` package, focusi
 
 # The `with_mock_api` context
 
-The package includes three contexts, which are "with"-style functions that you wrap around other code you want to execute. The most generally useful of the three is `with_mock_api`. In this context, HTTP requests are intercepted and mapped to local file paths. If the file exists, it is loaded and returned as the response; if it does not, an error with a message containing the request information is raised, and we can write tests that look for that error. These two different modes allow us to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct HTTP request(s); and (2) does my code correctly handle the types of responses that the server can return?
+The package includes three contexts, which are "with"-style functions that you wrap around other code you want to execute. The most generally useful of the three is `with_mock_api()`. In this context, HTTP requests are intercepted and mapped to local file paths. If the file exists, it is loaded and returned as the response; if it does not, an error with a message containing the request information is raised, and we can write tests that look for that error. These two different modes allow us to make assertions about two different kinds of logic: (1) given some inputs, does my code make the correct HTTP request(s); and (2) does my code correctly handle the types of responses that the server can return?
 
 ## Example
 
@@ -64,14 +64,15 @@ The error message reveals a few things about how `with_mock_api` works. First, i
 Requests are translated to mock file paths according to several rules that
 incorporate the request method, URL, query parameters, and body. Query parameters and request bodies are incorporated into the file path by hashing—hence the `84627b` in the `getUser` example. If a request method other than GET is used, it will be appended to the end of the end of the file name. Mock file paths also have an extension appended because in an HTTP API, a "directory" itself is a resource. The extension allows distinguishing directories and files in the file system. That is, a mocked `GET("http://example.com/api/")` may read a
 "example.com/api.json" file, while
-`GET("http://example.com/api/object1/")` reads "example.com/api/object1.json", and `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json". The file extension also gives information on content type. Two extensions are
-currently supported: .json and .R. JSON mocks can be stored in .json
-files, and when they are loaded by `with_mock_api`, relevant request
-metadata (headers, status code, etc.) are inferred. If your API doesn't
-return JSON, or if you want to simulate requests with other behavior (201
+`GET("http://example.com/api/object1/")` reads "example.com/api/object1.json", and `POST("api/object1/?a=1")` would map to "api/object1-b64371-POST.json".
+
+The file extension also gives information on content type. Files with `.json`,
+`.html`, `.xml`, `.txt`, `.csv`, and `.tsv` are loaded directly by `with_mock_api`, and relevant request
+metadata (`Content-Type` header, status code 200, etc.) are inferred. If your API doesn't
+return one of these types, or if you want to simulate requests with other behavior (201
 Location response, or 400 Bad Request, for example), you can store full
 `response` objects in .R files that `with_mock_api` will `source` to load.
-Any request can be stored as a .R mock, but the .json mocks offer a
+Any request can be stored as a .R mock, but the `.json` and other media types offer a
 simplified, more readable alternative.
 
 Back to the `getUser` example. The error message tells us that the request it is making—`GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev`—is what we should expect based on the API documentation, so that's good. Now let's provide a mock response. The API documentation page has an example JSON response, which looks like
@@ -158,7 +159,7 @@ Note that none of the test code inside the `with_mock_api` block looks any diffe
 
 # Recording mocks with `capture_requests`
 
-Using API documentation to build a library of fixtures is one way to set up testing using `with_mock_api`. Alternatively, you can collect real HTTP responses to use as test fixtures. `capture_requests` is a context that records the responses from requests you make and stores them as mock files. This enables you to perform a series
+Using API documentation to build a library of fixtures is one way to set up testing using `with_mock_api`. Alternatively, you can collect real HTTP responses to use as test fixtures. `capture_requests()` is a context that records the responses from requests you make and stores them as mock files. This enables you to perform a series
 of requests against a live server once and then build your test suite using
 those mocks, running your tests in `with_mock_api`.
 
@@ -174,9 +175,9 @@ stop_capturing()
 
 and as a result, we'd see a file created with a path/name of `api.twitter.com/1.1/search/tweets.json-ca54df.json`. The file will contain a JSON containing status matching the search query, per the [docs](https://dev.twitter.com/rest/reference/get/search/tweets).
 
-Both the `capture_requests` context and the `start_capturing` function take a "path" argument, which lets you specify a location other than the current working directory to which to write the response files, and a "simplify" argument that, when `TRUE` (the default), it records simplified .json files where appropriate (200 OK response with `Content-Type: application/json`) and .R full "response" objects otherwise.
+Both the `capture_requests` context and the `start_capturing` function follow the path setting of `.mockPaths()`, which lets you specify a location other than the current working directory to which to write the response files. They also have a "simplify" argument that, when `TRUE` (the default), it records simplified `.json`, `.csv`, `.xml`, et al. files where appropriate (200 OK response with a supported `Content-Type`) and .R full "response" objects otherwise.
 
-While recording requests to use later in tests can be very convenient, we don't always want to use captured requests, or at least not blindly. Real requests may contain information you want to sanitize or redact, like usernames, emails, or tokens. And real requests may be too big or messy to want to deal with. You may want to pare back a large set of results that a query returns down to four or five results and still have enough variation to test with.
+While recording responses to use later in tests can be very convenient, we don't always want to use captured responses, or at least not blindly. Real responses may contain information you want to sanitize or redact, like usernames, emails, or tokens. And real responses may be too big or messy to want to deal with. You may want to pare back a large set of results that a query returns down to four or five results and still have enough variation to test with.
 
 # Mocks are text files
 
@@ -322,4 +323,4 @@ Subsequent integration tests that assert that the dataset is correctly modified 
 
 # Just test it
 
-The goal of `httptest` is to remove a big obstacle to testing code that communicates with HTTP services: the HTTP service itself. If [`httr` makes HTTP easy](https://github.com/r-lib/httr/blob/master/R/httr.r#L1) and [`testthat` makes testing fun](https://github.com/r-lib/testthat/blob/master/R/test-that.R#L171), `httptest` makes testing your code that uses HTTP a simple pleasure.
+The goal of `httptest` is to remove a big obstacle to testing code that communicates with HTTP services: the HTTP service itself. If [`httr` makes HTTP easy](https://github.com/r-lib/httr/blob/master/R/httr.r#L1) and [`testthat` makes testing fun](https://github.com/r-lib/testthat/blob/5ed0bb15fb923eebca8eff529dd50fbf94fd717f/R/test-that.R#L177), `httptest` makes testing your code that uses HTTP a simple pleasure.
