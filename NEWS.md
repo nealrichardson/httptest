@@ -1,6 +1,6 @@
-## httptest 3.1.0
+# httptest 3.1.0
 
-### Better, more efficient response recording
+## Better, more efficient response recording
 
 * `capture_requests()` no longer includes the "request" object inside the recorded response when writing `.R` verbose responses. As of 3.0.0, `with_mock_api()` inserts the current request when loading mock files, so it was being overwritten anyway. This eliminates some (though not all) of the need for redacting responses. As a result, the redacting functions `redact_oauth()` and `redact_http_auth()` have been removed because they only acted on the `response$request`, which is now dropped entirely.
 * `capture_requests()` will record simplified response bodies for a range of Content-Types when `simplify=TRUE` (the default). Previously, only `.json` (`Content-Type: application/json`) was recorded as a simple text files; now, `.html`, `.xml`, `.txt`, `.csv`, and `.tsv` are supported.
@@ -9,11 +9,11 @@
 * Bare JSON files written by `capture_requests()` are now "prettified" (i.e. multiline, nice indentation).
 * `capture_requests()` now records responses from `httr::RETRY()` (#13)
 
-### Vignette setup and teardown
+## Vignette setup and teardown
 
 * Store package-level vignette setup and teardown code, called inside `start_vignette()` and `end_vignette()`, in `inst/httptest/start-vignette.R` and `inst/httptest/end-vignette.R`, respectively. Like with the package redactors and request preprocessors, these are automatically executed whenever your package is loaded and `start/end_vignette` is called. This makes it easy to write multiple vignettes without having to copy and paste as much setup code. See `vignette("vignettes")` for details.
 
-### Other enhancements and options
+## Other enhancements and options
 
 * `gsub_response()` now applies over the URL in a `Location` header, if found.
 * Add `options(httptest.max.print)` to allow you the ability to specify a length to which to truncate the request body printed in the error message for requests in `with_mock_api()`. Useful for debugging mock files not found when there are large request bodies.
@@ -39,25 +39,25 @@
 * Option `"httptest.verbose"` to govern some extra debug messaging (automatically turned off by `start_vignette()`)
 * Fix a bug where `write_disk` responses that were recorded in one location and moved to another directory could not be loaded
 
-### httptest 2.3.4
+# httptest 2.3.4
 * Ensure forward compatibility with a [change](https://github.com/wch/r-source/commit/62fced00949b9a261034d24789175b205f7fa866) in `deparse()` in the development version of R (r73699).
 
-### httptest 2.3.2
+# httptest 2.3.2
 * Add `redact_oauth()` to purge `httr::Token()` objects from requests ([#9](https://github.com/nealrichardson/httptest/issues/9)). `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
 
-## httptest 2.3.0
+# httptest 2.3.0
 * Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config=write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`.
 
-## httptest 2.2.0
+# httptest 2.2.0
 * Add redacting functions (`redact_auth()`, `redact_cookies()`, `redact_http_auth()`, `redact_headers()`, `within_body_text()`) that can be specified in `capture_requests()` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth()`, which wraps several of them. See `vignette("redacting", package="httptest")` for more.
 * When loading a JSON mock response, the current "request" object is now included in the response returned, as is the case with real responses.
 * Remove the file size limitation for mock files loaded in `with_mock_api()`
 * `skip_if_disconnected()` now also wraps `testthat::skip_on_cran()` so that tests that require a real network connection don't cause a flaky test failure on CRAN
 
-### httptest 2.1.2
+# httptest 2.1.2
 * Fix for compatibility with upcoming release of [httr](http://httr.r-lib.org/) that affected non-GET requests that did not contain any request body.
 
-## httptest 2.1.0
+# httptest 2.1.0
 * `with_mock_api()` and `without_internet()` handle multipart and urlencoded form data in mocked HTTP requests.
 * `buildMockURL()` escapes URL characters that are not valid in file names on all R platforms (which `R CMD check` would warn about).
 * `capture_requests()` now has a `verbose` argument, which, if `TRUE`, prints a message with the file path where each captured request is written.
@@ -68,24 +68,24 @@
 * New `.mockPaths()` function, in the model of `.libPaths()`, which allows you to specify alternate directories in which to search for mock API responses.
 * Documentation enriched and `vignette("httptest")` added.
 
-## httptest 1.3.0
+# httptest 1.3.0
 * New context `capture_requests()` to collect the responses from real requests and store them as mock files
 * `with_trace()` convenience wrapper around `trace`/`untrace`
 * `mockDownload()` now processes request URLs as `mock_request()` does
 
-## httptest 1.2.0
+# httptest 1.2.0
 * Add support in `with_mock_api()` for loading request fixtures for all HTTP verbs, not only GET ([#4](https://github.com/nealrichardson/httptest/pull/4)). Include request body in the mock file path hashing.
 * `buildMockURL()` can accept either a 'request' object or a character URL
 * Bump mock payload max size up to 128K
 
-### httptest 1.1.2
+# httptest 1.1.2
 * Support full URLs, not just file paths, in `with_mock_api()` ([#1](https://github.com/nealrichardson/httptest/issues/1))
 
-## httptest 1.1.0
+# httptest 1.1.0
 
 * `expect_header()` to assert that a HTTP request has a header
 * Always prune the leading ":///" that appears in `with_mock_api()` if the URL has a querystring
 
 # httptest 1.0.0
 
-* Initial addition of functions and tests, largely pulled from [httpcache](https://github.com/nealrichardson/httpcache) and [crunch](http://crunch.io/r/crunch).
+* Initial addition of functions and tests, largely pulled from [httpcache](https://enpiar.com/r/httpcache) and [crunch](https://crunch.io/r/crunch).
