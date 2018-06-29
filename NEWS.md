@@ -1,3 +1,6 @@
+# httptest 3.1.1 (under development)
+* Remove `with_fake_HTTP`, which was renamed to `with_fake_http()` in 3.0.0.
+
 # httptest 3.1.0
 
 ## Better, more efficient response recording
