@@ -40,7 +40,9 @@ quietly <- function (expr) {
 #' requesting behavior can be resumed.
 #' @return Nothing; called for its side effects
 #' @export
-stop_mocking <- function () safe_untrace("request_perform", add_headers)
+stop_mocking <- function () {
+    invisible(safe_untrace("request_perform", add_headers))
+}
 
 safe_untrace <- function (what, where) {
     ## If you attempt to untrace a function (1) that isn't exported from
