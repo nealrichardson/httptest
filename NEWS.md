@@ -1,5 +1,7 @@
 # httptest 3.1.1 (under development)
+
 * Remove `with_fake_HTTP`, which was renamed to `with_fake_http()` in 3.0.0.
+* Warn when capturing requests if the `httr` request function errors and no response file is written (#16)
 
 # httptest 3.1.0
 
