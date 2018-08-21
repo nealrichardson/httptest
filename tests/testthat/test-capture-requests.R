@@ -190,3 +190,12 @@ with_mock_api({
         })
     })
 })
+
+test_that("If the httr request function exits with an error, capture_requests warns", {
+    capture_requests({
+        expect_warning(
+            expect_error(GET(NULL)),
+            "Request errored; no captured response file saved"
+        )
+    })
+})

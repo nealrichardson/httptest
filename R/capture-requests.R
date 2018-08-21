@@ -102,8 +102,15 @@ start_capturing <- function (path, simplify=TRUE, verbose, redact) {
     req_tracer <- substitute({
         ## Get the value returned from the function, and sanitize it
         redactor <- get_current_redactor()
-        .resp <- redactor(returnValue())
-        save_response(.resp, simplify=simplify)
+        .resp <- returnValue()
+        if (is.null(.resp)) {
+            # returnValue() defaults to NULL if the traced function exits with
+            # an error, so there's no response to record.
+            warning("Request errored; no captured response file saved",
+                call.=FALSE)
+        } else {
+            save_response(redactor(.resp), simplify=simplify)
+        }
     }, list(simplify=simplify))
     for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET", "RETRY")) {
         trace_httr(verb, exit=req_tracer)
