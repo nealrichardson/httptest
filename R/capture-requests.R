@@ -205,5 +205,6 @@ save_response <- function (response, simplify=TRUE) {
 stop_capturing <- function () {
     for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB", "RETRY")) {
         safe_untrace(verb, add_headers)
+        safe_untrace(verb)
     }
 }
