@@ -2,6 +2,7 @@
 
 * Remove `with_fake_HTTP`, which was renamed to `with_fake_http()` in 3.0.0.
 * Warn when capturing requests if the `httr` request function errors and no response file is written (#16)
+* Support recording with `capture_requests()` when directly calling `GET` et al. interactively with the `httr` package attached (#17)
 
 # httptest 3.1.0
 

@@ -12,7 +12,7 @@
 #' @keywords internal
 with_trace <- function (x, where=topenv(parent.frame()), print=getOption("httptest.debug", FALSE), ..., expr) {
     quietly(trace(x, print=print, where=where, ...))
-    on.exit(quietly(untrace(x, where=where)))
+    on.exit(safe_untrace(x, where=where))
     eval.parent(expr)
 }
 
@@ -21,8 +21,15 @@ mock_perform <- function (mocker, ...) {
     invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
 
+#' @importFrom utils sessionInfo
 trace_httr <- function (..., print=getOption("httptest.debug", FALSE)) {
+    ## Trace it as seen from within httr
     quietly(trace(..., print=print, where=add_headers))
+    ## And if httr is attached and the function is exported, trace the
+    ## function as the user sees it
+    if ("httr" %in% names(sessionInfo()$otherPkgs) && ..1 %in% getNamespaceExports("httr")) {
+        try(quietly(trace(..., print=print, where=sys.frame())))
+    }
 }
 
 quietly <- function (expr) {
@@ -44,11 +51,18 @@ stop_mocking <- function () {
     invisible(safe_untrace("request_perform", add_headers))
 }
 
-safe_untrace <- function (what, where) {
+safe_untrace <- function (what, where=sys.frame()) {
     ## If you attempt to untrace a function (1) that isn't exported from
     ## whatever namespace it lives in and (2) that isn't currently traced,
     ## it errors. This prevents that so that it's always safe to call `untrace`
-    if (inherits(get(what, environment(where)), "functionWithTrace")) {
+
+    ## untrace() and get() handle enviroments differently
+    if (is.environment(where)) {
+        env <- where
+    } else {
+        env <- environment(where)
+    }
+    if (inherits(try(get(what, env)), "functionWithTrace")) {
         quietly(untrace(what, where=where))
     }
 }
