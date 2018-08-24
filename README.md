@@ -1,7 +1,7 @@
 # httptest: A Test Environment for HTTP Requests in R
 
 [![Build Status](https://travis-ci.org/nealrichardson/httptest.png?branch=master)](https://travis-ci.org/nealrichardson/httptest) [![Build status](https://ci.appveyor.com/api/projects/status/egrw65593iso21cu?svg=true)](https://ci.appveyor.com/project/nealrichardson/httptest) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://codecov.io/gh/nealrichardson/httptest)
-[![cran](https://www.r-pkg.org/badges/version-last-release/httptest)](https://cran.r-project.org/package=httptest)
+[![cran](https://www.r-pkg.org/badges/version-last-release/httptest)](https://cran.r-project.org/package=httptest) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2136/badge)](https://bestpractices.coreinfrastructure.org/projects/2136)
 
 `httptest` makes it easy to write tests for code and packages that wrap web APIs.
 Testing code that communicates with remote servers can otherwise be painful: things like authentication, server state, and network flakiness can make testing seem too costly to bother with. The `httptest` package enables you to test all of the logic on the R sides of the API in your package without requiring access to the remote service.
@@ -123,7 +123,7 @@ To change where files are being written or read from, use `.mockPaths()` (like `
 #### How do I fix "non-portable file paths"?
 
 If you see this error in `R CMD build` or `R CMD check`, it means that there are file paths are longer than 100 characters, which can sometimes happen when you record requests. `httptest` preserves the URL structure of mocks in file paths to improve the readability and maintainability of your tests, as well as to make visible the properties of your API.
-Indeed, the file-system tree view of the mock files gives a visual representation of your API. This value comes with a tradeoff: sometimes URLs can be long, and R doesn't like that. 
+Indeed, the file-system tree view of the mock files gives a visual representation of your API. This value comes with a tradeoff: sometimes URLs can be long, and R doesn't like that.
 
 Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
 
