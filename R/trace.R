@@ -62,7 +62,7 @@ safe_untrace <- function (what, where=sys.frame()) {
     } else {
         env <- environment(where)
     }
-    if (inherits(try(get(what, env)), "functionWithTrace")) {
+    if (inherits(try(get(what, env), silent=TRUE), "functionWithTrace")) {
         quietly(untrace(what, where=where))
     }
 }
