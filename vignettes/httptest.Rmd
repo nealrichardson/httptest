@@ -33,7 +33,9 @@ library(httptest)
 test_check("twitteR")
 ```
 
-Note that it says `library(httptest)` instead of the `library(testthat)` that you would otherwise use with `testthat`. Next, let's add a "testthat" directory to hold our test files. In that directory, we'll start with a "helper.R" file for common setup code. You can add `library(httptest)` to "helper.R" if you want to run the tests using `devtools::test()` or RStudio's `Build -> Test Package` (Cmd/Ctrl + Shift + T). From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real Twitter API, so we don't need a valid token—we just need a token to exist so the R code that looks for a token finds one:
+Note that it says `library(httptest)` instead of the `library(testthat)` that you would otherwise use with `testthat`. Next, let's add a "testthat" directory to hold our test files. In that directory, we'll start with a "helper.R" file for common setup code. You can add `library(httptest)` to "helper.R" if you want to run the tests using `devtools::test()` or RStudio's `Build -> Test Package` (`Cmd/Ctrl + Shift + T`).
+
+From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real Twitter API, so we don't need a valid token—we just need a token to exist so the R code that looks for a token finds one:
 
 ```r
 use_oauth_token("foo")

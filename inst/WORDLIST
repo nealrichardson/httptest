@@ -22,6 +22,7 @@ preprocessor
 programmatically
 replayable
 rmarkdown
+RStudio's
 serializable
 subdocuments
 subfolder
@@ -33,6 +34,3 @@ VignetteEncoding
 VignetteEngine
 VignetteIndexEntry
 Wickham's
-Cmd
-Ctrl
-RStudio's

@@ -34,7 +34,7 @@ Wherever you normally load `testthat`, load `httptest` instead. It "requires" `t
 * the DESCRIPTION file, where `testthat` is typically referenced under "Suggests"
 * tests/testthat.R, which may otherwise begin with `library(testthat)`.
 
-In addition, if you wish to run your tests using `devtools::test()` or `Build -> Test Package` (Cmd/Ctrl + Shift + T) in RStudio, you must include a `tests/testthat/helper.R` file with the line `library(httptest)`. `devtools::test()` [ignores](https://github.com/r-lib/devtools/issues/1468) `tests/thatthat.R` so `httptest` must be loaded in a helper script. 
+In addition, to run your tests using `devtools::test()` or RStudio's `Build -> Test Package` (`Cmd/Ctrl + Shift + T`), add `library(httptest)` to your `tests/testthat/helper.R` file because `devtools::test()` [ignores](https://github.com/r-lib/devtools/issues/1468) `tests/thatthat.R`. 
 
 Then, you're ready to start using the tools that `httptest` provides.
 
