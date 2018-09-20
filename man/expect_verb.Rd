@@ -8,11 +8,6 @@
 \alias{expect_PATCH}
 \alias{expect_DELETE}
 \alias{expect_no_request}
-\alias{expect_POST}
-\alias{expect_PATCH}
-\alias{expect_PUT}
-\alias{expect_DELETE}
-\alias{expect_no_request}
 \title{Expectations for mocked HTTP requests}
 \usage{
 expect_GET(object, url = "", ...)
