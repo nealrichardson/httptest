@@ -135,7 +135,7 @@ save_response <- function (response, simplify=TRUE) {
     mock_file <- buildMockURL(response$request)
     ## Track separately the actual full path we're going to write to
     dst_file <- file.path(.mockPaths()[1], mock_file)
-    dir.create(dirname(dst_file), showWarnings=FALSE, recursive=TRUE)
+    mkdir_p(dst_file)
 
     ## Get the Content-Type
     ct <- get_content_type(response)
@@ -207,4 +207,12 @@ stop_capturing <- function () {
         safe_untrace(verb, add_headers)
         safe_untrace(verb)
     }
+}
+
+mkdir_p <- function (filename) {
+    # Recursively create the directories so that we can write this file.
+    # If they already exist, do nothing.
+    # Like mkdir -p path
+
+    dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
 }

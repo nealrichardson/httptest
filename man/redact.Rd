@@ -6,9 +6,6 @@
 \alias{within_body_text}
 \alias{redact}
 \alias{redact_auth}
-\alias{redact_cookies}
-\alias{redact_headers}
-\alias{within_body_text}
 \title{Remove sensitive content from HTTP responses}
 \usage{
 redact_cookies(response)

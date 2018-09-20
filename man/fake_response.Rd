@@ -4,8 +4,8 @@
 \alias{fake_response}
 \title{Return something that looks like a 'response'}
 \usage{
-fake_response(request, verb = "GET", status_code = 200, headers = list(),
-  content = NULL)
+fake_response(request, verb = "GET", status_code = 200,
+  headers = list(), content = NULL)
 }
 \arguments{
 \item{request}{An 'httr' \code{request}-class object. A character URL is also
