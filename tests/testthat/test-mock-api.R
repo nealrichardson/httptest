@@ -109,6 +109,26 @@ public({
                 '(httpbin.org/post-78d84e-POST.json)')
         })
 
+        test_that("Regular expressions in expect_VERB", {
+            expect_GET(GET("http://example.com/1234/abcd/"),
+                "http://example.com/[0-9]{4}/[a-z]{4}/",
+                fixed=FALSE
+            )
+            expect_GET(GET("http://example.com/1234/abcd/"),
+                "http://EXAMPLE.com/[0-9]{4}/[a-z]{4}/",
+                fixed=FALSE,
+                ignore.case=TRUE
+            )
+            expect_POST(POST("http://example.com/1234/abcd/"),
+                "http://example.com/[0-9]{4}/[a-z]{4}/",
+                fixed=FALSE
+            )
+            expect_DELETE(DELETE("http://example.com/1234/abcd/"),
+                "http://example.com/[0-9]{4}/[a-z]{4}/",
+                fixed=FALSE
+            )
+        })
+
         test_that("Returned (JSON) mock response contains the actual request", {
             a <- GET("api/", add_headers(`X-FakeHeader`="fake_value"))
             expect_true("X-FakeHeader" %in% names(a$request$headers))
