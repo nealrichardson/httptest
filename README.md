@@ -20,11 +20,11 @@ This package bridges the gap between two others: (1) [testthat](http://testthat.
 install.packages("httptest")
 ```
 
-The pre-release version of the package can be pulled from GitHub using the [devtools](https://github.com/hadley/devtools) package:
+The pre-release version of the package can be pulled from GitHub using the [remotes](https://github.com/r-lib/remotes) package (formerly part of and now a dependency of `devtools`):
 
 ```r
-# install.packages("devtools")
-devtools::install_github("nealrichardson/httptest")
+# install.packages("remotes")
+remotes::install_github("nealrichardson/httptest")
 ```
 
 ## Using
