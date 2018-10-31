@@ -13,13 +13,26 @@
 #' an empty string, meaning that you can just assert that a request is made with
 #' a certain method without asserting anything further.
 #' @param ... character segments of a request payload you expect to be included
-#' in the request body, to be joined together by `paste0`
+#' in the request body, to be joined together by `paste0`. You may also pass
+#' any of the following named logical arguments, which will be passed to
+#' [base::grepl()]:
+#' * `fixed`: Should matching take the pattern as is or treat it as a regular
+#' expression. Default: `TRUE`, and note that this default is the opposite of
+#' the default in `grepl`. (The rest of the arguments follow its defaults.)
+#' * `ignore.case`: Should matching be done case insensitively? Default:
+#' `FALSE`, meaning matches are case sensitive.
+#' * `perl`: Should Perl-compatible regular expressions be used? Default: `FALSE`
+#' * `useBytes`: Should matching be done byte-by-byte rather than
+#' character-by-character? Default: `FALSE`
 #' @return A `testthat` 'expectation'.
 #' @examples
 #' library(httr)
 #' without_internet({
 #'     expect_GET(GET("http://httpbin.org/get"),
 #'         "http://httpbin.org/get")
+#'     expect_GET(GET("http://httpbin.org/get"),
+#'         "http://httpbin.org/[a-z]+",
+#'         fixed=FALSE) # For regular expression matching
 #'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'),
 #'         'http://httpbin.org/put',
 #'         '{"a":1}')
@@ -30,7 +43,7 @@
 #' @aliases expect_GET expect_POST expect_PUT expect_PATCH expect_DELETE expect_no_request
 #' @export
 expect_GET <- function (object, url="", ...) {
-    expect_mock_request(object, "GET ", url)
+    expect_mock_request(object, "GET ", url, " ", ...)
 }
 
 #' @rdname expect_verb
@@ -53,8 +66,8 @@ expect_PUT <- function (object, url="", ...) {
 
 #' @rdname expect_verb
 #' @export
-expect_DELETE <- function (object, url="") {
-    expect_mock_request(object, "DELETE ", url)
+expect_DELETE <- function (object, url="", ...) {
+    expect_mock_request(object, "DELETE ", url, " ", ...)
 }
 
 #' @rdname expect_verb
@@ -65,9 +78,22 @@ expect_no_request <- function (object, ...) {
 }
 
 #' @importFrom testthat expect_error
-expect_mock_request <- function (object, ...) {
-    expected <- sub(" +$", "", paste0(...)) ## PUT/POST/PATCH with no body may have trailing whitespace
-    request_happened()(object, expected, fixed=TRUE)
+expect_mock_request <- function (object,
+                                 ...,
+                                 fixed=TRUE,
+                                 ignore.case=FALSE,
+                                 perl=FALSE,
+                                 useBytes=FALSE) {
+    ## PUT/POST/PATCH with no body may have trailing whitespace, so trim it
+    expected <- sub(" +$", "", paste0(...))
+    request_happened()(
+        object,
+        expected,
+        fixed=fixed,
+        ignore.case=ignore.case,
+        perl=perl,
+        useBytes=useBytes
+    )
 }
 
 ## Without internet, POST/PUT/PATCH throw errors with their request info

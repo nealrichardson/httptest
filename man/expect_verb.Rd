@@ -18,7 +18,7 @@ expect_PATCH(object, url = "", ...)
 
 expect_PUT(object, url = "", ...)
 
-expect_DELETE(object, url = "")
+expect_DELETE(object, url = "", ...)
 
 expect_no_request(object, ...)
 }
@@ -30,7 +30,19 @@ an empty string, meaning that you can just assert that a request is made with
 a certain method without asserting anything further.}
 
 \item{...}{character segments of a request payload you expect to be included
-in the request body, to be joined together by \code{paste0}}
+in the request body, to be joined together by \code{paste0}. You may also pass
+any of the following named logical arguments, which will be passed to
+\code{\link[base:grepl]{base::grepl()}}:
+\itemize{
+\item \code{fixed}: Should matching take the pattern as is or treat it as a regular
+expression. Default: \code{TRUE}, and note that this default is the opposite of
+the default in \code{grepl}. (The rest of the arguments follow its defaults.)
+\item \code{ignore.case}: Should matching be done case insensitively? Default:
+\code{FALSE}, meaning matches are case sensitive.
+\item \code{perl}: Should Perl-compatible regular expressions be used? Default: \code{FALSE}
+\item \code{useBytes}: Should matching be done byte-by-byte rather than
+character-by-character? Default: \code{FALSE}
+}}
 }
 \value{
 A \code{testthat} 'expectation'.
@@ -49,6 +61,9 @@ library(httr)
 without_internet({
     expect_GET(GET("http://httpbin.org/get"),
         "http://httpbin.org/get")
+    expect_GET(GET("http://httpbin.org/get"),
+        "http://httpbin.org/[a-z]+",
+        fixed=FALSE) # For regular expression matching
     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'),
         'http://httpbin.org/put',
         '{"a":1}')
