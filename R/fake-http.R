@@ -40,6 +40,10 @@ with_fake_http <- function (expr) {
     eval.parent(expr)
 }
 
+#' @rdname with_fake_http
+#' @export
+with_fake_HTTP <- with_fake_http
+
 #' Return something that looks like a 'response'
 #'
 #' These functions allow mocking of HTTP requests without requiring an internet
