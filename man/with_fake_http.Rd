@@ -2,9 +2,12 @@
 % Please edit documentation in R/fake-http.R
 \name{with_fake_http}
 \alias{with_fake_http}
+\alias{with_fake_HTTP}
 \title{Make all HTTP requests return a fake response}
 \usage{
 with_fake_http(expr)
+
+with_fake_HTTP(expr)
 }
 \arguments{
 \item{expr}{Code to run inside the fake context}

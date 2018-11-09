@@ -1,8 +1,5 @@
 context("use_httptest")
 
-
-## TODO Test messaging
-
 test_add_to_desc <- function (str, msg="Adding 'httptest' to Suggests") {
     f <- tempfile()
     cat(str, file=f)
@@ -79,6 +76,8 @@ test_that("add to helper doesn't duplicate", {
 test_that("use_httptest integration test", {
     testpkg <- tempfile()
     dir.create(testpkg)
+    expect_error(use_httptest(testpkg), "is not an R package directory")
+    
     desc <- file.path(testpkg, "DESCRIPTION")
     cat("Title: Foo\n", file=desc)
     helper <- file.path(testpkg, "tests", "testthat", "helper.R")
