@@ -1,4 +1,4 @@
-# httptest 3.1.1 (under development)
+# httptest 3.2.0
 
 * `use_httptest()` for convenience when setting up a new package
 * Warn when capturing requests if the `httr` request function errors and no response file is written (#16)
