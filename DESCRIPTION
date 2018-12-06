@@ -34,6 +34,6 @@ Suggests:
     spelling,
     xml2
 Language: en-US
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

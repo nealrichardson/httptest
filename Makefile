@@ -38,3 +38,11 @@ build-vignettes: md
 
 covr:
 	export NOT_CRAN=true && R --slave -e 'library(covr); cv <- package_coverage(); df <- covr:::to_shiny_data(cv)[["file_stats"]]; cat("Line coverage:", round(100*sum(df[["Covered"]])/sum(df[["Relevant"]]), 1), "percent\\n"); report(cv)'
+
+build-pkgdown:
+	R -e 'pkgdown::build_site()'
+	cp ../nealrichardson.github.io/static/favicon.ico docs/
+
+publish-pkgdown:
+	rm -rf ../nealrichardson.github.io/static/r/httptest/
+	cp -r docs/* ../nealrichardson.github.io/static/r/httptest/
