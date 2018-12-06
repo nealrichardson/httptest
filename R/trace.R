@@ -72,14 +72,27 @@ safe_untrace <- function (what, where=sys.frame()) {
 ## that replaces the actual curl requesting and returns a response object.
 fetch_tracer <- quote({
     request_fetch <- function (...) .mocker(req)
-    parse_headers <- function (x, ...) {
+    parse_http_headers <- parse_headers <- function (x, ...) {
         # If we're loading a mock response, we've already parsed the headers,
         # so just use them.
+        # In httr <= 1.3.1, the function was called parse_headers
         if (length(resp$all_headers)) {
             return(resp$all_headers)
         } else {
             return(list(list(headers=x)))
         }
+    }
+    pu <- httr::parse_url
+    parse_url <- function (...) {
+        # This is a workaround that forces all URLs to be HTTP because
+        # httr > 1.3.1 supports non-HTTP and does different things with header
+        # parsing for those requests. That broke some httptest tests that use
+        # e.g. `GET("api/object1/")`.
+        # TODO: stop supporting that, especially if httptest is the only
+        # package that relies on the old behavior.
+        out <- pu(...)
+        out$scheme <- "http"
+        out
     }
     response <- function (...) {
         out <- structure(list(...), class="response")
