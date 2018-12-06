@@ -1,7 +1,10 @@
-url: http://enpiar.com/r/httptest
+url: https://enpiar.com/r/httptest
 template:
   params:
     ganalytics: UA-104182925-1
+    docsearch:
+      api_key: ad019ea9fe75a8488c96ff15cf8a57
+      index_name: enpiar_httptest
 navbar:
   title: httptest
   type: default
@@ -26,7 +29,7 @@ navbar:
   - icon: fa-github fa-lg
     href: https://github.com/nealrichardson/httptest
   - icon: fa-home fa-lg
-    href: http://enpiar.com
+    href: https://enpiar.com
 reference:
 - title: Contexts
   contents:
@@ -59,5 +62,6 @@ reference:
   - change_state
 - title: Other testing tools
   contents:
+  - use_httptest
   - public
   - skip_if_disconnected

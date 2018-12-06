@@ -19,6 +19,7 @@
 #' })
 #' @export
 expect_header <- function (...) {
+    # TODO: default to ignore.case=TRUE
     tracer <- quote({
         heads <- req$headers
         for (h in names(heads)) {
