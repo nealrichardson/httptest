@@ -1,3 +1,7 @@
+# httptest 3.2.2
+
+* Patch for compatibility with the upcoming 1.4.0 release of `httr`.
+
 # httptest 3.2.0
 
 * `use_httptest()` for convenience when setting up a new package
