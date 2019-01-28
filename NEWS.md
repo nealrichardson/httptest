@@ -1,3 +1,7 @@
+# httptest 3.2.3 (under development)
+
+* (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
+
 # httptest 3.2.2
 
 * Patch for compatibility with the upcoming 1.4.0 release of `httr`.

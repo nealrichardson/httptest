@@ -69,6 +69,11 @@ find_package_functions <- function (packages, file="redact.R") {
 
 ## TODO: export?
 get_package_function <- function (package, file="redact.R") {
+    if ("pkgload" %in% loadedNamespaces()) {
+        ## Someone may have loaded a package with pkgload::load_all(), so we
+        ## need this shim function to look up system files
+        system.file <- get("shim_system.file", asNamespace("pkgload"))
+    }
     func_file <- system.file("httptest", file, package=package)
     if (nchar(func_file)) {
         ## If file does not exist, it returns ""
@@ -104,7 +109,8 @@ get_current_redactor <- function () {
             ## We're using the result of default_requester(). Let's see if any
             ## new packages have been loaded
             current_packages <- get_attached_packages()
-            if (!identical(current_packages, pkgs)) {
+            ## Also, always reevaluate the default redactor if pkgload is involved
+            if ("pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)) {
                 ## Re-evaluate
                 out <- set_redactor(default_redactor(current_packages))
             }
