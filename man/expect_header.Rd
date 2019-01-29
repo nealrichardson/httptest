@@ -4,10 +4,15 @@
 \alias{expect_header}
 \title{Test that an HTTP request is made with a header}
 \usage{
-expect_header(...)
+expect_header(..., ignore.case = TRUE)
 }
 \arguments{
 \item{...}{Arguments passed to \code{expect_warning}}
+
+\item{ignore.case}{logical: if \code{FALSE}, the pattern matching is \emph{case
+sensitive} and if \code{TRUE}, case is ignored during matching. Default is \code{TRUE};
+note that this is the opposite of \code{expect_warning} but is appropriate here
+because HTTP header names are case insensitive.}
 }
 \value{
 \code{NULL}, according to \code{expect_warning}.
