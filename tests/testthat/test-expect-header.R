@@ -33,6 +33,15 @@ public({
                 config=add_headers(Accept="image/png")), silent=TRUE),
                 "Accept: image/jpeg"))
         })
+        test_that("expect_header ignore.case", {
+            expect_success(expect_header(GET("api/object1/",
+                config=add_headers(Accept="image/jpeg")),
+                "accept: image/jpeg"))
+            expect_failure(expect_header(GET("api/object1/",
+                config=add_headers(Accept="image/jpeg")),
+                "accept: image/jpeg",
+                ignore.case=FALSE))
+        })
     })
 
     without_internet({
