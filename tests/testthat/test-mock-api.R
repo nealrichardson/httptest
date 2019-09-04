@@ -100,13 +100,12 @@ public({
                 'http://httpbin.org/post',
                 '{"x":"A simple text string"} ',
                 '(httpbin.org/post-34199a-POST.json)')
-            skip("Need to find a platform-independent way to hash the filename")
             expect_POST(POST(b2, body = list(y = upload_file("helper.R"))),
                 'http://httpbin.org/post',
                 'list(y = list(path = "',
-                normalizePath("helper.R"),
+                "helper.R",
                 '", type = "text/plain")) ',
-                '(httpbin.org/post-78d84e-POST.json)')
+                '(httpbin.org/post-519188-POST.json)')
         })
 
         test_that("Regular expressions in expect_VERB", {
