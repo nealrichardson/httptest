@@ -18,6 +18,12 @@ with_trace <- function (x, where=topenv(parent.frame()), print=getOption("httpte
 
 mock_perform <- function (mocker, ...) {
     tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
+    # trace curl's form_file making the path normalization a no-op so that file
+    # hashes are the same on different platforms
+    trace(curl::form_file, quote(
+        normalizePath <- function (path, ...) return(path)
+    ), where=httr::upload_file, print=getOption("httptest.debug", FALSE))
+
     invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
 
@@ -48,6 +54,7 @@ quietly <- function (expr) {
 #' @return Nothing; called for its side effects
 #' @export
 stop_mocking <- function () {
+    safe_untrace(untrace(curl::form_file))
     invisible(safe_untrace("request_perform", add_headers))
 }
 

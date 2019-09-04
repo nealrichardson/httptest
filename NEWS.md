@@ -2,6 +2,7 @@
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
 * `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive. 
+* File uploads with `httr::upload_file` are now mockable even when tests are run from different locations.
 
 # httptest 3.2.2
 
