@@ -1,4 +1,4 @@
-# httptest 3.2.3 (under development)
+# httptest 3.3.0
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
 * `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive.

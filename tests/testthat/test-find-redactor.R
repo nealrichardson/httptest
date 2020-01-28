@@ -69,13 +69,10 @@ with_mock_api({
                     body=list(username="password"), encode="json")
             })
         )
+        # The auth token, which would have been removed (see test-redact.R),
+        # is present in the file we wrote because we set NULL as redactor
         expect_true(any(grepl("token=12345",
             readLines(file.path(newmocks2, "example.com", "login-712027-POST.R")))))
-        with_mock_path(newmocks2, {
-            b <- POST("http://example.com/login",
-                body=list(username="password"), encode="json")
-        })
-        expect_equal(content(b), content(a))
     })
 
     test_that("Loading a package with pkgload (devtools)", {

@@ -75,12 +75,10 @@ capture_requests <- function (expr, path, ...) {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path, simplify=TRUE) {
-    if (!missing(path)) {
+start_capturing <- function (path=NULL, simplify=TRUE) {
+    if (!is.null(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
-    } else {
-        path <- NULL
     }
 
     ## Use "substitute" so that args get inserted. Code remains quoted.
