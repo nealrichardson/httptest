@@ -1,8 +1,9 @@
 # httptest 3.2.3 (under development)
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
-* `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive. 
+* `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive.
 * Support mocking of file uploads via `httr::upload_file` on all platforms (#25)
+* Removes deprecated `redact` and `verbose` arguments to `capture_requests`
 
 # httptest 3.2.2
 

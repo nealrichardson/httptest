@@ -4,8 +4,10 @@
 \alias{skip_if_disconnected}
 \title{Skip tests that need an internet connection if you don't have one}
 \usage{
-skip_if_disconnected(message = paste("Offline: cannot reach", url),
-  url = "http://httpbin.org/")
+skip_if_disconnected(
+  message = paste("Offline: cannot reach", url),
+  url = "http://httpbin.org/"
+)
 }
 \arguments{
 \item{message}{character message to be printed, passed to

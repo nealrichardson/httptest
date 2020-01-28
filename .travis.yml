@@ -7,5 +7,7 @@ r:
   - oldrel
   - release
   - devel
+env:
+  - _R_CHECK_TESTS_NLINES_: 0
 after_success:
   - test $TRAVIS_R_VERSION_STRING = "release" && Rscript -e 'covr::codecov()'

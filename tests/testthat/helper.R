@@ -18,6 +18,13 @@ capture_while_mocking <- function (..., path) {
     })
 }
 
+with_redactor <- function (x, ...) {
+    old <- getOption("httptest.redactor")
+    set_redactor(x)
+    on.exit(set_redactor(old))
+    eval.parent(...)
+}
+
 ## from __future__ import ...
 if ("Rcmd" %in% ls(envir=asNamespace("tools"))) {
     Rcmd <- tools::Rcmd
