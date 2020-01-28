@@ -13,13 +13,13 @@ Description: Testing and documenting code that communicates with remote servers
     test fixtures. The ability to save responses and load them offline also
     enables one to write vignettes and other dynamic documents that can be
     distributed without access to a live server.
-Version: 3.2.3
+Version: 3.3.0
 Authors@R: person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com")
 URL: https://enpiar.com/r/httptest, https://github.com/nealrichardson/httptest
 BugReports: https://github.com/nealrichardson/httptest/issues
 License: MIT + file LICENSE
 Depends:
-    R (>= 3.0.0),
+    R (>= 3.3.0),
     testthat
 Imports:
     curl,
@@ -36,6 +36,6 @@ Suggests:
     spelling,
     xml2
 Language: en-US
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

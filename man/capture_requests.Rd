@@ -8,7 +8,7 @@
 \usage{
 capture_requests(expr, path, ...)
 
-start_capturing(path, simplify = TRUE, verbose, redact)
+start_capturing(path = NULL, simplify = TRUE)
 
 stop_capturing()
 }
@@ -26,17 +26,6 @@ want to write to a different path, rather than using the \code{path} argument.}
 will be written as just the text of the response body. In all other cases,
 and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
 a .R file using \code{\link[base:dput]{base::dput()}}.}
-
-\item{verbose}{logical: if \code{TRUE}, a \code{message} is printed for every file
-that is written when capturing requests containing the absolute path of the
-file. Useful for debugging if you're capturing but don't see the fixture
-files being written in the expected location. Default is \code{FALSE}. This
-parameter is deprecated; it is instead recommended that you set
-\code{options(httptest.verbose=TRUE)} to enable.}
-
-\item{redact}{function to run to purge sensitive strings from the recorded
-response objects. This argument is deprecated: use \code{\link[=set_redactor]{set_redactor()}} or a
-package redactor instead. See \code{vignette("redacting")} for more details.}
 }
 \value{
 \code{capture_requests} returns the result of \code{expr}. \code{start_capturing}
@@ -60,14 +49,18 @@ maintain them without having to re-record them. If the API changes subtly,
 such as when adding an additional attribute to an object, you can just touch
 up the mocks.
 
-If the response has status \code{200 OK} and the \code{Content-Type}
+If the response has status \verb{200 OK} and the \code{Content-Type}
 maps to a supported file extension---currently \code{.json},
 \code{.html}, \code{.xml}, \code{.txt}, \code{.csv}, and \code{.tsv}---just the response body will be
-written out, using the appropriate extension. \code{204 No Content} status
+written out, using the appropriate extension. \verb{204 No Content} status
 responses will be stored as an empty file with extension \code{.204}. Otherwise,
 the response will be written as a \code{.R} file containing syntax that, when
 executed, recreates the
 \code{httr} "response" object.
+
+If you have trouble when recording responses, or are unsure where the files
+are being written, set \code{options(httptest.verbose=TRUE)} to print a message
+for every file that is written containing the absolute path of the file.
 }
 \examples{
 \dontrun{
@@ -87,5 +80,7 @@ stop_capturing()
 }
 }
 \seealso{
-\code{\link[=build_mock_url]{build_mock_url()}} for how requests are translated to file paths
+\code{\link[=build_mock_url]{build_mock_url()}} for how requests are translated to file paths.
+And see \code{vignette("redacting")} for details on how to prune sensitive
+content from responses when recording.
 }
