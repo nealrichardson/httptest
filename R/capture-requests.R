@@ -24,6 +24,10 @@
 #' executed, recreates the
 #' `httr` "response" object.
 #'
+#' If you have trouble when recording responses, or are unsure where the files
+#' are being written, set `options(httptest.verbose=TRUE)` to print a message
+#' for every file that is written containing the absolute path of the file.
+#'
 #' @param expr Code to run inside the context
 #' @param path Where to save the mock files. Default is the first directory in
 #' [.mockPaths()], which if not otherwise specified is the current working
@@ -33,15 +37,6 @@
 #' will be written as just the text of the response body. In all other cases,
 #' and when `simplify` is `FALSE`, the "response" object will be written out to
 #' a .R file using [base::dput()].
-#' @param verbose logical: if `TRUE`, a `message` is printed for every file
-#' that is written when capturing requests containing the absolute path of the
-#' file. Useful for debugging if you're capturing but don't see the fixture
-#' files being written in the expected location. Default is `FALSE`. This
-#' parameter is deprecated; it is instead recommended that you set
-#' `options(httptest.verbose=TRUE)` to enable.
-#' @param redact function to run to purge sensitive strings from the recorded
-#' response objects. This argument is deprecated: use [set_redactor()] or a
-#' package redactor instead. See `vignette("redacting")` for more details.
 #' @param ... Arguments passed through `capture_requests` to `start_capturing`
 #' @return `capture_requests` returns the result of `expr`. `start_capturing`
 #' invisibly returns the `path` it is given. `stop_capturing` returns nothing;
@@ -64,7 +59,9 @@
 #' }
 #' @importFrom httr content
 #' @export
-#' @seealso [build_mock_url()] for how requests are translated to file paths
+#' @seealso [build_mock_url()] for how requests are translated to file paths.
+#' And see `vignette("redacting")` for details on how to prune sensitive
+#' content from responses when recording.
 capture_requests <- function (expr, path, ...) {
     start_capturing(...)
     on.exit(stop_capturing())
@@ -78,24 +75,10 @@ capture_requests <- function (expr, path, ...) {
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path, simplify=TRUE, verbose, redact) {
-    if (!missing(path)) {
+start_capturing <- function (path=NULL, simplify=TRUE) {
+    if (!is.null(path)) {
         ## Note that this changes state and doesn't reset it
         .mockPaths(path)
-    } else {
-        path <- NULL
-    }
-    if (!missing(verbose)) {
-        ## Note that this changes state and doesn't reset it
-        warning("The 'verbose' argument to capture_requests() is deprecated; ",
-            "Set options(httptest.verbose=TRUE) instead.", call.=FALSE)
-        options(httptest.verbose=verbose)
-    }
-
-    if (!missing(redact)) {
-        warning("The 'redact' argument to start_capturing() is deprecated. ",
-            "Use 'set_redactor()' instead.", call.=FALSE)
-        set_redactor(redact)
     }
 
     ## Use "substitute" so that args get inserted. Code remains quoted.

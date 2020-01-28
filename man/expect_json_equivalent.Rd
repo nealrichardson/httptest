@@ -4,8 +4,13 @@
 \alias{expect_json_equivalent}
 \title{Test that objects would generate equivalent JSON}
 \usage{
-expect_json_equivalent(object, expected, info = NULL, label = "object",
-  expected.label = "expected")
+expect_json_equivalent(
+  object,
+  expected,
+  info = NULL,
+  label = "object",
+  expected.label = "expected"
+)
 }
 \arguments{
 \item{object}{object to test}
