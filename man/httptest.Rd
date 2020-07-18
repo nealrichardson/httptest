@@ -3,7 +3,6 @@
 \docType{package}
 \name{httptest}
 \alias{httptest}
-\alias{httptest-package}
 \title{\code{httptest}: A Test Environment for HTTP Requests}
 \description{
 If \pkg{httr} makes HTTP easy and \pkg{testthat} makes testing fun,

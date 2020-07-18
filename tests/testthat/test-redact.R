@@ -156,11 +156,10 @@ with_mock_api({
         response <- within_body_text(response, cleaner)
         return(response)
     }
-    expect_warning(
-        capture_while_mocking(simplify=FALSE, path=d, redact=my_redactor, {
+    with_redactor(my_redactor,
+        capture_while_mocking(simplify=FALSE, path=d, {
             r <- GET("http://example.com/get")
-        }),
-        "The 'redact' argument to start_capturing() is deprecated. Use 'set_redactor()' instead.", fixed=TRUE
+        })
     )
     test_that("The real request is not affected by the redactor", {
         expect_identical(r$url, "http://example.com/get")

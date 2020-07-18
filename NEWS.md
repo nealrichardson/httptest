@@ -1,8 +1,9 @@
-# httptest 3.2.3 (under development)
+# httptest 3.3.0
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
-* `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive. 
-* File uploads with `httr::upload_file` are now mockable even when tests are run from different locations.
+* `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive.
+* Support mocking of file uploads via `httr::upload_file` on all platforms (#25)
+* Remove deprecated `redact` and `verbose` arguments to `capture_requests`
 
 # httptest 3.2.2
 
@@ -49,7 +50,7 @@
 * `use_mock_api()` and `block_requests()` enable the request altering behavior of `with_mock_api()` and `without_internet()`, respectively, without the enclosing context. (`use_mock_api` is called inside `start_vignette()`.) To turn off mocking, call `stop_mocking()`.
 * Internal change: mocking contexts no longer use `testthat::with_mock()` and instead use `trace()`.
 * `capture_requests()`/`start_capturing()` now allow you to call `.mockPaths()` while actively recording so that you can record server state changes to a different mock "layer". Previously, the recording path was fixed when the context was initialized.
-* The `redact` argument to `capture_requests()`/`start_capturing()` is deprecated in favor of `set_redactor()`. This function can take a `function (response) {...}`; a formula as shorthand for an anonymous function with `.` as the "response" argument, as in the [`purrr`](purrr.tidyverse.org) package; a list of functions that will be chained together; or `NULL` to disable the default `redact_auth()`.
+* The `redact` argument to `capture_requests()`/`start_capturing()` is deprecated in favor of `set_redactor()`. This function can take a `function (response) {...}`; a formula as shorthand for an anonymous function with `.` as the "response" argument, as in the [`purrr`](https://purrr.tidyverse.org) package; a list of functions that will be chained together; or `NULL` to disable the default `redact_auth()`.
 * `redact_headers()` and `within_body_text()` no longer return redacting functions. Instead, they take `response` as their first argument. This makes them more natural to use and chain together in custom redacting functions. To instead return a function as before, see `as.redactor()`.
 * `gsub_response()` is a new redactor that does regular-expression replacement (via `base::gsub()`) within a response's body text and URL.
 * `.mockPaths()` only keeps unique path values, consistent with `base::.libPaths()`.

@@ -70,7 +70,7 @@ To do this, we'll use `set_redactor()` to supply a custom function. The project 
 set_redactor(~ gsub_response(., getOption("pivotal.project"), "123"))
 ```
 
-Note the formula shorthand: this follows the syntax in the [`purrr`](purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function (response) gsub_response(response, getOption("pivotal.project"), "123")`.
+Note the formula shorthand: this follows the syntax in the [`purrr`](https://purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function (response) gsub_response(response, getOption("pivotal.project"), "123")`.
 
 Valid inputs to `set_redactor()` include:
 

@@ -4,8 +4,13 @@
 \alias{with_trace}
 \title{Wrapper around 'trace' to untrace when finished}
 \usage{
-with_trace(x, where = topenv(parent.frame()),
-  print = getOption("httptest.debug", FALSE), ..., expr)
+with_trace(
+  x,
+  where = topenv(parent.frame()),
+  print = getOption("httptest.debug", FALSE),
+  ...,
+  expr
+)
 }
 \arguments{
 \item{x}{Name of function to trace. See \code{\link[base:trace]{base::trace()}}.}
