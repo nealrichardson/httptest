@@ -23,6 +23,11 @@ mock_perform <- function (mocker, ...) {
     trace(curl::form_file, quote(
         normalizePath <- function (path, ...) return(path)
     ), where=httr::upload_file, print=getOption("httptest.debug", FALSE))
+    # trace body_config to close the file connection that it creates when the
+    # body inherits form_file
+    trace("body_config", exit=quote(
+        if (exists("con")) close.connection(con)
+    ), where=httr::PUT)
 
     invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
