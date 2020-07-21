@@ -1,3 +1,6 @@
+# httptest 3.3.0.9000 (under development)
+* Mocking PUT and POST with a body consisting of only `httr::upload_file` no longer leaves a file connection open. 
+
 # httptest 3.3.0
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
