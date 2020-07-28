@@ -25,6 +25,8 @@ Getting started is easy. At the beginning of your R Markdown document, add this 
 
 changing `vignette-name` to something meaningful, such as the name of your `.Rmd` file. `start_vignette()` works by checking for the existence of a directory with the name you provided. If no directory exists, the vignette proceeds making real API requests and records the responses as fixtures inside the `vignette-name` directory (that is, it calls `start_capturing()`). If the directory does exists, great---you've previously recorded API responses, so it uses them, loading them with the same `use_mock_api()` mode you can use in your test suite.
 
+Note that `start_vignette()` sets a path relative to your *current* working directory. When building the vignette for the first time (and recording the responses), your working directory should be the `vignettes` folder, *not* the root directory of your package. If this has worked properly, you will find the response in the folder `vignettes/vignette-name/0...` (and **not** in the folder `vignettes/0/...`).
+
 > Curious about how these recording and mocking contexts work? See `vignettes("httptest")` for an overview; it's focused on testing rather than vignettes, but the mechanics are the same.
 
 That's about it! It is a good idea to add an `end_vignette()` at the end of the document, like
@@ -36,6 +38,8 @@ That's about it! It is a good idea to add an `end_vignette()` at the end of the 
 This turns off the request recording or mocking and cleans up the R session state. It's not necessary if you build each vignette in a clean R process and quit on completion (everything is cleaned up when R exits), but having the `end_vignette()` call is good in case you build your documents in an interactive session.
 
 Note that these code chunks have `include=FALSE`. This prevents them from being printed in the resulting Markdown, HTML, PDF, or whatever format document you produce. They're doing work behind the scenes, so you don't need them to be shown to your readers.
+
+When your requests have been recorded and saved as a sub-folder that corresponds to your `vignette-name` in the vignettes directory, they will be used for all subsequent runs of the vignette. However, it's always assumed that the stored files are encoded in utf-8. If your files have a different encoding, you may need to change this manually to utf-8 for httptest to work properly. 
 
 # Handling server state changes
 
