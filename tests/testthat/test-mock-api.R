@@ -108,6 +108,23 @@ public({
                 '(httpbin.org/post-519188-POST.json)')
         })
 
+        test_that("PUT/POST with only a upload_file in body", {
+            b1 <- "http://httpbin.org/post"
+            expect_POST(POST(b1, body = upload_file("helper.R")),
+                'http://httpbin.org/post',
+                '(httpbin.org/post-POST.json)')
+            # and ensure that there are no floating connections still open
+            open_conns <- showConnections()
+            expect_false(any(open_conns[, "description"] == "helper.R"))
+            b2 <- "http://httpbin.org/put"
+            expect_PUT(PUT(b2, body = upload_file("helper.R")),
+                'http://httpbin.org/put',
+                '(httpbin.org/put-PUT.json)')
+            # and ensure that there are no floating connections still open
+            open_conns <- showConnections()
+            expect_false(any(open_conns[, "description"] == "helper.R"))
+        })
+
         test_that("Regular expressions in expect_VERB", {
             expect_GET(GET("http://example.com/1234/abcd/"),
                 "http://example.com/[0-9]{4}/[a-z]{4}/",
