@@ -1,5 +1,6 @@
 # httptest 3.3.0.9000 (under development)
 * Mocking PUT and POST with a body consisting of only `httr::upload_file` no longer leaves a file connection open. 
+* Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 
 # httptest 3.3.0
 

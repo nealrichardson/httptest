@@ -13,6 +13,10 @@ public({
             expect_json_equivalent(content(obj),
                 list(query=list(a=1), mocked="yes"))
         })
+        test_that("GET with special characters", {
+            a <- GET("api/x(y='1',z='2')")
+            expect_identical(content(a), list(object=TRUE))
+        })
         test_that("GET files that don't exist errors", {
             expect_GET(GET("api/NOTAFILE/"), "api/NOTAFILE/")
             expect_GET(GET("api/NOTAFILE/", query=list(a=1)),
