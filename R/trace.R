@@ -27,7 +27,7 @@ mock_perform <- function (mocker, ...) {
     # body inherits form_file
     quietly(trace("body_config", exit=quote(
         if (exists("con")) close.connection(con)
-    ), where=httr::PUT))
+    ), where=httr::PUT, print=getOption("httptest.debug", FALSE)))
 
     invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
