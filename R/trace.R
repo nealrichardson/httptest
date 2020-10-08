@@ -20,14 +20,14 @@ mock_perform <- function (mocker, ...) {
     tracer <- substitute_q(fetch_tracer, list(.mocker=mocker))
     # trace curl's form_file making the path normalization a no-op so that file
     # hashes are the same on different platforms
-    trace(curl::form_file, quote(
+    quietly(trace(curl::form_file, quote(
         normalizePath <- function (path, ...) return(path)
-    ), where=httr::upload_file, print=getOption("httptest.debug", FALSE))
+    ), where=httr::upload_file, print=getOption("httptest.debug", FALSE)))
     # trace body_config to close the file connection that it creates when the
     # body inherits form_file
-    trace("body_config", exit=quote(
+    quietly(trace("body_config", exit=quote(
         if (exists("con")) close.connection(con)
-    ), where=httr::PUT)
+    ), where=httr::PUT, print=getOption("httptest.debug", FALSE)))
 
     invisible(trace_httr("request_perform", tracer=tracer, ...))
 }
