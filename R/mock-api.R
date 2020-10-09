@@ -164,7 +164,7 @@ find_mock_file <- function (file) {
         }
         ## Turn the basename into a regular expression that will match it (and
         ## only it) with any .extension
-        mockbasename <- paste0("^", basename(mp), ".[[:alnum:]]*$")
+        mockbasename <- paste0("^\\Q", basename(mp), "\\E.[[:alnum:]]*$")
         mockfiles <- dir(dirname(mp), pattern=mockbasename, all.files=TRUE,
             full.names=TRUE)
         ## Remove directories
