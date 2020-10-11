@@ -131,11 +131,11 @@ save_response <- function (response, simplify=TRUE) {
             cont <- prettify(cont)
         }
         dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep=".")
-        cat(cont, file=file(dst_file, "wb"))
+        cat_wb(cont, dst_file)
     } else if (simplify && status == 204) {
         ## "touch" a file with extension .204
         dst_file <- paste0(dst_file, ".204")
-        cat("", file=file(dst_file, "wb"))
+        cat_wb("", dst_file)
     } else {
         ## Dump an object that can be sourced
 
@@ -175,7 +175,9 @@ save_response <- function (response, simplify=TRUE) {
         ## Drop request since httr:::request_perform will fill it in when loading
         response$request <- NULL
 
-        dput(response, file=file(dst_file, "wb"))
+        f <- file(dst_file, "wb")
+        on.exit(close(f))
+        dput(response, file=f)
     }
     if (isTRUE(getOption("httptest.verbose", FALSE))) {
         message("Writing ", normalizePath(dst_file))
@@ -198,4 +200,11 @@ mkdir_p <- function (filename) {
     # Like mkdir -p path
 
     dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
+}
+
+cat_wb <- function (x, file, ...) {
+  # For cleaning up CRLF issues on Windows, write to a file connection in binary mode
+  f <- file(file, "wb")
+  on.exit(close(f))
+  cat(x, f, ...)
 }
