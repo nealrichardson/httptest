@@ -131,11 +131,11 @@ save_response <- function (response, simplify=TRUE) {
             cont <- prettify(cont)
         }
         dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep=".")
-        cat_wb(cont, dst_file)
+        cat_wb(cont, file=dst_file)
     } else if (simplify && status == 204) {
         ## "touch" a file with extension .204
         dst_file <- paste0(dst_file, ".204")
-        cat_wb("", dst_file)
+        cat_wb("", file=dst_file)
     } else {
         ## Dump an object that can be sourced
 
