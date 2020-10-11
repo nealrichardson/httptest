@@ -5,7 +5,7 @@ doc:
 	-git add --all man/*.Rd
 
 test:
-	R CMD INSTALL --install-tests .
+	R CMD INSTALL --install-tests --no-test-load --no-docs --no-help --no-byte-compile .
 	export NOT_CRAN=true && R --slave -e 'library(testthat); setwd(file.path(.libPaths()[1], "httptest", "tests")); system.time(test_check("httptest", filter="${file}", reporter=ifelse(nchar("${r}"), "${r}", "summary")))'
 
 deps:
