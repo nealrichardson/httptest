@@ -206,5 +206,5 @@ cat_wb <- function (x, file, ...) {
   # For cleaning up CRLF issues on Windows, write to a file connection in binary mode
   f <- file(file, "wb", encoding="UTF-8")
   on.exit(close(f))
-  cat(x, file = f, ...)
+  cat(enc2utf8(x), file = f, ...)
 }
