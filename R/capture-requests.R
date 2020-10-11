@@ -131,11 +131,11 @@ save_response <- function (response, simplify=TRUE) {
             cont <- prettify(cont)
         }
         dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep=".")
-        cat(cont, file=dst_file)
+        cat(cont, file=file(dst_file, "wb"))
     } else if (simplify && status == 204) {
         ## "touch" a file with extension .204
         dst_file <- paste0(dst_file, ".204")
-        cat("", file=dst_file)
+        cat("", file=file(dst_file, "wb"))
     } else {
         ## Dump an object that can be sourced
 
@@ -175,7 +175,7 @@ save_response <- function (response, simplify=TRUE) {
         ## Drop request since httr:::request_perform will fill it in when loading
         response$request <- NULL
 
-        dput(response, file=dst_file)
+        dput(response, file=file(dst_file, "wb"))
     }
     if (isTRUE(getOption("httptest.verbose", FALSE))) {
         message("Writing ", normalizePath(dst_file))
