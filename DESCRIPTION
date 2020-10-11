@@ -37,6 +37,7 @@ Suggests:
     pkgload,
     rmarkdown,
     spelling,
+    waldo,
     xml2
 Language: en-US
 RoxygenNote: 7.0.2

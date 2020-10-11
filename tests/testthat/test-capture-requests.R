@@ -78,18 +78,18 @@ test_that("We can then load the mocks it stores", {
       unlist(strsplit(content(m2, "text"), "")),
       unlist(strsplit(content(r2, "text"), ""))
     )
-    expect_output(print(waldo::compare(
+    expect_output(try(print(waldo::compare(
       unlist(strsplit(content(m2, "text"), "")),
       unlist(strsplit(content(r2, "text"), "")))
-    ), NA)
+    )), NA)
     expect_identical(
       unlist(strsplit(content(m2, "text"), "\n")),
       unlist(strsplit(content(r2, "text"), "\n"))
     )
-    expect_output(print(waldo::compare(
+    expect_output(try(print(waldo::compare(
       unlist(strsplit(content(m2, "text"), "\n")),
       unlist(strsplit(content(r2, "text"), "\n")))
-    ), NA)
+    )), NA)
 
     expect_true(grepl("</body>", content(m2, "text")))
     expect_identical(content(m3), content(r3))
