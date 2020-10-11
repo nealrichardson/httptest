@@ -71,8 +71,8 @@ test_that("We can then load the mocks it stores", {
     ## Compare the HTML as text because the parsed HTML (XML) object has a
     ## C pointer that is different between the two objects.
     expect_identical(
-      content(m2, "text", encoding = "UTF-8"),
-      content(r2, "text", encoding = "UTF-8")
+      enc2utf8(content(m2, "text")),
+      enc2utf8(content(r2, "text"))
     )
 
     expect_true(grepl("</body>", content(m2, "text")))
