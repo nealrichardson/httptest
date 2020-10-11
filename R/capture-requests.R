@@ -175,7 +175,7 @@ save_response <- function (response, simplify=TRUE) {
         ## Drop request since httr:::request_perform will fill it in when loading
         response$request <- NULL
 
-        f <- file(dst_file, "wb")
+        f <- file(dst_file, "wb", encoding="UTF-8")
         on.exit(close(f))
         dput(response, file=f)
     }
