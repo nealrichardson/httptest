@@ -1,5 +1,3 @@
-context("capture_requests")
-
 d <- tempfile()
 dl_file <- tempfile()
 webp_file <- tempfile()
@@ -34,7 +32,7 @@ test_that("We can record a series of requests (a few ways)", {
           ))
     ## Test the contents of the .R files
     teapot <- source(file.path(d, "httpbin.org/status/418.R"))$value
-    expect_is(teapot, "response")
+    expect_s3_class(teapot, "response")
     expect_identical(teapot$status_code, 418L)
     ## Make sure that our .html file has HTML
     expect_true(any(grepl("</body>",
@@ -71,11 +69,11 @@ test_that("We can then load the mocks it stores", {
     ## Compare the HTML as text because the parsed HTML (XML) object has a
     ## C pointer that is different between the two objects.
     expect_identical(
-      enc2native(content(m2, "text")),
+      enc2native(quiet_content(m2, "text")),
       enc2native(content(r2, "text"))
     )
 
-    expect_true(grepl("</body>", content(m2, "text")))
+    expect_true(grepl("</body>", quiet_content(m2, "text")))
     expect_identical(content(m3), content(r3))
     expect_identical(content(m4), content(r4))
     expect_identical(content(m5), content(r5))
@@ -140,7 +138,7 @@ with_mock_api({
         expect_true(setequal(dir(d3, recursive=TRUE),
             c("example.com/get.R", "api/object1.R", "httpbin.org/status/204.R")))
         response <- source(file.path(d3, "example.com/get.R"))$value
-        expect_is(response, "response")
+        expect_s3_class(response, "response")
         expect_identical(content(response),
             content(GET("http://example.com/get/")))
     })

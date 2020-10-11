@@ -1,5 +1,3 @@
-context("Mock API")
-
 public({
     with_mock_api({
         test_that("Can load an object and file extension is added", {
@@ -201,9 +199,9 @@ test_that("load_response invalid extension handling", {
 })
 
 test_that("mock_request code paths are covered (outside of trace)", {
-    expect_is(mock_request(list(method="GET", url="api/")),
+    expect_s3_class(mock_request(list(method="GET", url="api/")),
         "response")
-    expect_is(mock_request(list(method="GET", url="http://example.com/html")),
+    expect_s3_class(mock_request(list(method="GET", url="http://example.com/html")),
         "response")
     expect_error(mock_request(list(method="PUT", url="api/")))
 })

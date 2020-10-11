@@ -1,5 +1,3 @@
-context("Fake HTTP")
-
 public({
     with_fake_http({
         test_that("fakeGET", {
@@ -85,17 +83,25 @@ public({
 })
 
 test_that("fake_response returns a valid enough response even if you give it just a URL", {
-    expect_is(fake_response("http://httpbin.org/get"), "response")
+    expect_s3_class(fake_response("http://httpbin.org/get"), "response")
 })
 
 test_that("fake_request gets covered directly (not just in tracer)", {
-    expect_is(fake_request(list(method="GET", url="http://httpbin.org/get")),
-        "response")
-    expect_is(fake_request(
-        list(
-            method="POST",
-            url="http://httpbin.org/get",
-            options=list(postfields=charToRaw("body"))
-        )),
+    expect_s3_class(
+        expect_message(
+            fake_request(list(method="GET", url="http://httpbin.org/get")),
+            "GET http://httpbin.org/get"
+        ),
+    "response")
+    expect_s3_class(
+        expect_message(
+            fake_request(
+                list(
+                    method="POST",
+                    url="http://httpbin.org/get",
+                    options=list(postfields=charToRaw("body"))
+                )),
+            "POST http://httpbin.org/get body"
+        ),
         "response")
 })

@@ -1,7 +1,8 @@
-context("Offline checking and skipping")
-
 test_that("currently_offline interacts with the mock contexts", {
-    expect_false(with_fake_http(currently_offline()))
+    expect_message(
+        expect_false(with_fake_http(currently_offline())),
+        "GET http://httpbin.org/"
+    )
     expect_true(without_internet(currently_offline()))
 })
 
@@ -13,9 +14,12 @@ public({
         })
     })
     test_that("skip_if_disconnected when 'connected'", {
-        with_fake_http({
-            skip_if_disconnected("This should not skip")
-            expect_failure(expect_true(FALSE))
-        })
+        expect_message(
+            with_fake_http({
+                skip_if_disconnected("This should not skip")
+                expect_failure(expect_true(FALSE))
+            }),
+            "GET http://httpbin.org/"
+        )
     })
 })

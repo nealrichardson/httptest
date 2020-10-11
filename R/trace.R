@@ -59,7 +59,7 @@ quietly <- function (expr) {
 #' @return Nothing; called for its side effects
 #' @export
 stop_mocking <- function () {
-    safe_untrace(untrace(curl::form_file))
+    safe_untrace(curl::form_file)
     invisible(safe_untrace("request_perform", add_headers))
 }
 

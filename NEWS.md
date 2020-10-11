@@ -4,6 +4,11 @@
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 * Switch continuous integration to use GitHub Actions (#36, @jonkeane)
 
+## Changes for compatiblity with the forthcoming testthat 3rd edition
+* [`expect_header()`] now emits a single warning with all of the headers that are included with the call (instead of one warning per header). This makes catching multiple headers easier (and prevents excess warnings when using testthat 3e).
+* Quiet an extraneous message about untracing `curl::form_file()`.
+* Numerous internal testing changes to ensure compatibility with testthat 3e.
+
 # httptest 3.3.0
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)

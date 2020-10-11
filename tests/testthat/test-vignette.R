@@ -1,5 +1,3 @@
-context("start_vignette")
-
 rp <- httr:::request_perform
 g <- httr::GET
 path <- tempfile()

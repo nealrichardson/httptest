@@ -48,8 +48,8 @@ Adding `with_mock_api()` to your tests is straightforward. Given a very basic te
 
 ```r
 test_that("Requests happen", {
-    expect_is(GET("http://httpbin.org/get"), "response")
-    expect_is(
+    expect_s3_class(GET("http://httpbin.org/get"), "response")
+    expect_s3_class(
         GET("http://httpbin.org/response-headers",
             query=list(`Content-Type`="application/json")),
         "response"
@@ -62,8 +62,8 @@ if we wrap the code in `with_mock_api()`, actual requests won't happen.
 ```r
 with_mock_api({
     test_that("Requests happen", {
-        expect_is(GET("http://httpbin.org/get"), "response")
-        expect_is(
+        expect_s3_class(GET("http://httpbin.org/get"), "response")
+        expect_s3_class(
             GET("http://httpbin.org/response-headers",
                 query=list(`Content-Type`="application/json")),
             "response"
