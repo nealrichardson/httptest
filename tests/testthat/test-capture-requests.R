@@ -71,25 +71,9 @@ test_that("We can then load the mocks it stores", {
     ## Compare the HTML as text because the parsed HTML (XML) object has a
     ## C pointer that is different between the two objects.
     expect_identical(
-      content(m2, "text"),
-      content(r2, "text")
+      enc2native(content(m2, "text")),
+      enc2native(content(r2, "text"))
     )
-    expect_identical(
-      unlist(strsplit(content(m2, "text"), "")),
-      unlist(strsplit(content(r2, "text"), ""))
-    )
-    expect_output(try(print(waldo::compare(
-      unlist(strsplit(content(m2, "text"), "")),
-      unlist(strsplit(content(r2, "text"), "")))
-    )), NA)
-    expect_identical(
-      unlist(strsplit(content(m2, "text"), "\n")),
-      unlist(strsplit(content(r2, "text"), "\n"))
-    )
-    expect_output(try(print(waldo::compare(
-      unlist(strsplit(content(m2, "text"), "\n")),
-      unlist(strsplit(content(r2, "text"), "\n")))
-    )), NA)
 
     expect_true(grepl("</body>", content(m2, "text")))
     expect_identical(content(m3), content(r3))
