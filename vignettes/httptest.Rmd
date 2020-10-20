@@ -121,7 +121,7 @@ tests
 │   │       └── users
 │   │           ├── lookup.json-342984.json
 │   │           └── show.json-84627b.json
-│   ├── helper.R
+│   ├── setup.R
 │   └── test-user.R
 └── testthat.R
 ```
@@ -131,7 +131,7 @@ The full test code looks like this:
 ```r
 context("Get a user")
 
-use_oauth_token("foo") # Pulled here from helper.R for clarity
+use_oauth_token("foo") # Pulled here from setup.R for clarity
 
 with_mock_api({
     test_that("We can get a user object", {

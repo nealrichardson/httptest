@@ -1,7 +1,7 @@
 #' Use 'httptest' in your tests
 #'
 #' This function adds `httptest` to Suggests in the package DESCRIPTION and
-#' loads it in `tests/testthat/helper.R`. Call it once when you're setting up
+#' loads it in `tests/testthat/setup.R`. Call it once when you're setting up
 #' a new package test suite.
 #'
 #' The function is idempotent: if `httptest` is already added to these files, no
@@ -15,8 +15,8 @@ use_httptest <- function (path=".") {
         stop(path, " is not an R package directory", call.=FALSE)
     }
     add_httptest_to_desc(file.path(path, "DESCRIPTION"))
-    # TODO: could allow helper.r too
-    add_httptest_to_helper(file.path(path, "tests", "testthat", "helper.R"))
+    # TODO: could allow setup.r too
+    add_httptest_to_setup(file.path(path, "tests", "testthat", "setup.R"))
     invisible()
 }
 
@@ -50,8 +50,8 @@ add_httptest_to_desc <- function (file) {
     }
 }
 
-add_httptest_to_helper <- function (file) {
-    # Create tests/testthat/helper.R if it does not exist
+add_httptest_to_setup <- function (file) {
+    # Create tests/testthat/setup.R if it does not exist
 
     if (!file.exists(file)) {
         message("Creating ", file)
@@ -60,13 +60,13 @@ add_httptest_to_helper <- function (file) {
         cat("library(httptest)\n", file=file)
         # Msg and write
     } else {
-        helper_lines <- readLines(file)
-        if (!any(grepl("library(httptest)", helper_lines, fixed=TRUE))) {
+        setup_lines <- readLines(file)
+        if (!any(grepl("library(httptest)", setup_lines, fixed=TRUE))) {
             # Add "library(httptest)" to the top if it's not already there
-            helper_lines <- c("library(httptest)", helper_lines)
+            setup_lines <- c("library(httptest)", setup_lines)
             # Msg and write
             message("Adding library(httptest) to ", file)
-            writeLines(helper_lines, file)
+            writeLines(setup_lines, file)
         }
     }
 }

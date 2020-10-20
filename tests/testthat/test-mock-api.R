@@ -104,24 +104,24 @@ public({
                 'http://httpbin.org/post',
                 '{"x":"A simple text string"} ',
                 '(httpbin.org/post-34199a-POST.json)')
-            expect_POST(POST(b2, body = list(y = upload_file("helper.R"))),
+            expect_POST(POST(b2, body = list(y = upload_file(testthat::test_path("setup.R")))),
                 'http://httpbin.org/post',
                 'list(y = list(path = "',
-                "helper.R",
+                testthat::test_path("setup.R"),
                 '", type = "text/plain")) ',
                 '(httpbin.org/post-519188-POST.json)')
         })
 
         test_that("PUT/POST with only a upload_file in body", {
             b1 <- "http://httpbin.org/post"
-            expect_POST(POST(b1, body = upload_file("helper.R")),
+            expect_POST(POST(b1, body = upload_file(testthat::test_path("setup.R"))),
                 'http://httpbin.org/post',
                 '(httpbin.org/post-POST.json)')
             # and ensure that there are no floating connections still open
             open_conns <- showConnections()
-            expect_false(any(open_conns[, "description"] == "helper.R"))
+            expect_false(any(open_conns[, "description"] == "setup.R"))
             b2 <- "http://httpbin.org/put"
-            expect_PUT(PUT(b2, body = upload_file("helper.R")),
+            expect_PUT(PUT(b2, body = upload_file(testthat::test_path("setup.R"))),
                 'http://httpbin.org/put',
                 '(httpbin.org/put-PUT.json)')
             # and ensure that there are no floating connections still open
