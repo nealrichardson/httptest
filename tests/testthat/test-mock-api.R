@@ -109,7 +109,7 @@ public({
                 'list(y = list(path = "',
                 testthat::test_path("setup.R"),
                 '", type = "text/plain")) ',
-                '(httpbin.org/post-519188-POST.json)')
+                '(httpbin.org/post-79b618-POST.json)')
         })
 
         test_that("PUT/POST with only a upload_file in body", {
