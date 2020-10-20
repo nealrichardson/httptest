@@ -1,8 +1,17 @@
 # httptest 3.3.0.9000 (under development)
-* changed the filename `helper.R` to `setup.R` to comply with `testthat`'s latest recommendations (#44, @maelle).
-* Mocking PUT and POST with a body consisting of only `httr::upload_file` no longer leaves a file connection open.
+
+## Changes for compatibility with the forthcoming testthat 3rd edition
+
+* `expect_header()` now emits a single warning with all of the headers that are included with the call (instead of one warning per header). This makes catching multiple headers easier and prevents excess warnings when using testthat 3e (#38, @jonkeane)
+* Quiet an extraneous message about untracing `curl::form_file()` (#35, @dmenne)
+* Numerous internal testing changes to ensure compatibility with testthat 3e
+
+## Other fixes and enhancements
+
+* Mocking PUT and POST with a body consisting of only `httr::upload_file()` no longer leaves a file connection open.
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 * Switch continuous integration to use GitHub Actions (#36, @jonkeane)
+* The test file `helper.R` was renamed to `setup.R` to comply with `testthat`'s latest recommendations (#44, @maelle)
 
 # httptest 3.3.0
 

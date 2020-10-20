@@ -25,9 +25,8 @@
 expect_header <- function (..., ignore.case=TRUE) {
     tracer <- quote({
         heads <- req$headers
-        for (h in names(heads)) {
-            warning(paste(h, heads[h], sep=": "), call.=FALSE)
-        }
+        msgs <- lapply(names(heads), function(h) paste(h, heads[h], sep=": "))
+        warning(msgs, call.=FALSE)
     })
     with_trace("request_prepare", exit=tracer, where=add_headers, expr={
         expect_warning(..., ignore.case=ignore.case)

@@ -52,3 +52,21 @@ skip_on_R_older_than <- function (version) {
         skip(paste("Requires R >=", version))
     }
 }
+
+# A quiet version of httr's content
+quiet_content <- function(...) {
+    suppressMessages(content(...))
+}
+
+testthat_transition <- function(old, new) {
+    is_3e <- tryCatch(testthat::edition_get() == 3, error = function(e) FALSE)
+    if (is_3e) {
+        eval(new, envir = parent.frame())
+    } else {
+        eval(old, envir = parent.frame())
+    }
+}
+
+# assign to global to be used inside of `public()` calls
+third_edition <<- tryCatch(testthat::edition_get() == 3, error = function(e) FALSE)
+

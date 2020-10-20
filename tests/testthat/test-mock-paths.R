@@ -1,5 +1,3 @@
-context("Setting different/multiple mock directories")
-
 public({
     test_that(".mockPaths works more or less like .libPaths", {
         expect_identical(.mockPaths(), ".")

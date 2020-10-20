@@ -1,5 +1,3 @@
-context("Content-Type parsing")
-
 resp <- source("example.com/html.R")$value
 
 test_that("get_content_type handles valid Content-Types, including omitted", {
