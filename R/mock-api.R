@@ -96,6 +96,11 @@ mock_request <- function (req, handle, refresh) {
 #' In the interest of standardizing naming conventions, `build_mock_url()` is
 #' the preferred name for this function; `buildMockURL()` is deprecated.
 #'
+#' Note that if you are trying to guess the mock file paths corresponding to a
+#' test for which you intend to create a mock file manually,
+#' instead of trying to build the URL, you should run the test
+#' with `with_mock_api` as the error message will contain the mock file path.
+#'
 #' @param req A `request` object, or a character "URL" to convert
 #' @param method character HTTP method. If `req` is a 'request' object,
 #' its request method will override this argument
