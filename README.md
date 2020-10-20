@@ -20,7 +20,7 @@ This package bridges the gap between two others: (1) [testthat](http://testthat.
 install.packages("httptest")
 ```
 
-The pre-release version of the package can be pulled from GitHub using the [remotes](https://github.com/r-lib/remotes) package (formerly part of and now a dependency of `devtools`):
+The pre-release version of the package can be pulled from GitHub using the [remotes](https://github.com/r-lib/remotes) package:
 
 ```r
 # install.packages("remotes")
@@ -32,7 +32,7 @@ remotes::install_github("nealrichardson/httptest")
 To start using `httptest` with your package, run `use_httptest()` in the root of your package directory. This will
 
 * add `httptest` to "Suggests" in the DESCRIPTION file
-* add `library(httptest)` to `tests/testthat/helper.R`, which `testthat` loads before running tests
+* add `library(httptest)` to `tests/testthat/setup.R`, which `testthat` loads before running tests
 
 Then, you're ready to start using the tools that `httptest` provides. Here's an overview of how to get started. For a longer discussion and examples, see `vignette("httptest")`, and see also the [package reference](https://enpiar.com/r/httptest/reference/) for a list of all of the test contexts and expectations provided in the package.
 
@@ -145,7 +145,7 @@ Finally, if you have your tests inside a `tests/testthat/` directory, and your f
 
 **Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_api()` blocks?
 
-**A.** One way to do this is to set `with_mock_api()` to another function in your test file (or in `helper.R` if you want it to run for all test files). So
+**A.** One way to do this is to set `with_mock_api()` to another function in your test file (or in `setup.R` if you want it to run for all test files). So
 
 ```r
 with_mock_api({
@@ -184,7 +184,7 @@ if (Sys.getenv("MOCK_BYPASS") == "true") {
 }
 ```
 
-to your `helper.R` or `setup.R`.
+to your `setup.R`.
 
 You could also experiment with using `start_vignette()`, which switches behavior based on the existence of the specified mock directory.
 
@@ -202,4 +202,4 @@ The repository includes a Makefile to facilitate some common tasks from the comm
 
 ### Updating documentation
 
-`$ make doc`. Requires the [roxygen2](https://github.com/klutometis/roxygen) package.
+`$ make doc`. Requires the [roxygen2](https://github.com/r-lib/roxygen2) package.
