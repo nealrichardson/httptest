@@ -1,4 +1,5 @@
 # httptest 3.3.0.9000 (under development)
+* changed the filename `helper.R` to `setup.R` to comply with `testthat`'s latest recommendations (#44, @maelle).
 * Mocking PUT and POST with a body consisting of only `httr::upload_file` no longer leaves a file connection open.
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 * Switch continuous integration to use GitHub Actions (#36, @jonkeane)

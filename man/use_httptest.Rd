@@ -14,7 +14,7 @@ Nothing: called for file system side effects.
 }
 \description{
 This function adds \code{httptest} to Suggests in the package DESCRIPTION and
-loads it in \code{tests/testthat/helper.R}. Call it once when you're setting up
+loads it in \code{tests/testthat/setup.R}. Call it once when you're setting up
 a new package test suite.
 }
 \details{
