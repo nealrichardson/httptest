@@ -126,7 +126,7 @@ public({
                 '(httpbin.org/put-PUT.json)')
             # and ensure that there are no floating connections still open
             open_conns <- showConnections()
-            expect_false(any(open_conns[, "description"] == "helper.R"))
+            expect_false(any(open_conns[, "description"] == "setup.R"))
         })
 
         test_that("Regular expressions in expect_VERB", {
