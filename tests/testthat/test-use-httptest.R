@@ -1,5 +1,3 @@
-context("use_httptest")
-
 test_add_to_desc <- function (str, msg="Adding 'httptest' to Suggests") {
     f <- tempfile()
     cat(str, file=f)
@@ -60,7 +58,13 @@ expect_added_to_setup <- function (str, msg="Adding library\\(httptest\\)") {
 test_that("add to setup creates file if doesn't exist", {
     f <- tempfile()
     expect_false(file.exists(f))
-    expect_message(add_httptest_to_setup(f), "Creating")
+    testthat_transition(
+        expect_message(add_httptest_to_setup(f), "Creating"),
+        expect_message(
+            expect_message(add_httptest_to_setup(f), "Creating"),
+            "Adding library\\(httptest\\) to"
+        )
+    )
     expect_identical(readLines(f), "library(httptest)")
 })
 
@@ -81,7 +85,19 @@ test_that("use_httptest integration test", {
     desc <- file.path(testpkg, "DESCRIPTION")
     cat("Title: Foo\n", file=desc)
     setup <- file.path(testpkg, "tests", "testthat", "setup.R")
-    expect_message(use_httptest(testpkg))
+    testthat_transition(
+        expect_message(use_httptest(testpkg), "Adding 'httptest' to Suggests"),
+        expect_message(
+            expect_message(
+                expect_message(
+                    use_httptest(testpkg),
+                    "Adding 'httptest' to Suggests"
+                ),
+                "Creating "
+            ),
+            "Adding library\\(httptest\\) to "
+        )
+    )
     expect_identical(readLines(desc), c("Title: Foo", "Suggests: httptest"))
     expect_identical(readLines(setup), "library(httptest)")
     # It does nothing if you the package already uses httptest

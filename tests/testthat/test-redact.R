@@ -1,5 +1,3 @@
-context("Redaction")
-
 d <- tempfile()
 
 with_mock_api({
@@ -133,7 +131,7 @@ with_mock_api({
         oauth <- GET("api/object1/", config(token = token))
     })
     test_that("The response has the 'auth_token' object'", {
-        expect_is(oauth$request$auth_token, "Token2.0")
+        expect_s3_class(oauth$request$auth_token, "Token2.0")
     })
 
     test_that("But the mock doesn't have the auth_token", {

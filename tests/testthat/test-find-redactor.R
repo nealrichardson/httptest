@@ -1,5 +1,3 @@
-context("Find package redactors")
-
 expect_redactor <- function (expr) {
     expect_identical(names(formals(expr)), "response")
 }
@@ -34,16 +32,34 @@ test_that("get_current_redactor edge cases", {
 with_mock_api({
     test_that("Reading redactors from within a package (and install that package)", {
         newmocks <- tempfile()
-        expect_message(
-            capture_while_mocking(path=newmocks, {
-                ## Install the "testpkg" to a temp lib.loc _after_ we've already started recording
-                lib <- install_testpkg("testpkg")
-                library(testpkg, lib.loc=lib)
-                expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+        testthat_transition(
+            expect_message(
+                capture_while_mocking(path=newmocks, {
+                    ## Install the "testpkg" to a temp lib.loc _after_ we've
+                    ## already started recording
+                    lib <- install_testpkg("testpkg")
+                    library(testpkg, lib.loc=lib)
+                    expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
 
-                r <- GET("http://example.com/get")
-            }),
-            paste0("Using redact.R from ", dQuote("testpkg"))
+                    r <- GET("http://example.com/get")
+                }),
+                paste0("Using redact.R from ", dQuote("testpkg"))
+            ),
+            expect_message(
+                expect_message(
+                    capture_while_mocking(path=newmocks, {
+                        ## Install the "testpkg" to a temp lib.loc _after_ we've
+                        ## already started recording
+                        lib <- install_testpkg("testpkg")
+                        library(testpkg, lib.loc=lib)
+                        expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
+
+                        r <- GET("http://example.com/get")
+                    }),
+                    paste0("Using redact.R from ", dQuote("testpkg"))
+                ),
+                paste0("Using request.R from ", dQuote("testpkg"))
+            )
         )
         with_mock_path(newmocks, {
             r2 <- GET("http://example.com/get")
@@ -84,7 +100,7 @@ with_mock_api({
         })
         expect_message(
             capture_while_mocking(path=newmocks3, {
-                pkgload::load_all("testpkg")
+                pkgload::load_all("testpkg", quiet = TRUE)
                 expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
                 r <- GET("http://example.com/get")
             }),

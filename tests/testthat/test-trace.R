@@ -1,5 +1,3 @@
-context("Tracing")
-
 public({
     test_that("safe_untrace makes mocking not error if not already traced", {
         expect_error(use_mock_api(), NA)

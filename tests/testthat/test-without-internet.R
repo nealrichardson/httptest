@@ -1,5 +1,3 @@
-context("without_internet")
-
 public({
     test_that("Outside of without_internet, requests work", {
         skip_if_disconnected()
@@ -49,11 +47,13 @@ public({
                 "http://httpbin.org/get",
                 '{"t')
             ## Just to be explicit since the expectations do partial matching
+            skip_if(third_edition)
             expect_failure(
                 expect_PUT(PUT("http://httpbin.org/get", body='{"test":true}'),
-                    "http://httpbin.org/get",
-                    '{"test":true}')
+                           "http://httpbin.org/get",
+                           '{"test":true}')
             )
+
         })
 
         test_that("without_internet respects query params", {

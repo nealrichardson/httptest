@@ -1,5 +1,3 @@
-context("Public")
-
 test_that("Functions not exported can be found", {
     expect_true(.internalFunction())
 })
