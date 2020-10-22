@@ -15,25 +15,25 @@
 #'
 with_mock_dir <- function(dir, expr) {
   dir <- testthat::test_path(dir)
-  current_mockPaths <- httptest::.mockPaths()
+  current_mockPaths <- .mockPaths()
 
   # Change mockPaths...
-  httptest::.mockPaths(dir)
+  .mockPaths(dir)
   # And clean up later
   withr::defer({
-    httptest::.mockPaths(NULL)
-    httptest::.mockPaths(current_mockPaths)
+    .mockPaths(NULL)
+    .mockPaths(current_mockPaths)
   })
 
   if (dir.exists(dir)) {
     ## We already have recorded, so use the fixtures
     withr::with_envvar(
       new = c("GITHUB_PAT" = "foobar"),
-      httptest::with_mock_api(...)
+      with_mock_api(...)
     )
   } else {
     ## Record!
-    httptest::capture_requests(...)
+    capture_requests(...)
   }
 
 }
