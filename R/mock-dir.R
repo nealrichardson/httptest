@@ -1,10 +1,10 @@
 #' Use or create mock files depending on their existence
 #'
-#' This context will switch the [`.mockPaths()`] to `tests/testthat/dir`
+#' This context will switch the [.mockPaths()] to `tests/testthat/dir`
 #' (and then resets it to what it was before).
-#' If the `tests/testthat/dir` folder doesn't exist, [`capture_requests()`] will
+#' If the `tests/testthat/dir` folder doesn't exist, [capture_requests()] will
 #' be run to create mocks.
-#' If it exists, [`with_mock_api()`] will be run.
+#' If it exists, [with_mock_api()] will be run.
 #' To re-record mock files, simply delete `tests/testthat/dir` and run the test.
 #'
 #' @param dir character string, unique folder name that will be used or created
