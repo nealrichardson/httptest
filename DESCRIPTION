@@ -31,7 +31,8 @@ Imports:
     httr,
     jsonlite,
     stats,
-    utils
+    utils,
+    withr
 Suggests:
     covr,
     knitr,
