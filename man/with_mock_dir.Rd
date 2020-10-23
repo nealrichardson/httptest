@@ -4,19 +4,13 @@
 \alias{with_mock_dir}
 \title{Use or create mock files depending on their existence}
 \usage{
-with_mock_dir(dir, expr, capture_prep, mock_prep)
+with_mock_dir(dir, expr)
 }
 \arguments{
 \item{dir}{character string, unique folder name that will be used or created
 under \verb{tests/testthat/}}
 
 \item{expr}{Code to run inside the fake context}
-
-\item{capture_prep}{code to be run before capturing e.g. setting
-an environment variable.}
-
-\item{mock_prep}{code to be run before using the mock files e.g.
-setting a fake environment variable to fool your package.}
 }
 \description{
 This context will switch the \code{\link[=.mockPaths]{.mockPaths()}} to \code{tests/testthat/dir}

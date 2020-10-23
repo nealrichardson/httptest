@@ -10,24 +10,18 @@
 #' @param dir character string, unique folder name that will be used or created
 #' under `tests/testthat/`
 #' @inheritParams with_mock_api
-#' @param capture_prep code to be run before capturing e.g. setting
-#' an environment variable.
-#' @param mock_prep code to be run before using the mock files e.g.
-#' setting a fake environment variable to fool your package.
 #'
 #' @export
 #'
-with_mock_dir <- function(dir, expr, capture_prep, mock_prep) {
+with_mock_dir <- function(dir, expr) {
   dir <- testthat::test_path(dir)
   current_mockPaths <- .mockPaths()
 
   if (dir.exists(dir)) {
     ## We alreagdy have recorded, so use the fixtures
-   force(mock_prep)
    with_mock_path(dir, with_mock_api(expr))
   } else {
     ## Record!
-    force(capture_prep)
     with_mock_path(dir, capture_requests(expr))
   }
 
