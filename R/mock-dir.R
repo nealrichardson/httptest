@@ -10,10 +10,11 @@
 #' @param dir character string, unique folder name that will be used or created
 #' under `tests/testthat/`
 #' @inheritParams with_mock_api
+#' @inheritParams start_capturing
 #'
 #' @export
 #'
-with_mock_dir <- function(dir, expr) {
+with_mock_dir <- function(dir, expr, simplify = TRUE) {
   dir <- testthat::test_path(dir)
   current_mockPaths <- .mockPaths()
 
@@ -22,7 +23,7 @@ with_mock_dir <- function(dir, expr) {
    with_mock_path(dir, with_mock_api(expr))
   } else {
     ## Record!
-    with_mock_path(dir, capture_requests(expr))
+    with_mock_path(dir, capture_requests(expr, simplify = simplify))
   }
 
 }

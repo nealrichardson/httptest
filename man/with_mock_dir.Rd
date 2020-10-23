@@ -4,13 +4,18 @@
 \alias{with_mock_dir}
 \title{Use or create mock files depending on their existence}
 \usage{
-with_mock_dir(dir, expr)
+with_mock_dir(dir, expr, simplify = TRUE)
 }
 \arguments{
 \item{dir}{character string, unique folder name that will be used or created
 under \verb{tests/testthat/}}
 
 \item{expr}{Code to run inside the fake context}
+
+\item{simplify}{logical: if \code{TRUE} (default), JSON responses with status 200
+will be written as just the text of the response body. In all other cases,
+and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
+a .R file using \code{\link[base:dput]{base::dput()}}.}
 }
 \description{
 This context will switch the \code{\link[=.mockPaths]{.mockPaths()}} to \code{tests/testthat/dir}
