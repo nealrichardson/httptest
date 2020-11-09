@@ -145,9 +145,6 @@ Finally, if you have your tests inside a `tests/testthat/` directory, and your f
 
 **Q.** I'd like to have my tests automatically create mock files when they don't exist yet, and re-use them after that. I'd like to also be able to easily re-record mock files.
 
-#### How do I switch between mocking and real requests?
-
-**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_api()` blocks?
 
 **A.** One way to do this is to use the `with_mock_dir()` context instead of `with_mock_api()`.
 
@@ -162,6 +159,10 @@ The first time you run the code above, it will create the folder `tests/testthat
  and create mock files under it.
 The next times you run it, it will _use_ the mock files in `tests/testthat/httpbin-get`.
 To re-record, simply delete the folder.
+
+#### How do I switch between mocking and real requests?
+
+**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_api()` blocks?
 
 **A.** One way to do this is to set `with_mock_api()` to another function in your test file (or in `setup.R` if you want it to run for all test files). So
 
