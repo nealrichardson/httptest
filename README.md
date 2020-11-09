@@ -145,7 +145,6 @@ Finally, if you have your tests inside a `tests/testthat/` directory, and your f
 
 **Q.** I'd like to have my tests automatically create mock files when they don't exist yet, and re-use them after that. I'd like to also be able to easily re-record mock files.
 
-
 **A.** One way to do this is to use the `with_mock_dir()` context instead of `with_mock_api()`.
 
 ```r
@@ -206,6 +205,8 @@ if (Sys.getenv("MOCK_BYPASS") == "true") {
 to your `setup.R`.
 
 You could also experiment with using `start_vignette()`, which switches behavior based on the existence of the specified mock directory.
+
+Lastly, if you expect your tests against the real API to be much different from the tests using httptest (no tests for API errors, less specific tests), you could set up a second folder that you'd .Rbuildignore most of the time and that you'd use via the `--test-dir` argument of `R CMD check` (or that you'd run with `testthat::test_dir()`, which is less useful on continuous integration services as it wouldn't generate artefacts in case of failures).
 
 ## Contributing
 
