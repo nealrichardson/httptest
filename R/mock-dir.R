@@ -19,7 +19,7 @@ with_mock_dir <- function(dir, expr, simplify = TRUE) {
   current_mockPaths <- .mockPaths()
 
   if (dir.exists(dir)) {
-    ## We alreagdy have recorded, so use the fixtures
+    ## We already have recorded, so use the fixtures
    with_mock_path(dir, with_mock_api(expr))
   } else {
     ## Record!
