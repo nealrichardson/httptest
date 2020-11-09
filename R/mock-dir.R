@@ -15,7 +15,11 @@
 #' @export
 #'
 with_mock_dir <- function(dir, expr, simplify = TRUE) {
-  dir <- testthat::test_path(dir)
+
+  if (!nzchar(Sys.getenv("TESTING_MOCK_DIR"))) {
+    dir <- testthat::test_path(dir)
+  }
+
 
   if (dir.exists(dir)) {
     ## We already have recorded, so use the fixtures

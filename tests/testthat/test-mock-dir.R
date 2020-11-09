@@ -1,5 +1,7 @@
 public({
     test_that("with_mock_dir works when the directory with mock files exists", {
+        withr::local_envvar(list("TESTING_MOCK_DIR" = TRUE))
+
         temporary_dir <- withr::local_tempdir()
         file.copy(testthat::test_path("httpbin.org"), temporary_dir, recursive = TRUE)
 
@@ -21,6 +23,8 @@ public({
 public({
     test_that("with_mock_dir creates mock files directory", {
         skip_if_disconnected()
+
+        withr::local_envvar(list("TESTING_MOCK_DIR" = TRUE))
 
         temporary_dir <- withr::local_tempdir()
 
