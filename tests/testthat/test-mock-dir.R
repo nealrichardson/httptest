@@ -9,7 +9,7 @@ public({
 
         current_mock_paths <- .mockPaths()
 
-        with_mock_dir(temporary_dir, {
+        with_mock_dir("httpbin.org", {
             httptest::expect_no_request(GET("http://httpbin.org/status/204"))
             resp <- GET("http://httpbin.org/status/204")
             expect_equal(headers(resp)$date, "Sat, 24 Feb 2018 00:22:11 GMT")
