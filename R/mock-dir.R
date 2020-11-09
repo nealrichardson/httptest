@@ -23,10 +23,18 @@ with_mock_dir <- function(dir, expr, simplify = TRUE) {
 
   if (dir.exists(dir)) {
     ## We already have recorded, so use the fixtures
-   with_mock_path(dir, with_mock_api(expr))
+   with_mock_path(
+     dir,
+     with_mock_api(expr),
+     replace = TRUE
+     )
   } else {
     ## Record!
-    with_mock_path(dir, capture_requests(expr, simplify = simplify))
+    with_mock_path(
+      dir,
+      capture_requests(expr, simplify = simplify),
+      replace = TRUE
+      )
   }
 
 }
