@@ -26,7 +26,7 @@
 #' @rdname mockPaths
 #' @export
 .mockPaths <- function (new) {
-    current <- getOption("httptest.mock.paths", default=".")
+    current <- getOption("httptest.mock.paths", default=testthat::test_path())
     if (missing(new)) {
         ## We're calling the function to get the list of paths
         return(current)
