@@ -59,8 +59,14 @@ jobs:
 
       - name: Run devtools::test twice
         run: |
-          devtools::test()
-          devtools::test()
+          run1 <- as.data.frame(devtools::test())
+          if (sum(run1$error, run1$failed, run1$warning) > 0) {
+            stop("Tests did not pass with devtools::test()")
+          }
+          run2 <- as.data.frame(devtools::test())
+          if (sum(run2$error, run2$failed, run2$warning) > 0) {
+            stop("Tests did not pass with devtools::test() when re-running (global state was modified)")
+          }
         shell: Rscript {0}
 
       - name: Upload check results
