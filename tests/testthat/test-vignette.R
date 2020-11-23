@@ -31,6 +31,7 @@ test_that("start/end_vignette with mocking (dir exists)", {
 test_that("start/end_vignette calls inst/httptest/vignette-start/end.R", {
     lib <- install_testpkg("testpkg")
     library(testpkg, lib.loc=lib)
+    on.exit(detach("package:testpkg", unload=TRUE))
     expect_false(getOption("testpkg.start.vignette", FALSE))
     start_vignette(path)
     expect_true(getOption("testpkg.start.vignette"))
@@ -44,3 +45,5 @@ test_that("change_state validation", {
         expect_error(change_state(), "foo is not valid for change_state()")
     })
 })
+
+reset_redactors()

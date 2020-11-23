@@ -39,6 +39,7 @@ start_vignette <- function (path, ...) {
     ## And don't print messages in a vignette
     options(
         httptest.mock.paths.old=getOption("httptest.mock.paths"),
+        httptest.verbose.old=getOption("httptest.verbose"),
         httptest.verbose=FALSE
     )
     ## This actually sources the files, if they exist
@@ -93,9 +94,10 @@ end_vignette <- function () {
     ## This actually sources the files, if they exist
     find_package_functions(get_attached_packages(), "end-vignette.R")
 
-    ## Restore original .mockPaths
+    ## Restore original settings
     options(
         httptest.mock.paths=getOption("httptest.mock.paths.old"),
-        httptest.mock.paths.old=NULL
+        httptest.mock.paths.old=NULL,
+        httptest.verbose=getOption("httptest.verbose.old")
     )
 }
