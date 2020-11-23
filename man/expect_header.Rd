@@ -20,7 +20,7 @@ because HTTP header names are case insensitive.}
 \description{
 This expectation checks that a HTTP header (and potentially header value)
 is present in a request. It works by inspecting the request object and
-raising warnings that are caught by \code{\link[testthat:expect_warning]{testthat::expect_warning()}}.
+raising warnings that are caught by \code{\link[testthat:expect_error]{testthat::expect_warning()}}.
 }
 \details{
 \code{expect_header} works both in the mock HTTP contexts and on "live" HTTP

@@ -12,7 +12,7 @@ gsub_request(request, pattern, replacement, ...)
 \arguments{
 \item{response}{An 'httr' \code{response} object to sanitize.}
 
-\item{pattern}{From \code{\link[base:gsub]{base::gsub()}}: "character string containing a regular
+\item{pattern}{From \code{\link[base:grep]{base::gsub()}}: "character string containing a regular
 expression (or character string for \code{fixed = TRUE}) to be matched in the
 given character vector." Passed to \code{gsub()}. See the docs for \code{gsub()} for
 further details.}
@@ -31,7 +31,7 @@ A \code{request} or \code{response} object, same as was passed in, with the
 pattern replaced in the URLs and bodies.
 }
 \description{
-These functions pass their arguments to \code{\link[base:gsub]{base::gsub()}} in order to find and
+These functions pass their arguments to \code{\link[base:grep]{base::gsub()}} in order to find and
 replace string patterns (regular expressions) within \code{request} or \code{response}
 objects. \code{gsub_request()} replaces in the request URL and any request body
 fields; \code{gsub_response()} replaces in the response URL, the response body,
