@@ -14,27 +14,14 @@
 #'
 #' @export
 #'
-with_mock_dir <- function(dir, expr, simplify = TRUE) {
-
-  if (!nzchar(Sys.getenv("TESTING_MOCK_DIR"))) {
-    dir <- testthat::test_path(dir)
-  }
-
-
-  if (dir.exists(dir)) {
-    ## We already have recorded, so use the fixtures
-   with_mock_path(
-     dir,
-     with_mock_api(expr),
-     replace = TRUE
-     )
-  } else {
-    ## Record!
-    with_mock_path(
-      dir,
-      capture_requests(expr, simplify = simplify),
-      replace = TRUE
-      )
-  }
-
+with_mock_dir <- function (dir, expr, simplify=TRUE) {
+    with_mock_path(dir, replace=TRUE, {
+        if (dir.exists(dir)) {
+            ## We already have recorded, so use the fixtures
+            with_mock_api(expr)
+        } else {
+            ## Record!
+            capture_requests(expr, simplify=simplify)
+        }
+    })
 }
