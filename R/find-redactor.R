@@ -32,7 +32,12 @@
 #' @seealso [set_requester()]
 set_redactor <- function (FUN) {
     FUN <- prepare_redactor(FUN)
-    options(httptest.redactor=FUN)
+    options(
+        httptest.redactor=FUN,
+        ## Because we're directly setting a redactor, remove any record that
+        ## a previous redactor was set by reading from packages
+        httptest.redactor.packages=NULL
+    )
     invisible(FUN)
 }
 
@@ -101,7 +106,8 @@ get_current_redactor <- function () {
     out <- getOption("httptest.redactor")
     if (is.null(out)) {
         ## Set the default
-        out <- set_redactor(default_redactor())
+        out <- default_redactor()
+        options(httptest.redactor=out)
     } else {
         ## See if default is based on packages and needs refreshing
         pkgs <- getOption("httptest.redactor.packages")
@@ -112,7 +118,8 @@ get_current_redactor <- function () {
             ## Also, always reevaluate the default redactor if pkgload is involved
             if ("pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)) {
                 ## Re-evaluate
-                out <- set_redactor(default_redactor(current_packages))
+                out <- default_redactor(current_packages)
+                options(httptest.redactor=out)
             }
         }
     }

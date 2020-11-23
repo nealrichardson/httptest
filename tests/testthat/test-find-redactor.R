@@ -53,7 +53,6 @@ with_mock_api({
                         lib <- install_testpkg("testpkg")
                         library(testpkg, lib.loc=lib)
                         expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
-
                         r <- GET("http://example.com/get")
                     }),
                     paste0("Using redact.R from ", dQuote("testpkg"))
@@ -94,10 +93,7 @@ with_mock_api({
     test_that("Loading a package with pkgload (devtools)", {
         newmocks3 <- tempfile()
         expect_false("testpkg" %in% names(sessionInfo()$otherPkgs))
-        on.exit({
-            pkgload::unload("testpkg")
-            unloadNamespace("pkgload")
-        })
+        on.exit(pkgload::unload("testpkg"))
         expect_message(
             capture_while_mocking(path=newmocks3, {
                 pkgload::load_all("testpkg", quiet = TRUE)
@@ -113,3 +109,5 @@ with_mock_api({
         expect_identical(content(r2), list(fake=TRUE))
     })
 })
+
+reset_redactors()
