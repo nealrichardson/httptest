@@ -14,7 +14,12 @@
 #' @seealso [set_redactor()]
 set_requester <- function (FUN) {
     FUN <- prepare_redactor(FUN)
-    options(httptest.requester=FUN)
+    options(
+        httptest.requester=FUN,
+        ## Because we're directly setting a redactor, remove any record that
+        ## a previous redactor was set by reading from packages
+        httptest.requester.packages=NULL
+    )
     invisible(FUN)
 }
 
@@ -42,7 +47,8 @@ get_current_requester <- function () {
     out <- getOption("httptest.requester")
     if (is.null(out)) {
         ## Set the default
-        out <- set_requester(default_requester())
+        out <- default_requester()
+        options(httptest.requester=out)
     } else {
         ## See if default is based on packages and needs refreshing
         pkgs <- getOption("httptest.requester.packages")
@@ -52,7 +58,8 @@ get_current_requester <- function () {
             current_packages <- get_attached_packages()
             if (!identical(current_packages, pkgs)) {
                 ## Re-evaluate
-                out <- set_requester(default_requester(current_packages))
+                out <- default_requester(current_packages)
+                options(httptest.requester=out)
             }
         }
     }

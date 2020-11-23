@@ -20,9 +20,22 @@ capture_while_mocking <- function (..., path) {
 
 with_redactor <- function (x, ...) {
     old <- getOption("httptest.redactor")
+    old.pkgs <- getOption("httptest.redactor.packages")
     set_redactor(x)
-    on.exit(set_redactor(old))
+    on.exit({
+      set_redactor(old)
+      options(httptest.redactor.packages=old.pkgs)
+    })
     eval.parent(...)
+}
+
+reset_redactors <- function() {
+  options(
+    httptest.redactor=NULL,
+    httptest.redactor.packages=NULL,
+    httptest.requester=NULL,
+    httptest.requester.packages=NULL
+  )
 }
 
 ## from __future__ import ...
@@ -69,4 +82,3 @@ testthat_transition <- function(old, new) {
 
 # assign to global to be used inside of `public()` calls
 third_edition <<- tryCatch(testthat::edition_get() == 3, error = function(e) FALSE)
-

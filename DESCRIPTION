@@ -39,7 +39,7 @@ Suggests:
     spelling,
     xml2
 Language: en-US
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 Config/testthat/edition: 3

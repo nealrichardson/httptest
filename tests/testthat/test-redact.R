@@ -164,16 +164,15 @@ with_mock_api({
         expect_identical(content(r), list(loaded=TRUE))
     })
     test_that("But the mock file gets written to the modified path with altered content", {
-        options(httptest.mock.paths=d)  ## Do this way to make sure "." isn't in
-                                        ## the search path. We're checking that
-                                        ## the original request doesn't have a
-                                        ## mock, but of course we made it from
-                                        ## a mock in the working directory
-        on.exit(options(httptest.mock.paths=NULL))
-        expect_GET(GET("http://example.com/get"),
-            "http://example.com/get")
-        expect_error(alt <- GET("http://example.com/fakeurl"), NA)
-        expect_identical(content(alt), list(changed=TRUE))
+        ## Use replace=TRUE to make sure that "." isn't in the search path.
+        ## We're checking that the original request doesn't have a mock,
+        ## but of course we made it from a mock in the working directory
+        with_mock_path(d, replace=TRUE, {
+          expect_GET(GET("http://example.com/get"),
+              "http://example.com/get")
+          expect_error(alt <- GET("http://example.com/fakeurl"), NA)
+          expect_identical(content(alt), list(changed=TRUE))
+        })
     })
 
     a <- GET("api/", add_headers(`Authorization`="Bearer token"))
@@ -229,3 +228,5 @@ test_that("chain_redactors", {
     expect_equal(f12(5), 23)
     expect_equal(f21(5), 32)
 })
+
+reset_redactors()
