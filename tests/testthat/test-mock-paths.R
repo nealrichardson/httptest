@@ -10,6 +10,15 @@ public({
         expect_identical(.mockPaths(), ".")
     })
 
+    test_that(".mockPaths default path prefers to be in tests/testthat", {
+        d <- tempfile()
+        dir.create(file.path(d, "tests", "testthat"), recursive=TRUE)
+        old <- setwd(d)
+        on.exit(setwd(old))
+
+        expect_identical(.mockPaths(), "tests/testthat")
+    })
+
     with_mock_api({
         test_that("GET with no query, default mock path", {
             b <- GET("api/object1/")
