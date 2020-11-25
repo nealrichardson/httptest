@@ -206,7 +206,7 @@ to your `setup.R`.
 
 You could also experiment with using `start_vignette()`, which switches behavior based on the existence of the specified mock directory.
 
-Lastly, if you expect your tests against the real API to be much different from the tests using httptest (no tests for API errors, less specific tests), you could set up a second folder that you'd .Rbuildignore most of the time and that you'd use via the `--test-dir` argument of `R CMD check` (or that you'd run with `testthat::test_dir()`, which is less useful on continuous integration services as it wouldn't generate artefacts in case of failures).
+Lastly, if you expect your tests against the real API to be much different from the tests using httptest (no tests for API errors, less specific tests), you could set up a second folder that you'd .Rbuildignore most of the time but that you'd replace `tests/testthat` with for some continuous integration builds (or that you'd run with `testthat::test_dir()`, which is less useful on continuous integration services as it wouldn't generate artefacts in case of failures).
 
 ## Contributing
 
