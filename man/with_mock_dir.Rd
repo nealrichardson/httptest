@@ -4,7 +4,7 @@
 \alias{with_mock_dir}
 \title{Use or create mock files depending on their existence}
 \usage{
-with_mock_dir(dir, expr, simplify = TRUE)
+with_mock_dir(dir, expr, simplify = TRUE, replace = TRUE)
 }
 \arguments{
 \item{dir}{character string, unique folder name that will be used or created
@@ -16,6 +16,9 @@ under \verb{tests/testthat/}}
 will be written as just the text of the response body. In all other cases,
 and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
 a .R file using \code{\link[base:dput]{base::dput()}}.}
+
+\item{replace}{Boolean, should the mock directory replace current mock
+directories?}
 }
 \description{
 This context will switch the \code{\link[=.mockPaths]{.mockPaths()}} to \code{tests/testthat/dir}
