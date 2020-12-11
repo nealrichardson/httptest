@@ -28,6 +28,17 @@ test_that("start/end_vignette with mocking (dir exists)", {
     expect_true(identical(g, httr::GET))
 })
 
+test_that("start_vignette puts path in vignettes dir, if exists", {
+  d <- tempfile()
+  dir.create(file.path(d, "vignettes"), recursive=TRUE)
+  old <- setwd(d)
+  on.exit(setwd(old))
+
+  start_vignette("testing")
+  expect_identical(.mockPaths()[1], file.path("vignettes", "testing", "0"))
+  end_vignette()
+})
+
 test_that("start/end_vignette calls inst/httptest/vignette-start/end.R", {
     lib <- install_testpkg("testpkg")
     library(testpkg, lib.loc=lib)

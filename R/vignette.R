@@ -46,6 +46,11 @@ start_vignette <- function (path, ...) {
     find_package_functions(get_attached_packages(), "start-vignette.R")
 
     ## Set the starting mockPath
+    if (dir.exists("vignettes")) {
+        ## We're in the package root directory, probably running interactively
+        ## but we need to make sure we record/load relative to the vignette dir
+        path <- file.path("vignettes", path)
+    }
     .mockPaths(file.path(path, "0"))
     if (dir.exists(path)) {
         ## We already have recorded, so use the fixtures
