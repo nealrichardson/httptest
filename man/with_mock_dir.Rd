@@ -17,8 +17,8 @@ will be written as just the text of the response body. In all other cases,
 and when \code{simplify} is \code{FALSE}, the "response" object will be written out to
 a .R file using \code{\link[base:dput]{base::dput()}}.}
 
-\item{replace}{Boolean, should the mock directory replace current mock
-directories?}
+\item{replace}{Logical: should the mock directory replace current mock
+directories? Default is \code{TRUE}.}
 }
 \description{
 This context will switch the \code{\link[=.mockPaths]{.mockPaths()}} to \code{tests/testthat/dir}
