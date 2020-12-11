@@ -174,10 +174,10 @@ Both the `capture_requests` context and the `start_capturing` function follow th
 
 While recording responses to use later in tests can be very convenient, we don't always want to use captured responses, or at least not blindly. Real responses may contain information you want to sanitize or redact, like usernames, emails, or tokens. And real responses may be too big or messy to want to deal with. You may want to pare back a large set of results that a query returns down to four or five results and still have enough variation to test with.
 
-# Automatically recording/playing back: the `with_mock_dir()` context
+## Automatically recording/playing back: the `with_mock_dir()` context
 
 The `with_mock_dir()` context can help you create mock files when they don't exist yet, and to easily re-record them.
-See example below:
+For example:
 
 ```r
 with_mock_dir("httpbin-get", {
@@ -186,12 +186,10 @@ with_mock_dir("httpbin-get", {
 })
 ```
 
-The first time you run the code above, it will create the folder `tests/testthat/httpbin-get`,
+The first time you run the code, it will create the folder `tests/testthat/httpbin-get`,
  and create mock files under it.
 The next times you run it, it will _use_ the mock files in `tests/testthat/httpbin-get`.
 To re-record, simply delete the folder.
-
-Now, this has the downside of creating one mock directory per test.
 
 
 # Mocks are text files
