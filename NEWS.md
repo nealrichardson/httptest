@@ -12,6 +12,7 @@
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 * Switch continuous integration to use GitHub Actions (#36, @jonkeane)
 * The test file `helper.R` was renamed to `setup.R` to comply with `testthat`'s latest recommendations (#44, @maelle)
+* Add `with_mock_dir()` that allows to automatically switch between recording and playing back for a test (#48, @maelle).
 
 # httptest 3.3.0
 
