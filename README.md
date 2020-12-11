@@ -143,50 +143,28 @@ Finally, if you have your tests inside a `tests/testthat/` directory, and your f
 
 #### How do I switch between mocking and real requests?
 
-**Q.** I'd like to run my mocked tests sometimes against the real API, perhaps to turn them into integration tests, or perhaps to use the same test code to record the mocks that I'll later use. How can I do this without copying the contents of the tests inside the `with_mock_api()` blocks?
+`httptest` does not intend that every request in your test suite is something that could be run against a live server. There are practical reasons why you should be able to see, modify, and maintain test fixtures, rather than re-record them every time you make a change. Among the considerations:
 
-**A.** One way to do this is to set `with_mock_api()` to another function in your test file (or in `setup.R` if you want it to run for all test files). So
+* In many cases, API responses contain way more content than is necessary to test your R code around them: 100 records when 2 will suffice, request metadata that you don't care about and can't meaningfully assert things about, and so on. In the interest of minimally reproducible examples, and of making tests readable, it often makes sense to take an actual API response and delete a lot of its content, or even to fabricate one entirely.
+* It's good to keep an API mock fixed so you know exactly what is in it. If you re-recorded a Twitter API response of, say, the most recent 10 tweets with `#rstats`, the specific content will change every time you record it, so your tests can't say much about what is in the response without having to rewrite them every time too.
+* Some conditions (rate limiting, server errors, e.g.) are difficult to test with real responses, but if you can hand-create a API mock with, say, a 503 response status code and test how your code handles it, you can have confidence of how your package will respond when that rare event happens with the real API.
+* Re-recording all responses can make for a huge code diff, which can blow up your repository size and make code review harder.
+
+That said, it can be worthwhile to have a subset of tests that can be run against a live API so that you can detect and respond to API changes. One option is to set up some tests with the `with_mock_dir()` context instead of `with_mock_api()`. For example:
 
 ```r
-with_mock_api({
+with_mock_dir("httpbin-get", {
     a <- GET("https://httpbin.org/get")
     print(a)
 })
 ```
 
-looks for the mock file, but
+The first time you run the code, it will create the directory `tests/testthat/httpbin-get`,
+ and create mock files under it.
+The next times you run it, it will _use_ the mock files in `tests/testthat/httpbin-get`.
+To re-record, simply delete the directory.
 
-```r
-with_mock_api <- force
-with_mock_api({
-    a <- GET("https://httpbin.org/get")
-    print(a)
-})
-```
-
-just evaluates the code with no mocking and makes the request, and
-
-```r
-with_mock_api <- capture_requests
-with_mock_api({
-    a <- GET("https://httpbin.org/get")
-    print(a)
-})
-```
-
-would make the request and record the response as a mock file. You could control this behavior with environment variables by adding something like
-
-```r
-if (Sys.getenv("MOCK_BYPASS") == "true") {
-    with_mock_api <- force
-} else if (Sys.getenv("MOCK_BYPASS") == "capture") {
-    with_mock_api <- capture_requests
-}
-```
-
-to your `setup.R`.
-
-You could also experiment with using `start_vignette()`, which switches behavior based on the existence of the specified mock directory.
+Another option is to have a secondary integration test suite in your code repository, a directory outside of the standard R package directories and included in `.Rbuildignore` so that it doesn't get packaged. You could run this locally with `testthat::test_dir()`, and you could run it on continuous integration builds by replacing the `tests/testthat` directory with the alternate test directory.
 
 ## Contributing
 
