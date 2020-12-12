@@ -13,16 +13,16 @@
 #' @seealso [testthat::skip()]
 #' @importFrom testthat skip skip_on_cran
 #' @export
-skip_if_disconnected <- function (message=paste("Offline: cannot reach", url),
-                                  url="http://httpbin.org/") {
-    skip_on_cran()
-    if (currently_offline(url)) {
-        skip(message)
-    }
-    invisible(TRUE)
+skip_if_disconnected <- function(message = paste("Offline: cannot reach", url),
+                                 url = "http://httpbin.org/") {
+  skip_on_cran()
+  if (currently_offline(url)) {
+    skip(message)
+  }
+  invisible(TRUE)
 }
 
 #' @importFrom httr GET PUT POST PATCH DELETE VERB RETRY
-currently_offline <- function (url="http://httpbin.org/") {
-    inherits(try(httr::GET(url), silent=TRUE), "try-error")
+currently_offline <- function(url = "http://httpbin.org/") {
+  inherits(try(httr::GET(url), silent = TRUE), "try-error")
 }

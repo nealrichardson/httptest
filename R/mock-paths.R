@@ -25,21 +25,21 @@
 #' identical(.mockPaths(), ".")
 #' @rdname mockPaths
 #' @export
-.mockPaths <- function (new) {
-    current <- getOption("httptest.mock.paths", default=default_mock_path())
-    if (missing(new)) {
-        ## We're calling the function to get the list of paths
-        return(current)
-    } else if (is.null(new)) {
-        ## We're calling the function to reset to the default
-        options(httptest.mock.paths=new)
-        invisible(current)
-    } else {
-        ## We're adding one or more paths
-        current <- unique(c(new, current))
-        options(httptest.mock.paths=current)
-        invisible(current)
-    }
+.mockPaths <- function(new) {
+  current <- getOption("httptest.mock.paths", default = default_mock_path())
+  if (missing(new)) {
+    ## We're calling the function to get the list of paths
+    return(current)
+  } else if (is.null(new)) {
+    ## We're calling the function to reset to the default
+    options(httptest.mock.paths = new)
+    invisible(current)
+  } else {
+    ## We're adding one or more paths
+    current <- unique(c(new, current))
+    options(httptest.mock.paths = current)
+    invisible(current)
+  }
 }
 
 default_mock_path <- function() {
@@ -50,14 +50,14 @@ default_mock_path <- function() {
   }
 }
 
-with_mock_path <- function (path, expr, replace=FALSE) {
-    oldmp <- .mockPaths()
-    if (replace) {
-        options(httptest.mock.paths=path)
-    } else {
-        ## Append
-        .mockPaths(path)
-    }
-    on.exit(options(httptest.mock.paths=oldmp))
-    eval.parent(expr)
+with_mock_path <- function(path, expr, replace = FALSE) {
+  oldmp <- .mockPaths()
+  if (replace) {
+    options(httptest.mock.paths = path)
+  } else {
+    ## Append
+    .mockPaths(path)
+  }
+  on.exit(options(httptest.mock.paths = oldmp))
+  eval.parent(expr)
 }

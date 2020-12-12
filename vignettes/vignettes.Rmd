@@ -70,16 +70,16 @@ library(httptest)
 library(magrittr)
 
 api_root <- "https://www.pivotaltracker.com/services/v5/"
-set_redactor(function (response) {
-    response %>%
-        redact_headers("X-TrackerToken") %>%
-        gsub_response(api_root, "", fixed=TRUE) %>%
-        gsub_response(getOption("pivotal.project"), "123")
+set_redactor(function(response) {
+  response %>%
+    redact_headers("X-TrackerToken") %>%
+    gsub_response(api_root, "", fixed = TRUE) %>%
+    gsub_response(getOption("pivotal.project"), "123")
 })
-set_requester(function (request) {
-    request %>%
-        gsub_request(api_root, "", fixed=TRUE) %>%
-        gsub_request(getOption("pivotal.project"), "123")
+set_requester(function(request) {
+  request %>%
+    gsub_request(api_root, "", fixed = TRUE) %>%
+    gsub_request(getOption("pivotal.project"), "123")
 })
 start_vignette("stories")
 ```

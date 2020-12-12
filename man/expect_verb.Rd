@@ -59,15 +59,20 @@ for instance, looks for a request message that starts with "PUT".
 \examples{
 library(httr)
 without_internet({
-    expect_GET(GET("http://httpbin.org/get"),
-        "http://httpbin.org/get")
-    expect_GET(GET("http://httpbin.org/get"),
-        "http://httpbin.org/[a-z]+",
-        fixed=FALSE) # For regular expression matching
-    expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'),
-        'http://httpbin.org/put',
-        '{"a":1}')
-    expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'))
-    expect_no_request(rnorm(5))
+  expect_GET(
+    GET("http://httpbin.org/get"),
+    "http://httpbin.org/get"
+  )
+  expect_GET(GET("http://httpbin.org/get"),
+    "http://httpbin.org/[a-z]+",
+    fixed = FALSE
+  ) # For regular expression matching
+  expect_PUT(
+    PUT("http://httpbin.org/put", body = '{"a":1}'),
+    "http://httpbin.org/put",
+    '{"a":1}'
+  )
+  expect_PUT(PUT("http://httpbin.org/put", body = '{"a":1}'))
+  expect_no_request(rnorm(5))
 })
 }

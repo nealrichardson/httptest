@@ -65,17 +65,19 @@ for every file that is written containing the absolute path of the file.
 \examples{
 \dontrun{
 capture_requests({
-    GET("http://httpbin.org/get")
-    GET("http://httpbin.org")
-    GET("http://httpbin.org/response-headers",
-        query=list(`Content-Type`="application/json"))
+  GET("http://httpbin.org/get")
+  GET("http://httpbin.org")
+  GET("http://httpbin.org/response-headers",
+    query = list(`Content-Type` = "application/json")
+  )
 })
 # Or:
 start_capturing()
 GET("http://httpbin.org/get")
 GET("http://httpbin.org")
 GET("http://httpbin.org/response-headers",
-    query=list(`Content-Type`="application/json"))
+  query = list(`Content-Type` = "application/json")
+)
 stop_capturing()
 }
 }

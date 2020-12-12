@@ -1,1 +1,1 @@
-options(testpkg.start.vignette=TRUE)
+options(testpkg.start.vignette = TRUE)
