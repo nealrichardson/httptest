@@ -36,8 +36,8 @@ with_mock_api({
     testthat_transition(
       expect_message(
         capture_while_mocking(path = newmocks, {
-          ## Install the "testpkg" to a temp lib.loc _after_ we've
-          ## already started recording
+          # Install the "testpkg" to a temp lib.loc _after_ we've
+          # already started recording
           lib <- install_testpkg("testpkg")
           library(testpkg, lib.loc = lib)
           expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
@@ -49,8 +49,8 @@ with_mock_api({
       expect_message(
         expect_message(
           capture_while_mocking(path = newmocks, {
-            ## Install the "testpkg" to a temp lib.loc _after_ we've
-            ## already started recording
+            # Install the "testpkg" to a temp lib.loc _after_ we've
+            # already started recording
             lib <- install_testpkg("testpkg")
             library(testpkg, lib.loc = lib)
             expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
@@ -64,12 +64,12 @@ with_mock_api({
     with_mock_path(newmocks, {
       r2 <- GET("http://example.com/get")
     })
-    ## The resulting mock content is what we injected into it from testpkg
+    # The resulting mock content is what we injected into it from testpkg
     expect_identical(content(r2), list(fake = TRUE))
   })
 
   test_that("Request preprocessing via package inst/httptest/request.R", {
-    ## That function prunes a leading http://pythong.org/ from URLs
+    # That function prunes a leading http://pythong.org/ from URLs
     expect_identical(
       content(GET("http://pythong.org/api/object1/")),
       content(GET("api/object1/"))
@@ -78,7 +78,7 @@ with_mock_api({
 
   test_that("set_redactor(NULL) to override default (and loaded packages)", {
     expect_true("testpkg" %in% names(sessionInfo()$otherPkgs))
-    ## Great, but let's kill it when we're done
+    # Great, but let's kill it when we're done
     on.exit(detach("package:testpkg", unload = TRUE))
     newmocks2 <- tempfile()
     with_redactor(
@@ -112,7 +112,7 @@ with_mock_api({
     with_mock_path(newmocks3, {
       r2 <- GET("http://example.com/get")
     })
-    ## The resulting mock content is what we injected into it from testpkg
+    # The resulting mock content is what we injected into it from testpkg
     expect_identical(content(r2), list(fake = TRUE))
   })
 })

@@ -25,6 +25,6 @@
 #' @export
 public <- function(...) with(globalenv(), ...)
 
-## This exists in the package but not exported so that we can test the behavior
-## of the `public` test context
+# This exists in the package but not exported so that we can test the behavior
+# of the `public` test context
 .internalFunction <- function() TRUE

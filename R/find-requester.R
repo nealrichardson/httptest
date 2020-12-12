@@ -16,17 +16,17 @@ set_requester <- function(FUN) {
   FUN <- prepare_redactor(FUN)
   options(
     httptest.requester = FUN,
-    ## Because we're directly setting a redactor, remove any record that
-    ## a previous redactor was set by reading from packages
+    # Because we're directly setting a redactor, remove any record that
+    # a previous redactor was set by reading from packages
     httptest.requester.packages = NULL
   )
   invisible(FUN)
 }
 
 default_requester <- function(packages = get_attached_packages()) {
-  ## Look for package-defined requesters
+  # Look for package-defined requesters
   func <- requester_from_packages(packages)
-  ## Record what packages we considered here
+  # Record what packages we considered here
   options(httptest.requester.packages = packages)
   return(func)
 }
@@ -36,28 +36,28 @@ requester_from_packages <- function(packages) {
   if (length(funcs)) {
     out <- prepare_redactor(funcs)
   } else {
-    ## Default
+    # Default
     out <- force
   }
   return(out)
 }
 
 get_current_requester <- function() {
-  ## First, check where we've cached the current one
+  # First, check where we've cached the current one
   out <- getOption("httptest.requester")
   if (is.null(out)) {
-    ## Set the default
+    # Set the default
     out <- default_requester()
     options(httptest.requester = out)
   } else {
-    ## See if default is based on packages and needs refreshing
+    # See if default is based on packages and needs refreshing
     pkgs <- getOption("httptest.requester.packages")
     if (!is.null(pkgs)) {
-      ## We're using the result of default_requester(). Let's see if any
-      ## new packages have been loaded
+      # We're using the result of default_requester(). Let's see if any
+      # new packages have been loaded
       current_packages <- get_attached_packages()
       if (!identical(current_packages, pkgs)) {
-        ## Re-evaluate
+        # Re-evaluate
         out <- default_requester(current_packages)
         options(httptest.requester = out)
       }

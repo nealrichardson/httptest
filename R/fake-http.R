@@ -68,19 +68,23 @@ with_fake_HTTP <- with_fake_http
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
-fake_response <- function(request, verb = "GET", status_code = 200, headers = list(), content = NULL) {
+fake_response <- function(request,
+                          verb = "GET",
+                          status_code = 200,
+                          headers = list(),
+                          content = NULL) {
   if (is.character(request)) {
-    ## To-be-deprecated(?) behavior of passing in a URL. Fake a request.
+    # To-be-deprecated(?) behavior of passing in a URL. Fake a request.
     request <- structure(list(method = verb, url = request), class = "request")
   }
-  ## TODO: if the request says `write_disk`, should we copy the mock file to
-  ## that location, so that that file exists?
+  # TODO: if the request says `write_disk`, should we copy the mock file to
+  # that location, so that that file exists?
   base.headers <- list()
   if (status_code == 204) {
     content <- NULL
   } else if (!is.raw(content)) {
     if (!is.character(content)) {
-      ## JSON it
+      # JSON it
       content <- toJSON(content,
         auto_unbox = TRUE, null = "null", na = "null",
         force = TRUE

@@ -1,5 +1,5 @@
 chain_redactors <- function(funs) {
-  ## Given a list of functions, return a function that execs them in sequence
+  # Given a list of functions, return a function that execs them in sequence
   return(function(response) {
     for (f in funs) {
       if (inherits(f, "formula")) {
@@ -16,8 +16,8 @@ chain_redactors <- function(funs) {
 redact_cookies <- function(response) {
   response <- redact_headers(response, "Set-Cookie")
   if (!is.null(response$cookies) && nrow(response$cookies)) {
-    ## is.null check is for reading mocks.
-    ## possible TODO: add $cookies to fake_response, then !is.null isn't needed
+    # is.null check is for reading mocks.
+    # possible TODO: add $cookies to fake_response, then !is.null isn't needed
     response$cookies$value <- "REDACTED"
   }
   return(response)
@@ -30,8 +30,8 @@ redact_headers <- function(response, headers = c()) {
 }
 
 header_apply <- function(response, headers, FUN, ...) {
-  ## Apply some function over a set of named headers, anywhere they may
-  ## appear in a response or request object
+  # Apply some function over a set of named headers, anywhere they may
+  # appear in a response or request object
   response$headers <- happly(response$headers, headers, FUN, ...)
   if (!is.null(response$all_headers)) {
     response$all_headers <- lapply(response$all_headers, function(h) {
@@ -43,7 +43,7 @@ header_apply <- function(response, headers, FUN, ...) {
 }
 
 happly <- function(header_list, headers, FUN, ...) {
-  ## Called from header_apply, actually does the applying on a header list
+  # Called from header_apply, actually does the applying on a header list
   todo <- tolower(names(header_list)) %in% tolower(headers)
   header_list[todo] <- lapply(header_list[todo], FUN, ...)
   return(header_list)
@@ -90,7 +90,7 @@ gsub_response <- function(response, pattern, replacement, ...) {
   response$url <- replacer(response$url)
   response <- header_apply(response, "location", replacer)
   response <- within_body_text(response, replacer)
-  ## Modify the request too because this affects where we write the mock file to
+  # Modify the request too because this affects where we write the mock file to
   response$request <- gsub_request(response$request, pattern, replacement, ...)
   return(response)
 }

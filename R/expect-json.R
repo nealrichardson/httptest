@@ -15,8 +15,11 @@
 #' @seealso [testthat::expect_equivalent()]
 #' @importFrom testthat expect
 #' @export
-expect_json_equivalent <- function(object, expected, info = NULL,
-                                   label = "object", expected.label = "expected") {
+expect_json_equivalent <- function(object,
+                                   expected,
+                                   info = NULL,
+                                   label = "object",
+                                   expected.label = "expected") {
   comp <- json_compare(object, expected, check.attributes = FALSE)
   expect(comp$equal, sprintf(
     "%s not JSON-equivalent to %s.\n%s",
@@ -34,7 +37,7 @@ json_compare <- function(object, expected, check.attributes = FALSE) {
 
 object_sort <- function(x) {
   if (is.list(x)) {
-    x <- as.list(x) ## For S4 subclasses
+    x <- as.list(x) # For S4 subclasses
     if (!is.null(names(x))) {
       x <- x[sort(names(x))]
     }

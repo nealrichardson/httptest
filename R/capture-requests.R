@@ -79,14 +79,14 @@ capture_requests <- function(expr, path, ...) {
 #' @export
 start_capturing <- function(path = NULL, simplify = TRUE) {
   if (!is.null(path)) {
-    ## Note that this changes state and doesn't reset it
+    # Note that this changes state and doesn't reset it
     .mockPaths(path)
   }
 
-  ## Use "substitute" so that args get inserted. Code remains quoted.
+  # Use "substitute" so that args get inserted. Code remains quoted.
   req_tracer <- substitute(
     {
-      ## Get the value returned from the function, and sanitize it
+      # Get the value returned from the function, and sanitize it
       redactor <- get_current_redactor()
       .resp <- returnValue()
       if (is.null(.resp)) {
@@ -120,37 +120,37 @@ start_capturing <- function(path = NULL, simplify = TRUE) {
 #' @keywords internal
 #' @importFrom jsonlite prettify
 save_response <- function(response, simplify = TRUE) {
-  ## Construct the mock file path
+  # Construct the mock file path
   mock_file <- buildMockURL(response$request)
-  ## Track separately the actual full path we're going to write to
+  # Track separately the actual full path we're going to write to
   dst_file <- file.path(.mockPaths()[1], mock_file)
   mkdir_p(dst_file)
 
-  ## Get the Content-Type
+  # Get the Content-Type
   ct <- get_content_type(response)
   status <- response$status_code
   if (simplify && status == 200 && ct %in% names(CONTENT_TYPE_TO_EXT)) {
-    ## Squelch the "No encoding supplied: defaulting to UTF-8."
+    # Squelch the "No encoding supplied: defaulting to UTF-8."
     cont <- suppressMessages(content(response, "text"))
     if (ct == "application/json") {
-      ## Prettify
+      # Prettify
       cont <- prettify(cont)
     }
     dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep = ".")
     cat_wb(cont, file = dst_file)
   } else if (simplify && status == 204) {
-    ## "touch" a file with extension .204
+    # "touch" a file with extension .204
     dst_file <- paste0(dst_file, ".204")
     cat_wb("", file = dst_file)
   } else {
-    ## Dump an object that can be sourced
+    # Dump an object that can be sourced
 
-    ## Change the file extension to .R
+    # Change the file extension to .R
     dst_file <- paste0(dst_file, ".R")
     mock_file <- paste0(mock_file, ".R")
 
-    ## If content is text, rawToChar it and dput it as charToRaw(that)
-    ## so that it loads correctly but is also readable
+    # If content is text, rawToChar it and dput it as charToRaw(that)
+    # so that it loads correctly but is also readable
     text_types <- c(
       "application/json",
       "application/x-www-form-urlencoded", "application/xml",
@@ -158,19 +158,19 @@ save_response <- function(response, simplify = TRUE) {
       "text/tab-separated-values", "text/xml"
     )
     if (ct %in% text_types) {
-      ## Squelch the "No encoding supplied: defaulting to UTF-8."
+      # Squelch the "No encoding supplied: defaulting to UTF-8."
       cont <- suppressMessages(content(response, "text"))
       # if (ct == "application/json") {
-      #     ## TODO: "parse error: premature EOF"
+      #     # TODO: "parse error: premature EOF"
       #     cont <- jsonlite::prettify(cont)
       # }
       response$content <- substitute(charToRaw(cont))
     } else if (inherits(response$request$output, "write_disk")) {
-      ## Copy real file and substitute the response$content "path".
-      ## Note that if content is a text type, the above attempts to
-      ## make the mock file readable call `content()`, which reads
-      ## in the file that has been written to disk, so it effectively
-      ## negates the "download" behavior for the recorded response.
+      # Copy real file and substitute the response$content "path".
+      # Note that if content is a text type, the above attempts to
+      # make the mock file readable call `content()`, which reads
+      # in the file that has been written to disk, so it effectively
+      # negates the "download" behavior for the recorded response.
       downloaded_file <- paste0(dst_file, "-FILE")
       file.copy(response$content, downloaded_file)
       mock_file <- paste0(mock_file, "-FILE")
@@ -179,9 +179,9 @@ save_response <- function(response, simplify = TRUE) {
       ))
     }
 
-    ## Omit curl handle C pointer, which doesn't serialize meaningfully
+    # Omit curl handle C pointer, which doesn't serialize meaningfully
     response$handle <- NULL
-    ## Drop request since httr:::request_perform will fill it in when loading
+    # Drop request since httr:::request_perform will fill it in when loading
     response$request <- NULL
 
     f <- file(dst_file, "wb", encoding = "UTF-8")

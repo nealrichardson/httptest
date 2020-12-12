@@ -36,10 +36,10 @@ mock_perform <- function(mocker, ...) {
 
 #' @importFrom utils sessionInfo
 trace_httr <- function(..., print = getOption("httptest.debug", FALSE)) {
-  ## Trace it as seen from within httr
+  # Trace it as seen from within httr
   quietly(trace(..., print = print, where = add_headers))
-  ## And if httr is attached and the function is exported, trace the
-  ## function as the user sees it
+  # And if httr is attached and the function is exported, trace the
+  # function as the user sees it
   if ("httr" %in% names(sessionInfo()$otherPkgs) && ..1 %in% getNamespaceExports("httr")) {
     try(quietly(trace(..., print = print, where = sys.frame())))
   }
@@ -66,11 +66,11 @@ stop_mocking <- function() {
 }
 
 safe_untrace <- function(what, where = sys.frame()) {
-  ## If you attempt to untrace a function (1) that isn't exported from
-  ## whatever namespace it lives in and (2) that isn't currently traced,
-  ## it errors. This prevents that so that it's always safe to call `untrace`
+  # If you attempt to untrace a function (1) that isn't exported from
+  # whatever namespace it lives in and (2) that isn't currently traced,
+  # it errors. This prevents that so that it's always safe to call `untrace`
 
-  ## untrace() and get() handle enviroments differently
+  # untrace() and get() handle enviroments differently
   if (is.environment(where)) {
     env <- where
   } else {
@@ -81,9 +81,9 @@ safe_untrace <- function(what, where = sys.frame()) {
   }
 }
 
-## This is the code that we'll inject into `request_perform` to override some
-## internal httr functions. Each mock context will provide its own `.mocker`
-## that replaces the actual curl requesting and returns a response object.
+# This is the code that we'll inject into `request_perform` to override some
+# internal httr functions. Each mock context will provide its own `.mocker`
+# that replaces the actual curl requesting and returns a response object.
 fetch_tracer <- quote({
   request_fetch <- function(...) .mocker(req)
   parse_http_headers <- parse_headers <- function(x, ...) {
@@ -117,5 +117,5 @@ fetch_tracer <- quote({
   }
 })
 
-## cf http://adv-r.had.co.nz/Computing-on-the-language.html#substitute
+# cf http://adv-r.had.co.nz/Computing-on-the-language.html#substitute
 substitute_q <- function(x, env) eval(substitute(substitute(y, env), list(y = x)))

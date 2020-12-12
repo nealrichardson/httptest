@@ -1,4 +1,4 @@
-Sys.setlocale("LC_COLLATE", "C") ## What CRAN does
+Sys.setlocale("LC_COLLATE", "C") # What CRAN does
 set.seed(999)
 options(
   warn = 1,
@@ -40,11 +40,11 @@ reset_redactors <- function() {
   )
 }
 
-## from __future__ import ...
+# from __future__ import ...
 if ("Rcmd" %in% ls(envir = asNamespace("tools"))) {
   Rcmd <- tools::Rcmd
 } else {
-  ## R < 3.3
+  # R < 3.3
   Rcmd <- function(args, ...) {
     if (.Platform$OS.type == "windows") {
       system2(file.path(R.home("bin"), "Rcmd.exe"), args, ...)

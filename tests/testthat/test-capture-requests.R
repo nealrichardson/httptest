@@ -5,7 +5,7 @@ webp_file <- tempfile()
 test_that("We can record a series of requests (a few ways)", {
   skip_if_disconnected()
   capture_requests(path = d, {
-    ## <<- assign these so that they're available in the next test_that too
+    # <<- assign these so that they're available in the next test_that too
     r1 <<- GET("http://httpbin.org/get")
     r2 <<- GET("http://httpbin.org")
     r3 <<- GET("http://httpbin.org/status/418")
@@ -19,26 +19,26 @@ test_that("We can record a series of requests (a few ways)", {
   r7 <<- GET("http://httpbin.org/image/webp", config = write_disk(webp_file))
   r8 <<- RETRY("GET", "http://httpbin.org/status/202")
   stop_capturing()
-  .mockPaths(NULL) ## because start_capturing with path modifies global state
+  .mockPaths(NULL) # because start_capturing with path modifies global state
   expect_identical(
     sort(dir(d, recursive = TRUE)),
     c(
-      "httpbin.org.html", ## it's HTML, and we now support that simplified
+      "httpbin.org.html", # it's HTML, and we now support that simplified
       "httpbin.org/anything.json",
       "httpbin.org/get.json",
-      "httpbin.org/image/webp.R", ## Not a simplifiable format, so .R
-      "httpbin.org/image/webp.R-FILE", ## The `write_disk` location
-      "httpbin.org/put-PUT.json", ## Not a GET, but returns 200
+      "httpbin.org/image/webp.R", # Not a simplifiable format, so .R
+      "httpbin.org/image/webp.R-FILE", # The `write_disk` location
+      "httpbin.org/put-PUT.json", # Not a GET, but returns 200
       "httpbin.org/response-headers-ac4928.json",
-      "httpbin.org/status/202.R", ## Not 200 response, so .R
-      "httpbin.org/status/418.R" ## Not 200 response, so .R
+      "httpbin.org/status/202.R", # Not 200 response, so .R
+      "httpbin.org/status/418.R" # Not 200 response, so .R
     )
   )
-  ## Test the contents of the .R files
+  # Test the contents of the .R files
   teapot <- source(file.path(d, "httpbin.org/status/418.R"))$value
   expect_s3_class(teapot, "response")
   expect_identical(teapot$status_code, 418L)
-  ## Make sure that our .html file has HTML
+  # Make sure that our .html file has HTML
   expect_true(any(grepl(
     "</body>",
     suppressWarnings(readLines(file.path(d, "httpbin.org.html")))
@@ -47,11 +47,11 @@ test_that("We can record a series of requests (a few ways)", {
 
 test_that("We can then load the mocks it stores", {
   skip_if_disconnected()
-  ## Look for mocks in our temp dir
+  # Look for mocks in our temp dir
   with_mock_path(d, {
-    ## Because the place we wrote out the file in our real request might not
-    ## naturally be in our mock directory, assume that that file doesn't exist
-    ## when we load our mocks.
+    # Because the place we wrote out the file in our real request might not
+    # naturally be in our mock directory, assume that that file doesn't exist
+    # when we load our mocks.
     content_r6 <<- content(r6)
     file.remove(dl_file)
     content_r7 <<- content(r7)
@@ -73,8 +73,8 @@ test_that("We can then load the mocks it stores", {
     })
   })
   expect_identical(content(m1), content(r1))
-  ## Compare the HTML as text because the parsed HTML (XML) object has a
-  ## C pointer that is different between the two objects.
+  # Compare the HTML as text because the parsed HTML (XML) object has a
+  # C pointer that is different between the two objects.
   expect_identical(
     enc2native(quiet_content(m2, "text")),
     enc2native(content(r2, "text"))
@@ -91,9 +91,9 @@ test_that("We can then load the mocks it stores", {
 
 test_that("write_disk mocks can be reloaded even if the mock directory moves", {
   skip_if_disconnected()
-  ## This is an edge case caught because `crunch` package puts fixtures in
-  ## `inst/`, so you record to one place but when you read them from the
-  ## installed package, it's a different directory.
+  # This is an edge case caught because `crunch` package puts fixtures in
+  # `inst/`, so you record to one place but when you read them from the
+  # installed package, it's a different directory.
   d2 <- tempfile()
   dir.create(file.path(d2, "httpbin.org", "image"), recursive = TRUE)
   for (f in c("httpbin.org/image/webp.R", "httpbin.org/image/webp.R-FILE")) {

@@ -194,9 +194,9 @@ with_mock_api({
     expect_identical(content(r), list(loaded = TRUE))
   })
   test_that("But the mock file gets written to the modified path with altered content", {
-    ## Use replace=TRUE to make sure that "." isn't in the search path.
-    ## We're checking that the original request doesn't have a mock,
-    ## but of course we made it from a mock in the working directory
+    # Use replace=TRUE to make sure that "." isn't in the search path.
+    # We're checking that the original request doesn't have a mock,
+    # but of course we made it from a mock in the working directory
     with_mock_path(d, replace = TRUE, {
       expect_GET(
         GET("http://example.com/get"),
@@ -256,7 +256,7 @@ with_fake_http({
     )
   )
   req <- p$request
-  ## TODO: more gsub_request tests
+  # TODO: more gsub_request tests
   test_that("gsub_request on non-JSON post fields", {
     expect_identical(
       gsub_request(req, "string", "SECRET")$fields,

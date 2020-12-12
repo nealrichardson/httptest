@@ -28,14 +28,14 @@
 .mockPaths <- function(new) {
   current <- getOption("httptest.mock.paths", default = default_mock_path())
   if (missing(new)) {
-    ## We're calling the function to get the list of paths
+    # We're calling the function to get the list of paths
     return(current)
   } else if (is.null(new)) {
-    ## We're calling the function to reset to the default
+    # We're calling the function to reset to the default
     options(httptest.mock.paths = new)
     invisible(current)
   } else {
-    ## We're adding one or more paths
+    # We're adding one or more paths
     current <- unique(c(new, current))
     options(httptest.mock.paths = current)
     invisible(current)
@@ -55,7 +55,7 @@ with_mock_path <- function(path, expr, replace = FALSE) {
   if (replace) {
     options(httptest.mock.paths = path)
   } else {
-    ## Append
+    # Append
     .mockPaths(path)
   }
   on.exit(options(httptest.mock.paths = oldmp))

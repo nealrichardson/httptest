@@ -68,7 +68,7 @@ public({
         "http://httpbin.org/get",
         '{"t'
       )
-      ## Just to be explicit since the expectations do partial matching
+      # Just to be explicit since the expectations do partial matching
       skip_if(third_edition)
       expect_failure(
         expect_PUT(

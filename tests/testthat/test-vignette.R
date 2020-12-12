@@ -7,7 +7,7 @@ test_that("start/end_vignette with recording (dir does not exist yet)", {
   expect_true(identical(rp, httr:::request_perform))
   expect_false(identical(g, httr::GET))
   expect_identical(.mockPaths()[1], file.path(path, "0"))
-  ## Test that state_change bumps the mockPath
+  # Test that state_change bumps the mockPath
   change_state()
   expect_identical(.mockPaths()[1], file.path(path, "1"))
   expect_identical(.mockPaths()[2], file.path(path, "0"))
