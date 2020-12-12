@@ -23,8 +23,8 @@ What does "redacting" entail? We aren't the CIA working with classified reports,
 To illustrate, here's a request that has a cookie in the response. Let's record it.
 
 ```r
-capture_requests(simplify=FALSE, {
-    real_resp <- GET("http://httpbin.org/cookies/set?token=12345")
+capture_requests(simplify = FALSE, {
+  real_resp <- GET("http://httpbin.org/cookies/set?token=12345")
 })
 ```
 
@@ -70,7 +70,7 @@ To do this, we'll use `set_redactor()` to supply a custom function. The project 
 set_redactor(~ gsub_response(., getOption("pivotal.project"), "123"))
 ```
 
-Note the formula shorthand: this follows the syntax in the [`purrr`](https://purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function (response) gsub_response(response, getOption("pivotal.project"), "123")`.
+Note the formula shorthand: this follows the syntax in the [`purrr`](https://purrr.tidyverse.org) package for defining anonymous functions. It is equivalent to `function(response) gsub_response(response, getOption("pivotal.project"), "123")`.
 
 Valid inputs to `set_redactor()` include:
 
@@ -85,7 +85,7 @@ To see this in action, let's record a request:
 ```r
 set_redactor(redact_pivotal)
 start_capturing()
-s <- getStories(search="mnt")
+s <- getStories(search = "mnt")
 stop_capturing()
 ```
 
@@ -100,7 +100,7 @@ However, the project id won't be found in the recorded file. If we load the reco
 
 ```r
 with_mock_api({
-    s <- getStories(search="mnt")
+    s <- getStories(search = "mnt")
 })
 s[[1]]$project_id
 ## [1] "123"
@@ -113,13 +113,13 @@ We can do more response cleaning with custom functions. All of the redactors in 
 Continuing with the `pivotaltrackR` example, let's also prune the domain and API root path from the URLs we're recording so that we're making shorter file paths:
 
 ```r
-function (response) {
-    require(magrittr, quietly=TRUE)
-    response %>%
-        # Shorten the URL
-        gsub_response("https://www.pivotaltracker.com/services/v5/", "", fixed=TRUE) %>%
-        # Remove my project ID
-        gsub_response(getOption("pivotal.project"), "123")
+function(response) {
+  require(magrittr, quietly=TRUE)
+  response %>%
+    # Shorten the URL
+    gsub_response("https://www.pivotaltracker.com/services/v5/", "", fixed = TRUE) %>%
+    # Remove my project ID
+    gsub_response(getOption("pivotal.project"), "123")
 }
 ```
 
@@ -148,10 +148,10 @@ and then all mocked requests would look for a path starting with "api/" rather t
 You can also provide this function in `inst/httptest/request.R`, just as you can for the redactor, and any time your package is loaded and you're reading mock (previously recorded) responses, this function will be called on the `request` object before mapping it to a file. For example, [here](https://github.com/nealrichardson/pivotaltrackR/blob/master/inst/httptest/request.R) is the one from `pivotaltrackR`:
 
 ```r
-function (request) {
-    require(magrittr, quietly=TRUE)
-    request %>%
-        gsub_request("https://www.pivotaltracker.com/services/v5/", "", fixed=TRUE) %>%
-        gsub_request(getOption("pivotal.project"), "123")
+function(request) {
+  require(magrittr, quietly=TRUE)
+  request %>%
+    gsub_request("https://www.pivotaltracker.com/services/v5/", "", fixed = TRUE) %>%
+    gsub_request(getOption("pivotal.project"), "123")
 }
 ```

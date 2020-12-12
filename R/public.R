@@ -23,8 +23,8 @@
 #' @return The result of `...` evaluated in the global environment (and not
 #' the package environment).
 #' @export
-public <- function (...) with(globalenv(), ...)
+public <- function(...) with(globalenv(), ...)
 
-## This exists in the package but not exported so that we can test the behavior
-## of the `public` test context
-.internalFunction <- function () TRUE
+# This exists in the package but not exported so that we can test the behavior
+# of the `public` test context
+.internalFunction <- function() TRUE

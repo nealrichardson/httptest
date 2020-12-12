@@ -30,67 +30,69 @@
 #' returns the `force()` function.
 #' @export
 #' @seealso [set_requester()]
-set_redactor <- function (FUN) {
-    FUN <- prepare_redactor(FUN)
-    options(
-        httptest.redactor=FUN,
-        ## Because we're directly setting a redactor, remove any record that
-        ## a previous redactor was set by reading from packages
-        httptest.redactor.packages=NULL
-    )
-    invisible(FUN)
+set_redactor <- function(FUN) {
+  FUN <- prepare_redactor(FUN)
+  options(
+    httptest.redactor = FUN,
+    # Because we're directly setting a redactor, remove any record that
+    # a previous redactor was set by reading from packages
+    httptest.redactor.packages = NULL
+  )
+  invisible(FUN)
 }
 
-default_redactor <- function (packages=get_attached_packages()) {
-    ## Look for package-defined requesters
-    func <- redactor_from_packages(packages)
-    ## Record what packages we considered here
-    options(httptest.redactor.packages=packages)
-    return(func)
+default_redactor <- function(packages = get_attached_packages()) {
+  # Look for package-defined requesters
+  func <- redactor_from_packages(packages)
+  # Record what packages we considered here
+  options(httptest.redactor.packages = packages)
+  return(func)
 }
 
-redactor_from_packages <- function (packages) {
-    funcs <- find_package_functions(packages, "redact.R")
-    if (length(funcs)) {
-        out <- prepare_redactor(funcs)
-    } else {
-        ## Default
-        out <- redact_auth
+redactor_from_packages <- function(packages) {
+  funcs <- find_package_functions(packages, "redact.R")
+  if (length(funcs)) {
+    out <- prepare_redactor(funcs)
+  } else {
+    # Default
+    out <- redact_auth
+  }
+  return(out)
+}
+
+find_package_functions <- function(packages, file = "redact.R") {
+  # Given package names, find any redactors put in inst/httptest/redact.R
+  base_pkgs <- c(
+    "base", "compiler", "datasets", "graphics", "grDevices",
+    "grid", "methods", "parallel", "splines", "stats", "stats4",
+    "tcltk", "tools", "utils"
+  )
+  packages <- setdiff(packages, base_pkgs)
+  funcs <- lapply(packages, get_package_function, file)
+  # Make sure we have functions
+  funcs <- Filter(is.function, funcs)
+  return(funcs)
+}
+
+# TODO: export?
+get_package_function <- function(package, file = "redact.R") {
+  if ("pkgload" %in% loadedNamespaces()) {
+    # Someone may have loaded a package with pkgload::load_all(), so we
+    # need this shim function to look up system files
+    system.file <- get("shim_system.file", asNamespace("pkgload"))
+  }
+  func_file <- system.file("httptest", file, package = package)
+  if (nchar(func_file)) {
+    # If file does not exist, it returns ""
+    func <- source(func_file)$value
+    if (is.function(func)) {
+      if (isTRUE(getOption("httptest.verbose", TRUE))) {
+        message(paste("Using", file, "from", dQuote(package)))
+      }
+      return(func)
     }
-    return(out)
-}
-
-find_package_functions <- function (packages, file="redact.R") {
-    ## Given package names, find any redactors put in inst/httptest/redact.R
-    base_pkgs <- c("base", "compiler", "datasets", "graphics", "grDevices",
-                   "grid", "methods", "parallel", "splines", "stats", "stats4",
-                   "tcltk", "tools", "utils")
-    packages <- setdiff(packages, base_pkgs)
-    funcs <- lapply(packages, get_package_function, file)
-    ## Make sure we have functions
-    funcs <- Filter(is.function, funcs)
-    return(funcs)
-}
-
-## TODO: export?
-get_package_function <- function (package, file="redact.R") {
-    if ("pkgload" %in% loadedNamespaces()) {
-        ## Someone may have loaded a package with pkgload::load_all(), so we
-        ## need this shim function to look up system files
-        system.file <- get("shim_system.file", asNamespace("pkgload"))
-    }
-    func_file <- system.file("httptest", file, package=package)
-    if (nchar(func_file)) {
-        ## If file does not exist, it returns ""
-        func <- source(func_file)$value
-        if (is.function(func)) {
-            if (isTRUE(getOption("httptest.verbose", TRUE))) {
-                message(paste("Using", file, "from", dQuote(package)))
-            }
-            return(func)
-        }
-    }
-    return(NULL)
+  }
+  return(NULL)
 }
 
 #' Fetch the active redacting function
@@ -101,51 +103,51 @@ get_package_function <- function (package, file="redact.R") {
 #' @return A redacting function.
 #' @export
 #' @keywords internal
-get_current_redactor <- function () {
-    ## First, check where we've cached the current one
-    out <- getOption("httptest.redactor")
-    if (is.null(out)) {
-        ## Set the default
-        out <- default_redactor()
-        options(httptest.redactor=out)
+get_current_redactor <- function() {
+  # First, check where we've cached the current one
+  out <- getOption("httptest.redactor")
+  if (is.null(out)) {
+    # Set the default
+    out <- default_redactor()
+    options(httptest.redactor = out)
+  } else {
+    # See if default is based on packages and needs refreshing
+    pkgs <- getOption("httptest.redactor.packages")
+    if (!is.null(pkgs)) {
+      # We're using the result of default_requester(). Let's see if any
+      # new packages have been loaded
+      current_packages <- get_attached_packages()
+      # Also, always reevaluate the default redactor if pkgload is involved
+      if ("pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)) {
+        # Re-evaluate
+        out <- default_redactor(current_packages)
+        options(httptest.redactor = out)
+      }
+    }
+  }
+  return(out)
+}
+
+prepare_redactor <- function(redactor) {
+  if (is.null(redactor)) {
+    # Allow, and make it do nothing
+    redactor <- force
+  } else if (inherits(redactor, "formula")) {
+    redactor <- as.redactor(redactor)
+  } else if (is.list(redactor)) {
+    if (length(redactor) == 1) {
+      redactor <- redactor[[1]]
     } else {
-        ## See if default is based on packages and needs refreshing
-        pkgs <- getOption("httptest.redactor.packages")
-        if (!is.null(pkgs)) {
-            ## We're using the result of default_requester(). Let's see if any
-            ## new packages have been loaded
-            current_packages <- get_attached_packages()
-            ## Also, always reevaluate the default redactor if pkgload is involved
-            if ("pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)) {
-                ## Re-evaluate
-                out <- default_redactor(current_packages)
-                options(httptest.redactor=out)
-            }
-        }
+      redactor <- chain_redactors(redactor)
     }
-    return(out)
+  }
+
+  if (!is.function(redactor)) {
+    stop("Redactor must be a function or list of functions", call. = FALSE)
+  }
+  return(redactor)
 }
 
-prepare_redactor <- function (redactor) {
-    if (is.null(redactor)) {
-        ## Allow, and make it do nothing
-        redactor <- force
-    } else if (inherits(redactor, "formula")) {
-        redactor <- as.redactor(redactor)
-    } else if (is.list(redactor)) {
-        if (length(redactor) == 1) {
-            redactor <- redactor[[1]]
-        } else {
-            redactor <- chain_redactors(redactor)
-        }
-    }
-
-    if (!is.function(redactor)) {
-        stop("Redactor must be a function or list of functions", call.=FALSE)
-    }
-    return(redactor)
-}
-
-get_attached_packages <- function () {
-    gsub("^package\\:", "", grep("^package\\:", search(), value=TRUE))
+get_attached_packages <- function() {
+  gsub("^package\\:", "", grep("^package\\:", search(), value = TRUE))
 }

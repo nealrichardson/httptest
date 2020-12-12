@@ -48,12 +48,12 @@ Adding `with_mock_api()` to your tests is straightforward. Given a very basic te
 
 ```r
 test_that("Requests happen", {
-    expect_s3_class(GET("http://httpbin.org/get"), "response")
-    expect_s3_class(
-        GET("http://httpbin.org/response-headers",
-            query=list(`Content-Type`="application/json")),
-        "response"
-    )
+  expect_s3_class(GET("http://httpbin.org/get"), "response")
+  expect_s3_class(
+    GET("http://httpbin.org/response-headers",
+      query = list(`Content-Type` = "application/json")),
+    "response"
+  )
 })
 ```
 
@@ -61,14 +61,14 @@ if we wrap the code in `with_mock_api()`, actual requests won't happen.
 
 ```r
 with_mock_api({
-    test_that("Requests happen", {
-        expect_s3_class(GET("http://httpbin.org/get"), "response")
-        expect_s3_class(
-            GET("http://httpbin.org/response-headers",
-                query=list(`Content-Type`="application/json")),
-            "response"
-        )
-    })
+  test_that("Requests happen", {
+    expect_s3_class(GET("http://httpbin.org/get"), "response")
+    expect_s3_class(
+      GET("http://httpbin.org/response-headers",
+        query = list(`Content-Type` = "application/json")),
+      "response"
+    )
+  })
 })
 ```
 
@@ -80,9 +80,9 @@ In our example, running this once:
 
 ```r
 capture_requests({
-    GET("http://httpbin.org/get")
-    GET("http://httpbin.org/response-headers",
-        query=list(`Content-Type`="application/json"))
+  GET("http://httpbin.org/get")
+  GET("http://httpbin.org/response-headers",
+    query = list(`Content-Type` = "application/json"))
 })
 ```
 
@@ -94,7 +94,7 @@ For convenience, you may find it easier in an interactive session to call `start
 start_capturing()
 GET("http://httpbin.org/get")
 GET("http://httpbin.org/response-headers",
-    query=list(`Content-Type`="application/json"))
+  query = list(`Content-Type` = "application/json"))
 stop_capturing()
 ```
 
@@ -129,7 +129,7 @@ A big way to cut long file paths is by using a request preprocessor: a function 
 
 ```r
 set_requester(function (request) {
-    gsub_request(request, "https\\://language.googleapis.com/v1/", "api/")
+  gsub_request(request, "https\\://language.googleapis.com/v1/", "api/")
 })
 ```
 
@@ -154,8 +154,8 @@ That said, it can be worthwhile to have a subset of tests that can be run agains
 
 ```r
 with_mock_dir("httpbin-get", {
-    a <- GET("https://httpbin.org/get")
-    print(a)
+  a <- GET("https://httpbin.org/get")
+  print(a)
 })
 ```
 

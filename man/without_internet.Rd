@@ -26,11 +26,16 @@ such as \code{\link[=expect_GET]{expect_GET()}} and \code{\link[=expect_POST]{ex
 }
 \examples{
 without_internet({
-    expect_error(httr::GET("http://httpbin.org/get"),
-        "GET http://httpbin.org/get")
-    expect_error(httr::PUT("http://httpbin.org/put",
-        body='{"a":1}'),
-        'PUT http://httpbin.org/put {"a":1}', fixed=TRUE)
+  expect_error(
+    httr::GET("http://httpbin.org/get"),
+    "GET http://httpbin.org/get"
+  )
+  expect_error(httr::PUT("http://httpbin.org/put",
+    body = '{"a":1}'
+  ),
+  'PUT http://httpbin.org/put {"a":1}',
+  fixed = TRUE
+  )
 })
 }
 \seealso{

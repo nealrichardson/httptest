@@ -1,28 +1,36 @@
-structure(list(url = "http://httpbin.org/html",
-    status_code = 200L,
-    headers = structure(list(
-        connection = "keep-alive",
-        server = "meinheld/0.6.1",
-        date = "Sat, 27 May 2017 20:08:33 GMT",
-        `content-type` = "text/html; charset=utf-8",
-        `content-length` = "3741",
-        `access-control-allow-origin` = "*",
-        `access-control-allow-credentials` = "true",
-        `x-powered-by` = "Flask",
-        `x-processed-time` = "0.000486850738525",
-        via = "1.1 vegur"), class = c("insensitive", "list")),
-    all_headers = list(
-        structure(list(status = 200L, version = "HTTP/1.1", headers = structure(list(
-            connection = "keep-alive", server = "meinheld/0.6.1",
-            date = "Sat, 27 May 2017 20:08:33 GMT", `content-type` = "text/html; charset=utf-8",
-            `content-length` = "3741", `access-control-allow-origin` = "*",
-            `access-control-allow-credentials` = "true", `x-powered-by` = "Flask",
-            `x-processed-time` = "0.000486850738525", via = "1.1 vegur"), .Names = c("connection",
-        "server", "date", "content-type", "content-length", "access-control-allow-origin",
-        "access-control-allow-credentials", "x-powered-by", "x-processed-time",
-        "via"), class = c("insensitive", "list"))), .Names = c("status",
-        "version", "headers"))),
-    content = charToRaw("<!DOCTYPE html>
+structure(list(
+  url = "http://httpbin.org/html",
+  status_code = 200L,
+  headers = structure(list(
+    connection = "keep-alive",
+    server = "meinheld/0.6.1",
+    date = "Sat, 27 May 2017 20:08:33 GMT",
+    `content-type` = "text/html; charset=utf-8",
+    `content-length` = "3741",
+    `access-control-allow-origin` = "*",
+    `access-control-allow-credentials` = "true",
+    `x-powered-by` = "Flask",
+    `x-processed-time` = "0.000486850738525",
+    via = "1.1 vegur"
+  ), class = c("insensitive", "list")),
+  all_headers = list(
+    structure(list(status = 200L, version = "HTTP/1.1", headers = structure(list(
+      connection = "keep-alive", server = "meinheld/0.6.1",
+      date = "Sat, 27 May 2017 20:08:33 GMT", `content-type` = "text/html; charset=utf-8",
+      `content-length` = "3741", `access-control-allow-origin` = "*",
+      `access-control-allow-credentials` = "true", `x-powered-by` = "Flask",
+      `x-processed-time` = "0.000486850738525", via = "1.1 vegur"
+    ), .Names = c(
+      "connection",
+      "server", "date", "content-type", "content-length", "access-control-allow-origin",
+      "access-control-allow-credentials", "x-powered-by", "x-processed-time",
+      "via"
+    ), class = c("insensitive", "list"))), .Names = c(
+      "status",
+      "version", "headers"
+    ))
+  ),
+  content = charToRaw("<!DOCTYPE html>
 <html>
   <head>
     </head>
@@ -34,20 +42,29 @@ structure(list(url = "http://httpbin.org/html",
           </div>
   </body>
 </html>"),
-    date = structure(1495915713, class = c("POSIXct", "POSIXt"), tzone = "GMT"),
-    times = structure(c(0, 0.018544, 0.100954, 0.101057, 0.186309, 0.186663),
-        .Names = c("redirect", "namelookup", "connect", "pretransfer",
-        "starttransfer", "total")),
-    request = structure(list(
-        method = "GET",
-        url = "http://httpbin.org/html",
-        headers = structure("application/json, text/xml, application/xml, */*",
-            .Names = "Accept"),
-        fields = NULL,
-        options = structure(list(
-            useragent = "libcurl/7.51.0 r-curl/2.3 httr/1.2.1",
-            httpget = TRUE)),
-        auth_token = NULL,
-        output = structure(list(), class = c("write_memory", "write_function"))),
-        class = "request")),
-    class = "response")
+  date = structure(1495915713, class = c("POSIXct", "POSIXt"), tzone = "GMT"),
+  times = structure(c(0, 0.018544, 0.100954, 0.101057, 0.186309, 0.186663),
+    .Names = c(
+      "redirect", "namelookup", "connect", "pretransfer",
+      "starttransfer", "total"
+    )
+  ),
+  request = structure(list(
+    method = "GET",
+    url = "http://httpbin.org/html",
+    headers = structure("application/json, text/xml, application/xml, */*",
+      .Names = "Accept"
+    ),
+    fields = NULL,
+    options = structure(list(
+      useragent = "libcurl/7.51.0 r-curl/2.3 httr/1.2.1",
+      httpget = TRUE
+    )),
+    auth_token = NULL,
+    output = structure(list(), class = c("write_memory", "write_function"))
+  ),
+  class = "request"
+  )
+),
+class = "response"
+)
