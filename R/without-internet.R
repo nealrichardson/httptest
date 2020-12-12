@@ -14,17 +14,22 @@
 #' @seealso [block_requests()] to enable mocking on its own (not in a context)
 #' @examples
 #' without_internet({
-#'     expect_error(httr::GET("http://httpbin.org/get"),
-#'         "GET http://httpbin.org/get")
-#'     expect_error(httr::PUT("http://httpbin.org/put",
-#'         body='{"a":1}'),
-#'         'PUT http://httpbin.org/put {"a":1}', fixed=TRUE)
+#'   expect_error(
+#'     httr::GET("http://httpbin.org/get"),
+#'     "GET http://httpbin.org/get"
+#'   )
+#'   expect_error(httr::PUT("http://httpbin.org/put",
+#'     body = '{"a":1}'
+#'   ),
+#'   'PUT http://httpbin.org/put {"a":1}',
+#'   fixed = TRUE
+#'   )
 #' })
 #' @export
-without_internet <- function (expr) {
-    block_requests()
-    on.exit(stop_mocking())
-    eval.parent(expr)
+without_internet <- function(expr) {
+  block_requests()
+  on.exit(stop_mocking())
+  eval.parent(expr)
 }
 
 #' Block HTTP requests
@@ -39,22 +44,22 @@ without_internet <- function (expr) {
 #' @return Nothing; called for its side effects.
 #' @seealso [without_internet()] [stop_mocking()] [use_mock_api()]
 #' @export
-block_requests <- function () mock_perform(stop_request)
+block_requests <- function() mock_perform(stop_request)
 
-stop_request <- function (req, handle, refresh) {
-    out <- paste(req$method, req$url)
-    body <- request_body(req)
-    if (!is.null(body)) {
-        ## Max print option for debugging large payloads
-        body <- substr(body, 1, getOption("httptest.max.print", nchar(body)))
-        out <- paste(out, body)
-    }
+stop_request <- function(req, handle, refresh) {
+  out <- paste(req$method, req$url)
+  body <- request_body(req)
+  if (!is.null(body)) {
+    # Max print option for debugging large payloads
+    body <- substr(body, 1, getOption("httptest.max.print", nchar(body)))
+    out <- paste(out, body)
+  }
 
-    if (!is.null(req$mockfile)) {
-        ## Poked in here by mock_request for ease of debugging
-        ## Append it to the end.
-        ## TODO: remove .json if/when possible; there for backwards compat
-        out <- paste0(out, " (", req$mockfile, ".json)")
-    }
-    stop(out, call.=FALSE)
+  if (!is.null(req$mockfile)) {
+    # Poked in here by mock_request for ease of debugging
+    # Append it to the end.
+    # TODO: remove .json if/when possible; there for backwards compat
+    out <- paste0(out, " (", req$mockfile, ".json)")
+  }
+  stop(out, call. = FALSE)
 }

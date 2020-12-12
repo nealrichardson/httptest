@@ -18,17 +18,19 @@
 #' @examples
 #' library(httr)
 #' with_fake_http({
-#'     expect_header(GET("http://example.com", config=add_headers(Accept="image/png")),
-#'         "Accept: image/png")
+#'   expect_header(
+#'     GET("http://example.com", config = add_headers(Accept = "image/png")),
+#'     "Accept: image/png"
+#'   )
 #' })
 #' @export
-expect_header <- function (..., ignore.case=TRUE) {
-    tracer <- quote({
-        heads <- req$headers
-        msgs <- lapply(names(heads), function(h) paste(h, heads[h], sep=": "))
-        warning(msgs, call.=FALSE)
-    })
-    with_trace("request_prepare", exit=tracer, where=add_headers, expr={
-        expect_warning(..., ignore.case=ignore.case)
-    })
+expect_header <- function(..., ignore.case = TRUE) {
+  tracer <- quote({
+    heads <- req$headers
+    msgs <- lapply(names(heads), function(h) paste(h, heads[h], sep = ": "))
+    warning(msgs, call. = FALSE)
+  })
+  with_trace("request_prepare", exit = tracer, where = add_headers, expr = {
+    expect_warning(..., ignore.case = ignore.case)
+  })
 }

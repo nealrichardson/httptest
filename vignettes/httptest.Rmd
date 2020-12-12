@@ -40,9 +40,9 @@ Let's write a test. Add "test-user.R" to your test directory and put a test for 
 context("Get a user")
 
 with_mock_api({
-    test_that("We can get a user object", {
-        user <- getUser("twitterdev")
-    })
+  test_that("We can get a user object", {
+    user <- getUser("twitterdev")
+  })
 })
 ```
 
@@ -92,10 +92,10 @@ Let's copy that example response to the fixture file path that the message indic
 
 ```r
 test_that("We can get a user object", {
-    user <- getUser("twitterdev")
-    expect_is(user, "user")
-    expect_identical(user$name, "TwitterDev")
-    expect_output(print(user), "TwitterDev")
+  user <- getUser("twitterdev")
+  expect_is(user, "user")
+  expect_identical(user$name, "TwitterDev")
+  expect_output(print(user), "TwitterDev")
 })
 ```
 
@@ -103,9 +103,9 @@ We can do the same for the `lookupUsers` function. It should hit the `users/look
 
 ```r
 test_that("lookupUsers retrieves many", {
-    result <- lookupUsers(c("twitterapi", "twitter"))
-    expect_is(result, "list")
-    expect_true(all(vapply(result, inherits, logical(1), what="user")))
+  result <- lookupUsers(c("twitterapi", "twitter"))
+  expect_is(result, "list")
+  expect_true(all(vapply(result, inherits, logical(1), what = "user")))
 })
 ```
 
@@ -134,19 +134,19 @@ context("Get a user")
 use_oauth_token("foo") # Pulled here from setup.R for clarity
 
 with_mock_api({
-    test_that("We can get a user object", {
-        user <- getUser("twitterdev")
-        expect_is(user, "user")
-        expect_identical(user$name, "TwitterDev")
-        expect_identical(name(user), "TwitterDev")
-        expect_output(print(user), "TwitterDev")
-    })
+  test_that("We can get a user object", {
+    user <- getUser("twitterdev")
+    expect_is(user, "user")
+    expect_identical(user$name, "TwitterDev")
+    expect_identical(name(user), "TwitterDev")
+    expect_output(print(user), "TwitterDev")
+  })
 
-    test_that("lookupUsers retrieves many", {
-        result <- lookupUsers(c("twitterapi", "twitter"))
-        expect_is(result, "list")
-        expect_true(all(vapply(result, inherits, logical(1), what="user")))
-    })
+  test_that("lookupUsers retrieves many", {
+    result <- lookupUsers(c("twitterapi", "twitter"))
+    expect_is(result, "list")
+    expect_true(all(vapply(result, inherits, logical(1), what = "user")))
+  })
 })
 ```
 
@@ -181,8 +181,8 @@ For example:
 
 ```r
 with_mock_dir("httpbin-get", {
-    a <- GET("https://httpbin.org/get")
-    print(a)
+  a <- GET("https://httpbin.org/get")
+  print(a)
 })
 ```
 
@@ -254,13 +254,13 @@ Here's a example of how `without_internet` can be used to assert that code that 
 
 ```r
 with_fake_http({
-    test_that("Cache gets set on GET", {
-        expect_length(cacheKeys(), 0)
-        expect_GET(a <- GET("https://app.crunch.io/api/"),
-            "https://app.crunch.io/api/")
-        expect_length(cacheKeys(), 1)
-        expect_identical(a, getCache("https://app.crunch.io/api/"))
-    })
+  test_that("Cache gets set on GET", {
+    expect_length(cacheKeys(), 0)
+    expect_GET(a <- GET("https://app.crunch.io/api/"),
+      "https://app.crunch.io/api/")
+    expect_length(cacheKeys(), 1)
+    expect_identical(a, getCache("https://app.crunch.io/api/"))
+  })
 })
 ```
 
@@ -268,14 +268,14 @@ Then, using `without_internet`, the test checks two things: first, that doing th
 
 ```r
 without_internet({
-    test_that("When the cache is set, can read from it even with no connection", {
-        expect_identical(GET("https://app.crunch.io/api/")$url,
-            "https://app.crunch.io/api/")
-    })
-    test_that("But uncached() prevents reading from the cache", {
-        expect_error(uncached(GET("https://app.crunch.io/api/")),
-            "GET https://app.crunch.io/api/")
-    })
+  test_that("When the cache is set, can read from it even with no connection", {
+    expect_identical(GET("https://app.crunch.io/api/")$url,
+      "https://app.crunch.io/api/")
+  })
+  test_that("But uncached() prevents reading from the cache", {
+    expect_error(uncached(GET("https://app.crunch.io/api/")),
+      "GET https://app.crunch.io/api/")
+  })
 })
 ```
 
@@ -289,7 +289,7 @@ Both `without_internet` and `with_mock_api` allow you to make assertions about r
 
 ```r
 test_that("is.archived", {
-    expect_identical(is.archived(catalog), c(FALSE, TRUE, FALSE))
+  expect_identical(is.archived(catalog), c(FALSE, TRUE, FALSE))
 })
 ```
 
@@ -297,9 +297,9 @@ When we update the attributes of the catalog's entities, we send a PATCH request
 
 ```r
 test_that("'archive' sets the archived attribute and only PATCHes changes", {
-    expect_PATCH(archive(catalog[2:3]),
-        'https://app.crunch.io/api/datasets/',
-        '{"https://app.crunch.io/api/datasets/3/":{"archived":true}}')
+  expect_PATCH(archive(catalog[2:3]),
+    'https://app.crunch.io/api/datasets/',
+    '{"https://app.crunch.io/api/datasets/3/":{"archived":true}}')
 })
 ```
 
@@ -311,24 +311,25 @@ An example of this from the `crunch` package is in testing a `join` function, wh
 
 ```r
 testPayload <- paste0(
-    '{"https://app.crunch.io/api/datasets/1/joins/95c0b45fe0af492594863f818cb913d2/":',
-    '{"left_key":"https://app.crunch.io/api/datasets/1/variables/birthyr/",',
-    '"right_key":"https://app.crunch.io/api/datasets/3/variables/birthyr/"}}')
+  '{"https://app.crunch.io/api/datasets/1/joins/95c0b45fe0af492594863f818cb913d2/":',
+  '{"left_key":"https://app.crunch.io/api/datasets/1/variables/birthyr/",',
+  '"right_key":"https://app.crunch.io/api/datasets/3/variables/birthyr/"}}'
+)
 ```
 
 and then asserts that three different ways of calling `join` result in the same `PATCH` request being made
 
 ```r
 test_that("Can specify 'by' variables several ways", {
-    expect_PATCH(join(ds1, ds2, by.x=ds1$birthyr, ds2$birthyr),
-        'https://app.crunch.io/api/datasets/1/joins/',
-        testPayload)
-    expect_PATCH(join(ds1, ds2, by.x="birthyr", by.y="birthyr"),
-        'https://app.crunch.io/api/datasets/1/joins/',
-        testPayload)
-    expect_PATCH(join(ds1, ds2, by="birthyr"),
-        'https://app.crunch.io/api/datasets/1/joins/',
-        testPayload)
+  expect_PATCH(join(ds1, ds2, by.x = ds1$birthyr, ds2$birthyr),
+    'https://app.crunch.io/api/datasets/1/joins/',
+    testPayload)
+  expect_PATCH(join(ds1, ds2, by.x = "birthyr", by.y = "birthyr"),
+    'https://app.crunch.io/api/datasets/1/joins/',
+    testPayload)
+  expect_PATCH(join(ds1, ds2, by = "birthyr"),
+    'https://app.crunch.io/api/datasets/1/joins/',
+    testPayload)
 })
 ```
 

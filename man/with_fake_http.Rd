@@ -37,10 +37,12 @@ the preferred name for this context; \code{with_fake_HTTP()} is deprecated.
 }
 \examples{
 with_fake_http({
-    expect_GET(req1 <- httr::GET("http://example.com"), "http://example.com")
-    req1$url
-    expect_POST(req2 <- httr::POST("http://example.com", body='{"a":1}'),
-        "http://example.com")
-    httr::content(req2)
+  expect_GET(req1 <- httr::GET("http://example.com"), "http://example.com")
+  req1$url
+  expect_POST(
+    req2 <- httr::POST("http://example.com", body = '{"a":1}'),
+    "http://example.com"
+  )
+  httr::content(req2)
 })
 }

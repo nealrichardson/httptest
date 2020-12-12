@@ -28,82 +28,87 @@
 #' @examples
 #' library(httr)
 #' without_internet({
-#'     expect_GET(GET("http://httpbin.org/get"),
-#'         "http://httpbin.org/get")
-#'     expect_GET(GET("http://httpbin.org/get"),
-#'         "http://httpbin.org/[a-z]+",
-#'         fixed=FALSE) # For regular expression matching
-#'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'),
-#'         'http://httpbin.org/put',
-#'         '{"a":1}')
-#'     expect_PUT(PUT("http://httpbin.org/put", body='{"a":1}'))
-#'     expect_no_request(rnorm(5))
+#'   expect_GET(
+#'     GET("http://httpbin.org/get"),
+#'     "http://httpbin.org/get"
+#'   )
+#'   expect_GET(GET("http://httpbin.org/get"),
+#'     "http://httpbin.org/[a-z]+",
+#'     fixed = FALSE
+#'   ) # For regular expression matching
+#'   expect_PUT(
+#'     PUT("http://httpbin.org/put", body = '{"a":1}'),
+#'     "http://httpbin.org/put",
+#'     '{"a":1}'
+#'   )
+#'   expect_PUT(PUT("http://httpbin.org/put", body = '{"a":1}'))
+#'   expect_no_request(rnorm(5))
 #' })
 #' @name expect_verb
 #' @aliases expect_GET expect_POST expect_PUT expect_PATCH expect_DELETE expect_no_request
 #' @export
-expect_GET <- function (object, url="", ...) {
-    expect_mock_request(object, "GET ", url, " ", ...)
+expect_GET <- function(object, url = "", ...) {
+  expect_mock_request(object, "GET ", url, " ", ...)
 }
 
 #' @rdname expect_verb
 #' @export
-expect_POST <- function (object, url="", ...) {
-    expect_mock_request(object, "POST ", url, " ", ...)
+expect_POST <- function(object, url = "", ...) {
+  expect_mock_request(object, "POST ", url, " ", ...)
 }
 
 #' @rdname expect_verb
 #' @export
-expect_PATCH <- function (object, url="", ...) {
-    expect_mock_request(object, "PATCH ", url, " ", ...)
+expect_PATCH <- function(object, url = "", ...) {
+  expect_mock_request(object, "PATCH ", url, " ", ...)
 }
 
 #' @rdname expect_verb
 #' @export
-expect_PUT <- function (object, url="", ...) {
-    expect_mock_request(object, "PUT ", url, " ", ...)
+expect_PUT <- function(object, url = "", ...) {
+  expect_mock_request(object, "PUT ", url, " ", ...)
 }
 
 #' @rdname expect_verb
 #' @export
-expect_DELETE <- function (object, url="", ...) {
-    expect_mock_request(object, "DELETE ", url, " ", ...)
+expect_DELETE <- function(object, url = "", ...) {
+  expect_mock_request(object, "DELETE ", url, " ", ...)
 }
 
 #' @rdname expect_verb
 #' @export
-expect_no_request <- function (object, ...) {
-    ## No request means no error/message thrown
-    request_happened()(object, NA)
+expect_no_request <- function(object, ...) {
+  # No request means no error/message thrown
+  request_happened()(object, NA)
 }
 
 #' @importFrom testthat expect_error
-expect_mock_request <- function (object,
-                                 ...,
-                                 fixed=TRUE,
-                                 ignore.case=FALSE,
-                                 perl=FALSE,
-                                 useBytes=FALSE) {
-    ## PUT/POST/PATCH with no body may have trailing whitespace, so trim it
-    expected <- sub(" +$", "", paste0(...))
-    request_happened()(
-        object,
-        expected,
-        fixed=fixed,
-        ignore.case=ignore.case,
-        perl=perl,
-        useBytes=useBytes
-    )
+expect_mock_request <- function(object,
+                                ...,
+                                fixed = TRUE,
+                                ignore.case = FALSE,
+                                perl = FALSE,
+                                useBytes = FALSE) {
+  # PUT/POST/PATCH with no body may have trailing whitespace, so trim it
+  expected <- sub(" +$", "", paste0(...))
+  request_happened()(
+    object,
+    expected,
+    fixed = fixed,
+    ignore.case = ignore.case,
+    perl = perl,
+    useBytes = useBytes
+  )
 }
 
-## Without internet, POST/PUT/PATCH throw errors with their request info
-## With fake HTTP, POST/PUT/PATCH print messages with their request info.
-## with_fake_http mocks request_happened to make it expect_message
+# Without internet, POST/PUT/PATCH throw errors with their request info
+# With fake HTTP, POST/PUT/PATCH print messages with their request info.
+# with_fake_http mocks request_happened to make it expect_message
 #' @importFrom testthat expect_error expect_message
-request_happened <- function () {
-    if (getOption("..httptest.request.errors", TRUE)) {
-        return(testthat::expect_error)
-    } else {
-        return(testthat::expect_message)
-    }
+request_happened <- function() {
+  if (getOption("..httptest.request.errors", TRUE)) {
+    return(testthat::expect_error)
+  } else {
+    return(testthat::expect_message)
+  }
 }

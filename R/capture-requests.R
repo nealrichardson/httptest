@@ -44,17 +44,19 @@
 #' @examples
 #' \dontrun{
 #' capture_requests({
-#'     GET("http://httpbin.org/get")
-#'     GET("http://httpbin.org")
-#'     GET("http://httpbin.org/response-headers",
-#'         query=list(`Content-Type`="application/json"))
+#'   GET("http://httpbin.org/get")
+#'   GET("http://httpbin.org")
+#'   GET("http://httpbin.org/response-headers",
+#'     query = list(`Content-Type` = "application/json")
+#'   )
 #' })
 #' # Or:
 #' start_capturing()
 #' GET("http://httpbin.org/get")
 #' GET("http://httpbin.org")
 #' GET("http://httpbin.org/response-headers",
-#'     query=list(`Content-Type`="application/json"))
+#'   query = list(`Content-Type` = "application/json")
+#' )
 #' stop_capturing()
 #' }
 #' @importFrom httr content
@@ -62,43 +64,47 @@
 #' @seealso [build_mock_url()] for how requests are translated to file paths.
 #' And see `vignette("redacting")` for details on how to prune sensitive
 #' content from responses when recording.
-capture_requests <- function (expr, path, ...) {
-    start_capturing(...)
-    on.exit(stop_capturing())
-    where <- parent.frame()
-    if (!missing(path)) {
-        with_mock_path(path, eval(expr, where))
-    } else {
-        eval(expr, where)
-    }
+capture_requests <- function(expr, path, ...) {
+  start_capturing(...)
+  on.exit(stop_capturing())
+  where <- parent.frame()
+  if (!missing(path)) {
+    with_mock_path(path, eval(expr, where))
+  } else {
+    eval(expr, where)
+  }
 }
 
 #' @rdname capture_requests
 #' @export
-start_capturing <- function (path=NULL, simplify=TRUE) {
-    if (!is.null(path)) {
-        ## Note that this changes state and doesn't reset it
-        .mockPaths(path)
-    }
+start_capturing <- function(path = NULL, simplify = TRUE) {
+  if (!is.null(path)) {
+    # Note that this changes state and doesn't reset it
+    .mockPaths(path)
+  }
 
-    ## Use "substitute" so that args get inserted. Code remains quoted.
-    req_tracer <- substitute({
-        ## Get the value returned from the function, and sanitize it
-        redactor <- get_current_redactor()
-        .resp <- returnValue()
-        if (is.null(.resp)) {
-            # returnValue() defaults to NULL if the traced function exits with
-            # an error, so there's no response to record.
-            warning("Request errored; no captured response file saved",
-                call.=FALSE)
-        } else {
-            save_response(redactor(.resp), simplify=simplify)
-        }
-    }, list(simplify=simplify))
-    for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET", "RETRY")) {
-        trace_httr(verb, exit=req_tracer)
-    }
-    invisible(path)
+  # Use "substitute" so that args get inserted. Code remains quoted.
+  req_tracer <- substitute(
+    {
+      # Get the value returned from the function, and sanitize it
+      redactor <- get_current_redactor()
+      .resp <- returnValue()
+      if (is.null(.resp)) {
+        # returnValue() defaults to NULL if the traced function exits with
+        # an error, so there's no response to record.
+        warning("Request errored; no captured response file saved",
+          call. = FALSE
+        )
+      } else {
+        save_response(redactor(.resp), simplify = simplify)
+      }
+    },
+    list(simplify = simplify)
+  )
+  for (verb in c("PUT", "POST", "PATCH", "DELETE", "VERB", "GET", "RETRY")) {
+    trace_httr(verb, exit = req_tracer)
+  }
+  invisible(path)
 }
 
 #' Write out a captured response
@@ -113,98 +119,101 @@ start_capturing <- function (path=NULL, simplify=TRUE) {
 #' @export
 #' @keywords internal
 #' @importFrom jsonlite prettify
-save_response <- function (response, simplify=TRUE) {
-    ## Construct the mock file path
-    mock_file <- buildMockURL(response$request)
-    ## Track separately the actual full path we're going to write to
-    dst_file <- file.path(.mockPaths()[1], mock_file)
-    mkdir_p(dst_file)
+save_response <- function(response, simplify = TRUE) {
+  # Construct the mock file path
+  mock_file <- buildMockURL(response$request)
+  # Track separately the actual full path we're going to write to
+  dst_file <- file.path(.mockPaths()[1], mock_file)
+  mkdir_p(dst_file)
 
-    ## Get the Content-Type
-    ct <- get_content_type(response)
-    status <- response$status_code
-    if (simplify && status == 200 && ct %in% names(CONTENT_TYPE_TO_EXT)) {
-        ## Squelch the "No encoding supplied: defaulting to UTF-8."
-        cont <- suppressMessages(content(response, "text"))
-        if (ct == "application/json") {
-            ## Prettify
-            cont <- prettify(cont)
-        }
-        dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep=".")
-        cat_wb(cont, file=dst_file)
-    } else if (simplify && status == 204) {
-        ## "touch" a file with extension .204
-        dst_file <- paste0(dst_file, ".204")
-        cat_wb("", file=dst_file)
-    } else {
-        ## Dump an object that can be sourced
-
-        ## Change the file extension to .R
-        dst_file <- paste0(dst_file, ".R")
-        mock_file <- paste0(mock_file, ".R")
-
-        ## If content is text, rawToChar it and dput it as charToRaw(that)
-        ## so that it loads correctly but is also readable
-        text_types <- c("application/json",
-            "application/x-www-form-urlencoded", "application/xml",
-            "text/csv", "text/html", "text/plain",
-            "text/tab-separated-values", "text/xml")
-        if (ct %in% text_types) {
-            ## Squelch the "No encoding supplied: defaulting to UTF-8."
-            cont <- suppressMessages(content(response, "text"))
-            # if (ct == "application/json") {
-            #     ## TODO: "parse error: premature EOF"
-            #     cont <- jsonlite::prettify(cont)
-            # }
-            response$content <- substitute(charToRaw(cont))
-        } else if (inherits(response$request$output, "write_disk")) {
-            ## Copy real file and substitute the response$content "path".
-            ## Note that if content is a text type, the above attempts to
-            ## make the mock file readable call `content()`, which reads
-            ## in the file that has been written to disk, so it effectively
-            ## negates the "download" behavior for the recorded response.
-            downloaded_file <- paste0(dst_file, "-FILE")
-            file.copy(response$content, downloaded_file)
-            mock_file <- paste0(mock_file, "-FILE")
-            response$content <- substitute(structure(find_mock_file(mock_file),
-                class="path"))
-        }
-
-        ## Omit curl handle C pointer, which doesn't serialize meaningfully
-        response$handle <- NULL
-        ## Drop request since httr:::request_perform will fill it in when loading
-        response$request <- NULL
-
-        f <- file(dst_file, "wb", encoding="UTF-8")
-        on.exit(close(f))
-        dput(response, file=f)
+  # Get the Content-Type
+  ct <- get_content_type(response)
+  status <- response$status_code
+  if (simplify && status == 200 && ct %in% names(CONTENT_TYPE_TO_EXT)) {
+    # Squelch the "No encoding supplied: defaulting to UTF-8."
+    cont <- suppressMessages(content(response, "text"))
+    if (ct == "application/json") {
+      # Prettify
+      cont <- prettify(cont)
     }
-    if (isTRUE(getOption("httptest.verbose", FALSE))) {
-        message("Writing ", normalizePath(dst_file))
+    dst_file <- paste(dst_file, CONTENT_TYPE_TO_EXT[[ct]], sep = ".")
+    cat_wb(cont, file = dst_file)
+  } else if (simplify && status == 204) {
+    # "touch" a file with extension .204
+    dst_file <- paste0(dst_file, ".204")
+    cat_wb("", file = dst_file)
+  } else {
+    # Dump an object that can be sourced
+
+    # Change the file extension to .R
+    dst_file <- paste0(dst_file, ".R")
+    mock_file <- paste0(mock_file, ".R")
+
+    # If content is text, rawToChar it and dput it as charToRaw(that)
+    # so that it loads correctly but is also readable
+    text_types <- c(
+      "application/json",
+      "application/x-www-form-urlencoded", "application/xml",
+      "text/csv", "text/html", "text/plain",
+      "text/tab-separated-values", "text/xml"
+    )
+    if (ct %in% text_types) {
+      # Squelch the "No encoding supplied: defaulting to UTF-8."
+      cont <- suppressMessages(content(response, "text"))
+      # if (ct == "application/json") {
+      #     # TODO: "parse error: premature EOF"
+      #     cont <- jsonlite::prettify(cont)
+      # }
+      response$content <- substitute(charToRaw(cont))
+    } else if (inherits(response$request$output, "write_disk")) {
+      # Copy real file and substitute the response$content "path".
+      # Note that if content is a text type, the above attempts to
+      # make the mock file readable call `content()`, which reads
+      # in the file that has been written to disk, so it effectively
+      # negates the "download" behavior for the recorded response.
+      downloaded_file <- paste0(dst_file, "-FILE")
+      file.copy(response$content, downloaded_file)
+      mock_file <- paste0(mock_file, "-FILE")
+      response$content <- substitute(structure(find_mock_file(mock_file),
+        class = "path"
+      ))
     }
-    return(dst_file)
+
+    # Omit curl handle C pointer, which doesn't serialize meaningfully
+    response$handle <- NULL
+    # Drop request since httr:::request_perform will fill it in when loading
+    response$request <- NULL
+
+    f <- file(dst_file, "wb", encoding = "UTF-8")
+    on.exit(close(f))
+    dput(response, file = f)
+  }
+  if (isTRUE(getOption("httptest.verbose", FALSE))) {
+    message("Writing ", normalizePath(dst_file))
+  }
+  return(dst_file)
 }
 
 #' @rdname capture_requests
 #' @export
-stop_capturing <- function () {
-    for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB", "RETRY")) {
-        safe_untrace(verb, add_headers)
-        safe_untrace(verb)
-    }
+stop_capturing <- function() {
+  for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB", "RETRY")) {
+    safe_untrace(verb, add_headers)
+    safe_untrace(verb)
+  }
 }
 
-mkdir_p <- function (filename) {
-    # Recursively create the directories so that we can write this file.
-    # If they already exist, do nothing.
-    # Like mkdir -p path
+mkdir_p <- function(filename) {
+  # Recursively create the directories so that we can write this file.
+  # If they already exist, do nothing.
+  # Like mkdir -p path
 
-    dir.create(dirname(filename), showWarnings=FALSE, recursive=TRUE)
+  dir.create(dirname(filename), showWarnings = FALSE, recursive = TRUE)
 }
 
-cat_wb <- function (x, file, ...) {
+cat_wb <- function(x, file, ...) {
   # For cleaning up CRLF issues on Windows, write to a file connection in binary mode
-  f <- file(file, "wb", encoding="UTF-8")
+  f <- file(file, "wb", encoding = "UTF-8")
   on.exit(close(f))
   cat(enc2utf8(x), file = f, ...)
 }

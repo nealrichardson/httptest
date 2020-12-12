@@ -34,31 +34,31 @@
 #' for how previously recorded requests are loaded; [change_state()] for how to
 #' handle recorded requests when the server state is changing;
 #' `vignette("vignettes", package="httptest")` for an overview of all
-start_vignette <- function (path, ...) {
-    ## Cache the original .mockPaths so we can restore it on exit
-    ## And don't print messages in a vignette
-    options(
-        httptest.mock.paths.old=getOption("httptest.mock.paths"),
-        httptest.verbose.old=getOption("httptest.verbose"),
-        httptest.verbose=FALSE
-    )
-    ## This actually sources the files, if they exist
-    find_package_functions(get_attached_packages(), "start-vignette.R")
+start_vignette <- function(path, ...) {
+  # Cache the original .mockPaths so we can restore it on exit
+  # And don't print messages in a vignette
+  options(
+    httptest.mock.paths.old = getOption("httptest.mock.paths"),
+    httptest.verbose.old = getOption("httptest.verbose"),
+    httptest.verbose = FALSE
+  )
+  # This actually sources the files, if they exist
+  find_package_functions(get_attached_packages(), "start-vignette.R")
 
-    ## Set the starting mockPath
-    if (dir.exists("vignettes")) {
-        ## We're in the package root directory, probably running interactively
-        ## but we need to make sure we record/load relative to the vignette dir
-        path <- file.path("vignettes", path)
-    }
-    .mockPaths(file.path(path, "0"))
-    if (dir.exists(path)) {
-        ## We already have recorded, so use the fixtures
-        use_mock_api()
-    } else {
-        ## Record!
-        start_capturing(...)
-    }
+  # Set the starting mockPath
+  if (dir.exists("vignettes")) {
+    # We're in the package root directory, probably running interactively
+    # but we need to make sure we record/load relative to the vignette dir
+    path <- file.path("vignettes", path)
+  }
+  .mockPaths(file.path(path, "0"))
+  if (dir.exists(path)) {
+    # We already have recorded, so use the fixtures
+    use_mock_api()
+  } else {
+    # Record!
+    start_capturing(...)
+  }
 }
 
 #' Handle a change of server state
@@ -75,34 +75,34 @@ start_vignette <- function (path, ...) {
 #'
 #' @return Invisibly, the return of `.mockPaths()` with the new path added.
 #' @export
-change_state <- function () {
-    current_path <- .mockPaths()[1]
-    path_segments <- unlist(strsplit(current_path, .Platform$file.sep))
-    current_number <- suppressWarnings(as.numeric(path_segments[length(path_segments)]))
-    if (is.na(current_number)) {
-        ## This path doesn't come from start_vignette/change_state
-        stop(current_path, " is not valid for change_state()")
-    }
-    path_segments[length(path_segments)] <- current_number + 1
-    new_path <- do.call(file.path, as.list(path_segments))
-    .mockPaths(new_path)
+change_state <- function() {
+  current_path <- .mockPaths()[1]
+  path_segments <- unlist(strsplit(current_path, .Platform$file.sep))
+  current_number <- suppressWarnings(as.numeric(path_segments[length(path_segments)]))
+  if (is.na(current_number)) {
+    # This path doesn't come from start_vignette/change_state
+    stop(current_path, " is not valid for change_state()")
+  }
+  path_segments[length(path_segments)] <- current_number + 1
+  new_path <- do.call(file.path, as.list(path_segments))
+  .mockPaths(new_path)
 }
 
 #' @rdname start_vignette
 #' @export
-end_vignette <- function () {
-    stop_capturing()
-    stop_mocking()
-    ## TODO: compress recorded mocks (in case change_state() was called but
-    ## state didn't actually change) if we were recording
+end_vignette <- function() {
+  stop_capturing()
+  stop_mocking()
+  # TODO: compress recorded mocks (in case change_state() was called but
+  # state didn't actually change) if we were recording
 
-    ## This actually sources the files, if they exist
-    find_package_functions(get_attached_packages(), "end-vignette.R")
+  # This actually sources the files, if they exist
+  find_package_functions(get_attached_packages(), "end-vignette.R")
 
-    ## Restore original settings
-    options(
-        httptest.mock.paths=getOption("httptest.mock.paths.old"),
-        httptest.mock.paths.old=NULL,
-        httptest.verbose=getOption("httptest.verbose.old")
-    )
+  # Restore original settings
+  options(
+    httptest.mock.paths = getOption("httptest.mock.paths.old"),
+    httptest.mock.paths.old = NULL,
+    httptest.verbose = getOption("httptest.verbose.old")
+  )
 }

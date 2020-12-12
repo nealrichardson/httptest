@@ -17,7 +17,7 @@
 # httptest 3.3.0
 
 * (Re)load package redactors when loading a package interactively with `pkgload::load_all()`, formerly of `devtools` (#15)
-* `expect_header()` now defaults to `ignore.case=TRUE` because HTTP header names are case insensitive.
+* `expect_header()` now defaults to `ignore.case = TRUE` because HTTP header names are case insensitive.
 * Support mocking of file uploads via `httr::upload_file` on all platforms (#25)
 * Remove deprecated `redact` and `verbose` arguments to `capture_requests`
 
@@ -37,8 +37,8 @@
 ## Better, more efficient response recording
 
 * `capture_requests()` no longer includes the "request" object inside the recorded response when writing `.R` verbose responses. As of 3.0.0, `with_mock_api()` inserts the current request when loading mock files, so it was being overwritten anyway. This eliminates some (though not all) of the need for redacting responses. As a result, the redacting functions `redact_oauth()` and `redact_http_auth()` have been removed because they only acted on the `response$request`, which is now dropped entirely.
-* `capture_requests()` will record simplified response bodies for a range of Content-Types when `simplify=TRUE` (the default). Previously, only `.json` (`Content-Type: application/json`) was recorded as a simple text files; now, `.html`, `.xml`, `.txt`, `.csv`, and `.tsv` are supported.
-* When recording with `simplify=TRUE`, HTTP responses with `204 No Content` status are now written as empty files with `.204` extension. This saves around 2K of disk space per file.
+* `capture_requests()` will record simplified response bodies for a range of Content-Types when `simplify = TRUE` (the default). Previously, only `.json` (`Content-Type: application/json`) was recorded as a simple text files; now, `.html`, `.xml`, `.txt`, `.csv`, and `.tsv` are supported.
+* When recording with `simplify = TRUE`, HTTP responses with `204 No Content` status are now written as empty files with `.204` extension. This saves around 2K of disk space per file.
 * `with_mock_api()` now can also load these newly supported file types.
 * Bare JSON files written by `capture_requests()` are now "prettified" (i.e. multiline, nice indentation).
 * `capture_requests()` now records responses from `httr::RETRY()` (#13)
@@ -58,8 +58,8 @@
 
 ## Major features
 * Write vignettes and other R Markdown documents that communicate with a remote API using `httptest`. Add a code chunk at the beginning of the document including `start_vignette()`. The first time you run the document, the real API responses are recorded to a subfolder in your `vignettes` directory. Subsequent vignette builds use these recorded responses, allowing the document to regenerate without a network connection or API credentials. If your document needs to handle changes of server state, as when you make an API request that creates a record on the server, add a call to `change_state()`. See `vignette("vignettes")` for more discussion and links to examples.
-* Packages can now have a default redacting function, such that whenever the package is loaded, `capture_requests()` will apply that function to any responses it records. This ensures that you never forget to sanitize your API responses if you need to use a custom function. To take advantage of this feature, put a `function (response) {...}` in a file at `inst/httptest/redact.R` in your package. See the updated `vignette("redacting", package="httptest")` for more.
-* You can also now provide a function to preprocess mock requests. This can be particularly for shortening URLs---and thus the mock file paths---because of CRAN-mandated constraints on file path lengths ("non-portable file paths"). This machinery works very similar to redacting responses when recording them, except it operates on `request` objects inside of `with_mock_api()`. To use it, either pass a `function (request) {...}` to `set_requester()` in your R session, or to define one for the package, put a `function (request) {...}` in a file at `inst/httptest/request.R`. `gsub_request()` is particularly useful here. `vignette("redacting", package="httptest")` has further details.
+* Packages can now have a default redacting function, such that whenever the package is loaded, `capture_requests()` will apply that function to any responses it records. This ensures that you never forget to sanitize your API responses if you need to use a custom function. To take advantage of this feature, put a `function (response) {...}` in a file at `inst/httptest/redact.R` in your package. See the updated `vignette("redacting", package = "httptest")` for more.
+* You can also now provide a function to preprocess mock requests. This can be particularly for shortening URLs---and thus the mock file paths---because of CRAN-mandated constraints on file path lengths ("non-portable file paths"). This machinery works very similar to redacting responses when recording them, except it operates on `request` objects inside of `with_mock_api()`. To use it, either pass a `function (request) {...}` to `set_requester()` in your R session, or to define one for the package, put a `function (request) {...}` in a file at `inst/httptest/request.R`. `gsub_request()` is particularly useful here. `vignette("redacting", package = "httptest")` has further details.
 
 ## Other big changes and enhancements
 * Standardize exported functions on `snake_case` rather than `camelCase` to better align with `httr` and `testthat` (except for `.mockPaths()`, which follows `base::.libPaths()`). Exported functions that have been renamed have retained their old aliases in this release, but they are to be deprecated.
@@ -80,10 +80,10 @@
 * Add `redact_oauth()` to purge `httr::Token()` objects from requests ([#9](https://github.com/nealrichardson/httptest/issues/9)). `redact_oauth()` is built in to `redact_auth()`, the default redactor, so no action is required to start using it.
 
 # httptest 2.3.0
-* Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config=write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`.
+* Remove support for mocking `utils::download.file()`, as `testthat` no longer permits it. Use `httr::GET(url, config = write_disk(filename))` instead, which `httptest` now more robustly supports in `capture_requests()`.
 
 # httptest 2.2.0
-* Add redacting functions (`redact_auth()`, `redact_cookies()`, `redact_http_auth()`, `redact_headers()`, `within_body_text()`) that can be specified in `capture_requests()` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth()`, which wraps several of them. See `vignette("redacting", package="httptest")` for more.
+* Add redacting functions (`redact_auth()`, `redact_cookies()`, `redact_http_auth()`, `redact_headers()`, `within_body_text()`) that can be specified in `capture_requests()` so that sensitive information like tokens and ids can be purged from recorded response files. The default redacting function is `redact_auth()`, which wraps several of them. See `vignette("redacting", package = "httptest")` for more.
 * When loading a JSON mock response, the current "request" object is now included in the response returned, as is the case with real responses.
 * Remove the file size limitation for mock files loaded in `with_mock_api()`
 * `skip_if_disconnected()` now also wraps `testthat::skip_on_cran()` so that tests that require a real network connection don't cause a flaky test failure on CRAN

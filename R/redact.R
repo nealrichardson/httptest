@@ -1,61 +1,61 @@
-chain_redactors <- function (funs) {
-    ## Given a list of functions, return a function that execs them in sequence
-    return(function (response) {
-        for (f in funs) {
-            if (inherits(f, "formula")) {
-                f <- as.redactor(f)
-            }
-            response <- f(response)
-        }
-        return(response)
+chain_redactors <- function(funs) {
+  # Given a list of functions, return a function that execs them in sequence
+  return(function(response) {
+    for (f in funs) {
+      if (inherits(f, "formula")) {
+        f <- as.redactor(f)
+      }
+      response <- f(response)
+    }
+    return(response)
+  })
+}
+
+#' @rdname redact
+#' @export
+redact_cookies <- function(response) {
+  response <- redact_headers(response, "Set-Cookie")
+  if (!is.null(response$cookies) && nrow(response$cookies)) {
+    # is.null check is for reading mocks.
+    # possible TODO: add $cookies to fake_response, then !is.null isn't needed
+    response$cookies$value <- "REDACTED"
+  }
+  return(response)
+}
+
+#' @rdname redact
+#' @export
+redact_headers <- function(response, headers = c()) {
+  header_apply(response, headers, function(x) "REDACTED")
+}
+
+header_apply <- function(response, headers, FUN, ...) {
+  # Apply some function over a set of named headers, anywhere they may
+  # appear in a response or request object
+  response$headers <- happly(response$headers, headers, FUN, ...)
+  if (!is.null(response$all_headers)) {
+    response$all_headers <- lapply(response$all_headers, function(h) {
+      h$headers <- happly(h$headers, headers, FUN, ...)
+      return(h)
     })
+  }
+  return(response)
+}
+
+happly <- function(header_list, headers, FUN, ...) {
+  # Called from header_apply, actually does the applying on a header list
+  todo <- tolower(names(header_list)) %in% tolower(headers)
+  header_list[todo] <- lapply(header_list[todo], FUN, ...)
+  return(header_list)
 }
 
 #' @rdname redact
 #' @export
-redact_cookies <- function (response) {
-    response <- redact_headers(response, "Set-Cookie")
-    if (!is.null(response$cookies) && nrow(response$cookies)) {
-        ## is.null check is for reading mocks.
-        ## possible TODO: add $cookies to fake_response, then !is.null isn't needed
-        response$cookies$value <- "REDACTED"
-    }
-    return(response)
-}
-
-#' @rdname redact
-#' @export
-redact_headers <- function (response, headers=c()) {
-    header_apply(response, headers, function (x) "REDACTED")
-}
-
-header_apply <- function (response, headers, FUN, ...) {
-    ## Apply some function over a set of named headers, anywhere they may
-    ## appear in a response or request object
-    response$headers <- happly(response$headers, headers, FUN, ...)
-    if (!is.null(response$all_headers)) {
-        response$all_headers <- lapply(response$all_headers, function (h) {
-            h$headers <- happly(h$headers, headers, FUN, ...)
-            return(h)
-        })
-    }
-    return(response)
-}
-
-happly <- function (header_list, headers, FUN, ...) {
-    ## Called from header_apply, actually does the applying on a header list
-    todo <- tolower(names(header_list)) %in% tolower(headers)
-    header_list[todo] <- lapply(header_list[todo], FUN, ...)
-    return(header_list)
-}
-
-#' @rdname redact
-#' @export
-within_body_text <- function (response, FUN) {
-    old <- suppressMessages(content(response, "text"))
-    new <- FUN(old)
-    response$content <- charToRaw(new)
-    return(response)
+within_body_text <- function(response, FUN) {
+  old <- suppressMessages(content(response, "text"))
+  new <- FUN(old)
+  response$content <- charToRaw(new)
+  return(response)
 }
 
 #' Find and replace within a 'response' or 'request'
@@ -85,42 +85,42 @@ within_body_text <- function (response, FUN) {
 #' @return A `request` or `response` object, same as was passed in, with the
 #' pattern replaced in the URLs and bodies.
 #' @export
-gsub_response <- function (response, pattern, replacement, ...) {
-    replacer <- function (x) gsub(pattern, replacement, x, ...)
-    response$url <- replacer(response$url)
-    response <- header_apply(response, "location", replacer)
-    response <- within_body_text(response, replacer)
-    ## Modify the request too because this affects where we write the mock file to
-    response$request <- gsub_request(response$request, pattern, replacement, ...)
-    return(response)
+gsub_response <- function(response, pattern, replacement, ...) {
+  replacer <- function(x) gsub(pattern, replacement, x, ...)
+  response$url <- replacer(response$url)
+  response <- header_apply(response, "location", replacer)
+  response <- within_body_text(response, replacer)
+  # Modify the request too because this affects where we write the mock file to
+  response$request <- gsub_request(response$request, pattern, replacement, ...)
+  return(response)
 }
 
 #' @param request An 'httr' `request` object to sanitize.
 #' @rdname gsub_response
 #' @export
-gsub_request <- function (request, pattern, replacement, ...) {
-    replacer <- function (x) gsub(pattern, replacement, x, ...)
-    request$url <- replacer(request$url)
-    # Body (as in JSON)
-    bod <- request_postfields(request)
-    if (!is.null(bod)) {
-        request$options[["postfields"]] <- charToRaw(replacer(bod))
-    }
-    # Multipart post fields
-    request$fields <- replace_in_fields(request$fields, replacer)
-    return(request)
+gsub_request <- function(request, pattern, replacement, ...) {
+  replacer <- function(x) gsub(pattern, replacement, x, ...)
+  request$url <- replacer(request$url)
+  # Body (as in JSON)
+  bod <- request_postfields(request)
+  if (!is.null(bod)) {
+    request$options[["postfields"]] <- charToRaw(replacer(bod))
+  }
+  # Multipart post fields
+  request$fields <- replace_in_fields(request$fields, replacer)
+  return(request)
 }
 
-replace_in_fields <- function (x, FUN) {
-    if (is.list(x)) {
-        x <- lapply(x, replace_in_fields, FUN)
-        if (!is.null(names(x))) {
-            names(x) <- FUN(names(x))
-        }
-    } else if (is.character(x)) {
-        x <- FUN(x)
+replace_in_fields <- function(x, FUN) {
+  if (is.list(x)) {
+    x <- lapply(x, replace_in_fields, FUN)
+    if (!is.null(names(x))) {
+      names(x) <- FUN(names(x))
     }
-    return(x)
+  } else if (is.character(x)) {
+    x <- FUN(x)
+  }
+  return(x)
 }
 
 #' Wrap a redacting expression as a proper function
@@ -141,11 +141,11 @@ replace_in_fields <- function (x, FUN) {
 #' @importFrom stats terms
 #' @keywords internal
 #' @seealso [capture_requests()]
-as.redactor <- function (fmla) {
-    env <- parent.frame()
-    expr <- attr(terms(fmla), "variables")[[2]]
-    # cf. magrittr:::wrap_function: wrap that in a function (.) ...
-    return(eval(call("function", as.pairlist(alist(.=)), expr), env, env))
+as.redactor <- function(fmla) {
+  env <- parent.frame()
+  expr <- attr(terms(fmla), "variables")[[2]]
+  # cf. magrittr:::wrap_function: wrap that in a function (.) ...
+  return(eval(call("function", as.pairlist(alist(. = )), expr), env, env))
 }
 
 #' Remove sensitive content from HTTP responses
