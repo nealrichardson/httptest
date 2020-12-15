@@ -32,4 +32,18 @@ public({
     })
     expect_true(all.equal(current_mock_paths, .mockPaths()))
   })
+
+  test_that("with_mock_dir prefers to be in tests/testthat", {
+    d <- tempfile()
+    dir.create(file.path(d, "tests", "testthat"), recursive = TRUE)
+    old <- setwd(d)
+    on.exit(setwd(old))
+
+    with_mock_dir("asdf", {
+      expect_identical(.mockPaths(), file.path("tests", "testthat", "asdf"))
+    })
+    with_mock_dir("/asdf", {
+      expect_identical(.mockPaths(), "/asdf")
+    })
+  })
 })
