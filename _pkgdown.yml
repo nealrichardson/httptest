@@ -35,6 +35,7 @@ reference:
   contents:
   - with_mock_api
   - use_mock_api
+  - with_mock_dir
   - without_internet
   - block_requests
   - with_fake_http
@@ -62,6 +63,7 @@ reference:
   - change_state
 - title: Other testing tools
   contents:
+  - httptest
   - use_httptest
   - public
   - skip_if_disconnected
