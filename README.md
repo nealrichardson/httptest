@@ -34,7 +34,7 @@ To start using `httptest` with your package, run `use_httptest()` in the root of
 * add `httptest` to "Suggests" in the DESCRIPTION file
 * add `library(httptest)` to `tests/testthat/setup.R`, which `testthat` loads before running tests
 
-Then, you're ready to start using the tools that `httptest` provides. Here's an overview of how to get started. For a longer discussion and examples, see `vignette("httptest")`, and see also the [package reference](https://enpiar.com/r/httptest/reference/) for a list of all of the test contexts and expectations provided in the package.
+Then, you're ready to start using the tools that `httptest` provides. Here's an overview of how to get started. For a longer discussion and examples, see `vignette("httptest")`, and check out `vignette("faq")` for some common questions. See also the [package reference](https://enpiar.com/r/httptest/reference/) for a list of all of the test contexts and expectations provided in the package.
 
 ### In your test suite
 
@@ -108,63 +108,6 @@ Package vignettes are a valuable way to show how to use your code, but when comm
 
 To use `httptest` in your vignettes, add a code chunk with `start_vignette()` at the beginning, and for many use cases, that's the only thing you need. If you need to handle changes of server state, as when you make an API request that creates a record on the server, add a call to `change_state()`. See `vignette("vignettes")` for more discussion and links to examples.
 
-### FAQ
-
-#### Where are my mocks recorded?
-
-By default, the destination path for `capture_requests()` is relative to the current working directory of the process. This matches the behavior of `with_mock_api()`, which looks for files relative to its directory, which typically is `tests/testthat/`.
-
-If you're running `capture_requests` within a test suite in an installed package, or if you're running interactively from a different directory, the working directory may not be the same as your code repository. If you aren't sure where the files are going, set `options(httptest.verbose=TRUE)`, and it will message the absolute path of the files as it writes them.
-
-To change where files are being written or read from, use `.mockPaths()` (like `base::.libPaths()`) to specify a different directory.
-
-#### How do I fix "non-portable file paths"?
-
-If you see this error in `R CMD build` or `R CMD check`, it means that there are file paths are longer than 100 characters, which can sometimes happen when you record requests. `httptest` preserves the URL structure of mocks in file paths to improve the readability and maintainability of your tests, as well as to make visible the properties of your API.
-Indeed, the file-system tree view of the mock files gives a visual representation of your API. This value comes with a tradeoff: sometimes URLs can be long, and R doesn't like that.
-
-Depending on how long your URLs are, there are a few ways to save on characters without compromising readability of your code and tests.
-
-A big way to cut long file paths is by using a request preprocessor: a function that alters the content of your 'httr' `request` before mapping it to a mock file. For example, if all of your API endpoints sit beneath `https://language.googleapis.com/v1/`, you could set a request preprocessor like:
-
-```r
-set_requester(function (request) {
-  gsub_request(request, "https\\://language.googleapis.com/v1/", "api/")
-})
-```
-
-and then all mocked requests would look for a path starting with "api/" rather than "language.googleapis.com/v1/", saving you (in this case) 23 characters.
-
-You can also provide this function in `inst/httptest/request.R`, and any time your package is loaded (as when you run tests or build vignettes), this function will be called automatically. See `vignette("redacting")` for more.
-
-You may also be able to economize on other parts of the file paths. If you've recorded requests and your file paths contain long ids like "1495480537a3c1bf58486b7e544ce83d", depending on how you access the API in your code, you may be able to simply replace that id with something shorter, like "1". The mocks are just files, disconnected from a real server and API, so you can rename them and munge them as needed.
-
-Finally, if you have your tests inside a `tests/testthat/` directory, and your fixture files inside that, you can save 9 characters by moving the fixtures up to `tests/` and setting `.mockPaths("../")`.
-
-#### How do I switch between mocking and real requests?
-
-`httptest` does not intend that every request in your test suite is something that could be run against a live server. There are practical reasons why you should be able to see, modify, and maintain test fixtures, rather than re-record them every time you make a change. Among the considerations:
-
-* In many cases, API responses contain way more content than is necessary to test your R code around them: 100 records when 2 will suffice, request metadata that you don't care about and can't meaningfully assert things about, and so on. In the interest of minimally reproducible examples, and of making tests readable, it often makes sense to take an actual API response and delete a lot of its content, or even to fabricate one entirely.
-* It's good to keep an API mock fixed so you know exactly what is in it. If you re-recorded a Twitter API response of, say, the most recent 10 tweets with `#rstats`, the specific content will change every time you record it, so your tests can't say much about what is in the response without having to rewrite them every time too.
-* Some conditions (rate limiting, server errors, e.g.) are difficult to test with real responses, but if you can hand-create a API mock with, say, a 503 response status code and test how your code handles it, you can have confidence of how your package will respond when that rare event happens with the real API.
-* Re-recording all responses can make for a huge code diff, which can blow up your repository size and make code review harder.
-
-That said, it can be worthwhile to have a subset of tests that can be run against a live API so that you can detect and respond to API changes. One option is to set up some tests with the `with_mock_dir()` context instead of `with_mock_api()`. For example:
-
-```r
-with_mock_dir("httpbin-get", {
-  a <- GET("https://httpbin.org/get")
-  print(a)
-})
-```
-
-The first time you run the code, it will create the directory `tests/testthat/httpbin-get`,
- and create mock files under it.
-The next times you run it, it will _use_ the mock files in `tests/testthat/httpbin-get`.
-To re-record, simply delete the directory.
-
-Another option is to have a secondary integration test suite in your code repository, a directory outside of the standard R package directories and included in `.Rbuildignore` so that it doesn't get packaged. You could run this locally with `testthat::test_dir()`, and you could run it on continuous integration builds by replacing the `tests/testthat` directory with the alternate test directory.
 
 ## Contributing
 
