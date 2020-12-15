@@ -22,7 +22,7 @@ navbar:
     - text: Using with Vignettes
       href: articles/vignettes.html
     - text: FAQ
-      href: index.html#faq
+      href: articles/faq.html
   - text: News
     href: news/
   right:
