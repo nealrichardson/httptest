@@ -1,6 +1,6 @@
 # httptest 3.3.0.9000 (under development)
 
-## Changes for compatibility with the forthcoming testthat 3rd edition
+## Changes for compatibility with testthat 3rd edition
 
 * `expect_header()` now emits a single warning with all of the headers that are included with the call (instead of one warning per header). This makes catching multiple headers easier and prevents excess warnings when using testthat 3e (#38, @jonkeane)
 * Quiet an extraneous message about untracing `curl::form_file()` (#35, @dmenne)
@@ -8,11 +8,12 @@
 
 ## Other fixes and enhancements
 
+* Add `with_mock_dir()` that allows to automatically switch between recording and playing back for a test (#48, @maelle).
 * Mocking PUT and POST with a body consisting of only `httr::upload_file()` no longer leaves a file connection open.
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
-* Switch continuous integration to use GitHub Actions (#36, @jonkeane)
-* The test file `helper.R` was renamed to `setup.R` to comply with `testthat`'s latest recommendations (#44, @maelle)
-* Add `with_mock_dir()` that allows to automatically switch between recording and playing back for a test (#48, @maelle).
+* Many improvements to interactive test running and mock recording, including that `.mockPaths()` will prefer to use `tests/testthat` if it exists (i.e. when running interactively in the package root directory) (#52) and `start_vignette()` similarly prefers the `vignettes` directory (#55).
+* Function aliases `with_mock_API`, `with_fake_HTTP`, and `buildMockURL`, deprecated in 3.0.0, have been removed.
+* Testing: switch continuous integration to use GitHub Actions (#36, @jonkeane); rename `helper.R` to `setup.R` per `testthat`'s latest recommendations (#44, @maelle)
 
 # httptest 3.3.0
 
