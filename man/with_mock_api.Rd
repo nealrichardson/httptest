@@ -2,12 +2,9 @@
 % Please edit documentation in R/mock-api.R
 \name{with_mock_api}
 \alias{with_mock_api}
-\alias{with_mock_API}
 \title{Serve a mock API from files}
 \usage{
 with_mock_api(expr)
-
-with_mock_API(expr)
 }
 \arguments{
 \item{expr}{Code to run inside the fake context}

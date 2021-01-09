@@ -2,12 +2,9 @@
 % Please edit documentation in R/mock-api.R
 \name{build_mock_url}
 \alias{build_mock_url}
-\alias{buildMockURL}
 \title{Convert a request to a mock file path}
 \usage{
 build_mock_url(req, method = "GET")
-
-buildMockURL(req, method = "GET")
 }
 \arguments{
 \item{req}{A \code{request} object, or a character "URL" to convert}
