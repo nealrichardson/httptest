@@ -15,9 +15,6 @@
 #' location for storing and retrieving mocks, but you can put them anywhere you
 #' want as long as you set the appropriate location with [.mockPaths()].
 #'
-#' `with_mock_API()` is a deprecated alias for `with_mock_api()` and will be
-#' removed in the next release.
-#'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
 #' @seealso [use_mock_api()] to enable mocking on its own (not in a context); [build_mock_url()]; [.mockPaths()]
@@ -27,10 +24,6 @@ with_mock_api <- function(expr) {
   on.exit(stop_mocking())
   eval.parent(expr)
 }
-
-#' @rdname with_mock_api
-#' @export
-with_mock_API <- with_mock_api
 
 #' Turn on API mocking
 #'
