@@ -90,7 +90,7 @@
 * `skip_if_disconnected()` now also wraps `testthat::skip_on_cran()` so that tests that require a real network connection don't cause a flaky test failure on CRAN
 
 # httptest 2.1.2
-* Fix for compatibility with upcoming release of [httr](http://httr.r-lib.org/) that affected non-GET requests that did not contain any request body.
+* Fix for compatibility with upcoming release of [httr](https://httr.r-lib.org/) that affected non-GET requests that did not contain any request body.
 
 # httptest 2.1.0
 * `with_mock_api()` and `without_internet()` handle multipart and urlencoded form data in mocked HTTP requests.
@@ -123,4 +123,4 @@
 
 # httptest 1.0.0
 
-* Initial addition of functions and tests, largely pulled from [httpcache](https://enpiar.com/r/httpcache) and [crunch](https://crunch.io/r/crunch).
+* Initial addition of functions and tests, largely pulled from [httpcache](https://enpiar.com/r/httpcache/) and [crunch](https://crunch.io/r/crunch/).

@@ -62,7 +62,7 @@ Redacting functions can help with this content as well. You can use redactors on
 
 For example, in the [API for Pivotal Tracker](https://www.pivotaltracker.com/help/api), the agile project management tool, the Pivotal project id is built into many of its URLs. As a result, it would appear in mock file paths you record. The id is also often included in the response body.
 
-We'd rather not have that information leak in our test fixtures, so in the [pivotaltrackR](http://enpiar.com/r/pivotaltrackR/) package, which wraps this API, we need to tell `capture_requests` to scrub this id when we record mocks.
+We'd rather not have that information leak in our test fixtures, so in the [pivotaltrackR](https://enpiar.com/r/pivotaltrackR/) package, which wraps this API, we need to tell `capture_requests` to scrub this id when we record mocks.
 
 To do this, we'll use `set_redactor()` to supply a custom function. The project id is stored in the R session in `options(pivotal.project)`, so we can identify it and find-and-replace it with `gsub_response()`. The function takes `response` as its first argument and then passes the rest to `gsub()`, which is called on both the response URL and the response body.
 
@@ -108,7 +108,7 @@ s[[1]]$project_id
 
 Nor will the project id appear in the file path: since the redactor is evaluated before determining the file path to write to, if you alter the response URL, the destination file path will be generated based on the modified URL. In this case, our mock is written to ".../projects/123/stories-fb1776.json", not ".../projects/my-project-name/stories-fb1776.json".
 
-We can do more response cleaning with custom functions. All of the redactors in `httptest` take the "response" object as their first argument and return the response object modified in some way. This lends them to pipelining, as with the [`magrittr`](http://magrittr.tidyverse.org/) package.
+We can do more response cleaning with custom functions. All of the redactors in `httptest` take the "response" object as their first argument and return the response object modified in some way. This lends them to pipelining, as with the [`magrittr`](https://magrittr.tidyverse.org/) package.
 
 Continuing with the `pivotaltrackR` example, let's also prune the domain and API root path from the URLs we're recording so that we're making shorter file paths:
 
