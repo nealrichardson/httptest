@@ -1,4 +1,4 @@
-# httptest 3.3.0.9000 (under development)
+# httptest 4.0.0
 
 ## Changes for compatibility with testthat 3rd edition
 
