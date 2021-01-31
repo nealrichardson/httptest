@@ -50,9 +50,6 @@ This function is exported so that other packages can construct similar mock
 behaviors or override specific requests at a higher level than
 \code{with_mock_api} mocks.
 
-In the interest of standardizing naming conventions, \code{build_mock_url()} is
-the preferred name for this function; \code{buildMockURL()} is deprecated.
-
 Note that if you are trying to guess the mock file paths corresponding to a
 test for which you intend to create a mock file manually,
 instead of trying to build the URL, you should run the test

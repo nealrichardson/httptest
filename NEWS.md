@@ -12,7 +12,7 @@
 * Mocking PUT and POST with a body consisting of only `httr::upload_file()` no longer leaves a file connection open.
 * Mock files with special characters in the filename are now correctly found (#33, @natbprice)
 * Many improvements to interactive test running and mock recording, including that `.mockPaths()` will prefer to use `tests/testthat` if it exists (i.e. when running interactively in the package root directory) (#52) and `start_vignette()` similarly prefers the `vignettes` directory (#55).
-* Function aliases `with_mock_API`, `with_fake_HTTP`, and `buildMockURL`, deprecated in 3.0.0, have been removed.
+* Function aliases `with_fake_HTTP` and `buildMockURL`, deprecated in 3.0.0, have been removed.
 * Testing: switch continuous integration to use GitHub Actions (#36, @jonkeane); rename `helper.R` to `setup.R` per `testthat`'s latest recommendations (#44, @maelle)
 
 # httptest 3.3.0

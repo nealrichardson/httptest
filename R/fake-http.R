@@ -15,9 +15,6 @@
 #' it returns echoes back most of the request itself, similar to how some
 #' endpoints on \url{http://httpbin.org} do.
 #'
-#' In the interest of standardizing naming conventions, `with_fake_http()` is
-#' the preferred name for this context; `with_fake_HTTP()` is deprecated.
-#'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
 #' @examples

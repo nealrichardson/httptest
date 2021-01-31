@@ -15,8 +15,8 @@
 #' location for storing and retrieving mocks, but you can put them anywhere you
 #' want as long as you set the appropriate location with [.mockPaths()].
 #'
-#' In the interest of standardizing naming conventions, `with_mock_api()` is the
-#' preferred name for this context; `with_mock_API()` is being deprecated.
+#' `with_mock_API()` is a deprecated alias for `with_mock_api()` and will be
+#' removed in the next release.
 #'
 #' @param expr Code to run inside the fake context
 #' @return The result of `expr`
@@ -27,6 +27,10 @@ with_mock_api <- function(expr) {
   on.exit(stop_mocking())
   eval.parent(expr)
 }
+
+#' @rdname with_mock_api
+#' @export
+with_mock_API <- with_mock_api
 
 #' Turn on API mocking
 #'
@@ -88,9 +92,6 @@ mock_request <- function(req, handle, refresh) {
 #' This function is exported so that other packages can construct similar mock
 #' behaviors or override specific requests at a higher level than
 #' `with_mock_api` mocks.
-#'
-#' In the interest of standardizing naming conventions, `build_mock_url()` is
-#' the preferred name for this function; `buildMockURL()` is deprecated.
 #'
 #' Note that if you are trying to guess the mock file paths corresponding to a
 #' test for which you intend to create a mock file manually,
