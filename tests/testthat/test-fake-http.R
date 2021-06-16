@@ -115,15 +115,15 @@ test_that("fake_response returns a valid enough response even if you give it jus
 })
 
 test_that("fake_request gets covered directly (not just in tracer)", {
-  expect_s3_class(
-    expect_message(
+  expect_message(
+    expect_s3_class(
       fake_request(list(method = "GET", url = "http://httpbin.org/get")),
-      "GET http://httpbin.org/get"
+      "response"
     ),
-    "response"
+    "GET http://httpbin.org/get"
   )
-  expect_s3_class(
-    expect_message(
+  expect_message(
+    expect_s3_class(
       fake_request(
         list(
           method = "POST",
@@ -131,8 +131,8 @@ test_that("fake_request gets covered directly (not just in tracer)", {
           options = list(postfields = charToRaw("body"))
         )
       ),
-      "POST http://httpbin.org/get body"
+      "response"
     ),
-    "response"
+    "POST http://httpbin.org/get body"
   )
 })
