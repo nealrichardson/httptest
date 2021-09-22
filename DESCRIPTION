@@ -13,7 +13,7 @@ Description: Testing and documenting code that communicates with remote servers
     test fixtures. The ability to save responses and load them offline also
     enables one to write vignettes and other dynamic documents that can be
     distributed without access to a live server.
-Version: 4.0.0.9000
+Version: 4.1.0
 Authors@R: c(
         person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com"),
         person("Jonathan", "Keane", role="ctb", email="jkeane@gmail.com"),
@@ -40,7 +40,7 @@ Suggests:
     spelling,
     xml2
 Language: en-US
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.1.9001
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
