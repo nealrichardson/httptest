@@ -27,6 +27,7 @@
 #' @return A `testthat` 'expectation'.
 #' @examples
 #' library(httr)
+#' # without_internet provides required mock context for expectations
 #' without_internet({
 #'   expect_GET(
 #'     GET("http://httpbin.org/get"),

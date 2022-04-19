@@ -58,6 +58,7 @@ for instance, looks for a request message that starts with "PUT".
 }
 \examples{
 library(httr)
+# without_internet provides required mock context for expectations
 without_internet({
   expect_GET(
     GET("http://httpbin.org/get"),
