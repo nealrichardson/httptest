@@ -55,6 +55,11 @@ method (e.g. "GET"); (2) the request URL; and
 (3) the request body, if present.
 These verb-expectation functions look for this message shape. \code{expect_PUT},
 for instance, looks for a request message that starts with "PUT".
+
+This means that \code{expect_verb} functions won't work outside of mock context,
+as no error would be raised while making a request. Thus, any \code{expect_verb}
+function should be wrapped inside a mocking function like
+\code{\link[=without_internet]{without_internet()}}, as shown in the examples.
 }
 \examples{
 library(httr)
