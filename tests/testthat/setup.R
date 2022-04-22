@@ -63,8 +63,7 @@ install_testpkg <- function(pkg, lib = tempfile()) {
 }
 
 skip_on_R_older_than <- function(version) {
-  r <- R.Version()
-  if (utils::compareVersion(paste(r$major, r$minor, sep = "."), version) < 0) {
+  if (getRversion() < version) {
     skip(paste("Requires R >=", version))
   }
 }

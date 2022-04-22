@@ -1,5 +1,6 @@
 #' Expectations for mocked HTTP requests
 #'
+#' @description
 #' The mock contexts in `httptest` can raise errors or messages when requests
 #' are made, and those (error) messages have three
 #' elements, separated by space: (1) the request
@@ -7,6 +8,11 @@
 #' (3) the request body, if present.
 #' These verb-expectation functions look for this message shape. `expect_PUT`,
 #' for instance, looks for a request message that starts with "PUT".
+#'
+#' This means that `expect_verb` functions won't work outside of mock context,
+#' as no error would be raised while making a request. Thus, any `expect_verb`
+#' function should be wrapped inside a mocking function like
+#' [without_internet()], as shown in the examples.
 #'
 #' @param object Code to execute that may cause an HTTP request
 #' @param url character: the URL you expect a request to be made to. Default is
@@ -27,6 +33,7 @@
 #' @return A `testthat` 'expectation'.
 #' @examples
 #' library(httr)
+#' # without_internet provides required mock context for expectations
 #' without_internet({
 #'   expect_GET(
 #'     GET("http://httpbin.org/get"),
