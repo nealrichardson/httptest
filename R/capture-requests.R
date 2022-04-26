@@ -121,7 +121,7 @@ start_capturing <- function(path = NULL, simplify = TRUE) {
 #' @importFrom jsonlite prettify
 save_response <- function(response, simplify = TRUE) {
   # Construct the mock file path
-  mock_file <- build_mock_url(response$request)
+  mock_file <- build_mock_url(get_current_requester()(response$request))
   # Track separately the actual full path we're going to write to
   dst_file <- file.path(.mockPaths()[1], mock_file)
   mkdir_p(dst_file)
