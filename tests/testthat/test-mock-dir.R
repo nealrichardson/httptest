@@ -46,4 +46,24 @@ public({
       expect_identical(.mockPaths(), "/asdf")
     })
   })
+
+  test_that("with_mock_dir uses the set requester", {
+    set_requester(function (request) {
+      gsub_request(
+        request,
+        "http://httpbin.org/status/",
+        "api/",
+        fixed = TRUE
+      )
+    })
+    d <- tempfile()
+    dir.create(file.path(d, "tests", "testthat"), recursive = TRUE)
+    old <- setwd(d)
+    on.exit(setwd(old))
+
+    with_mock_dir("asdf", {
+      resp <- GET("http://httpbin.org/status/204")
+      expect_true(dir.exists(file.path("tests", "testthat", "asdf", "api")))
+    })
+  })
 })

@@ -1,5 +1,7 @@
 # httptest 4.1.0.9000
 
+* `with_mock_dir()` now uses the requester set by `set_requester()` (#70, @maelle).
+
 # httptest 4.1.0
 
 * Function alias `with_mock_API`, deprecated in 3.0.0, has been removed.
