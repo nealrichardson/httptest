@@ -159,6 +159,8 @@ find_mock_file <- function(file) {
     print(mp)
     print("---")
     print(dir(dirname(mp)))
+    print("---")
+    print(mockbasename)
     print("***")
     mockfiles <- dir(dirname(mp),
       pattern = mockbasename, all.files = TRUE,
