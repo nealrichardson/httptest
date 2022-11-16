@@ -87,7 +87,7 @@ start_capturing <- function(path = NULL, simplify = TRUE) {
   req_tracer <- substitute(
     {
       # Get the value returned from the function, and sanitize it
-      redactor <- get_current_redactor()
+      redactor <- httptest::get_current_redactor()
       .resp <- returnValue()
       if (is.null(.resp)) {
         # returnValue() defaults to NULL if the traced function exits with
@@ -96,7 +96,7 @@ start_capturing <- function(path = NULL, simplify = TRUE) {
           call. = FALSE
         )
       } else {
-        save_response(redactor(.resp), simplify = simplify)
+        httptest::save_response(redactor(.resp), simplify = simplify)
       }
     },
     list(simplify = simplify)
