@@ -213,16 +213,6 @@ public({
     })
   })
 
-  # check that the functions are untraced
-  expect_false(inherits(httr:::body_config, "functionWithTrace"))
-  expect_false(inherits(curl::form_file, "functionWithTrace"))
-  expect_false(inherits(httr:::request_perform, "functionWithTrace"))
-  for (verb in c("GET", "PUT", "POST", "PATCH", "DELETE", "VERB", "RETRY")) {
-    fun <- getFromNamespace(verb, 'httr')
-    expect_false(inherits(fun, "functionWithTrace"))
-  }
-
-
 })
 
 test_that("build_mock_url file path construction with character URL", {

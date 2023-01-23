@@ -12,7 +12,7 @@ public({
   })
 
   FUNS <- list(
-    httr = c('GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'VERB', 'RETRY', 'request_perform', 'body_config'),
+    httr = c('request_perform', 'body_config'),
     curl = c('form_file')
   )
   
@@ -27,18 +27,14 @@ public({
   }
 
   with_mock_api({
-    test_that("cur/httr functions are properly traced", {
-      browser()
+    test_that("curl/httr functions are properly traced", {
       expect_true(all(.are_pkgs_traced()))
     })
   })
 
-  # test_that("cur/httr functions are properly untraced", {
-  #   for (fun_name in TRACED_FUNCTIONS) {
-  #     fun <- getFromNamespace(fun_name, 'httr')
-  #     expect_false(inherits(fun, "functionWithTrace"))
-  #   }
-  # })
+  test_that("curl/httr functions are properly untraced", {
+      expect_true(all(!.are_pkgs_traced()))
+  })
 
 })
 
