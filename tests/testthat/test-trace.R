@@ -33,7 +33,7 @@ public({
   })
 
   test_that("curl/httr functions are properly untraced", {
-      expect_true(all(!.are_pkgs_traced()))
+      expect_false(any(.are_pkgs_traced()))
   })
 
 })
