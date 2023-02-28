@@ -3,6 +3,7 @@
 * `with_mock_dir()` uses the requester set by `set_requester()` (#70, @maelle).
 * `capture_requests()` can be used without loading `library(httptest)` (#77, @kforner).
 * `stop_mocking()` correctly untraces all functions (#79, @kforner).
+* `get_current_requester()` is now included within the package exports to match the behaviour of `get_current_redactor()` (#81, @stephenashton-dhsc).
 
 # httptest 4.1.0
 
