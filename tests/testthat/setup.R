@@ -48,12 +48,6 @@ install_testpkg <- function(pkg, lib = tempfile()) {
   return(lib)
 }
 
-skip_on_R_older_than <- function(version) {
-  if (getRversion() < version) {
-    skip(paste("Requires R >=", version))
-  }
-}
-
 # A quiet version of httr's content
 quiet_content <- function(...) {
   suppressMessages(content(...))

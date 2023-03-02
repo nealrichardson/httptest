@@ -227,7 +227,6 @@ with_mock_api({
 })
 
 test_that("If the httr request function exits with an error, capture_requests warns", {
-  skip_on_R_older_than("3.5.0") # IDK why but it fails on travis
   capture_requests({
     expect_warning(
       expect_error(GET(stop("Error!"))),
