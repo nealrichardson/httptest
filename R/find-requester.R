@@ -42,6 +42,15 @@ requester_from_packages <- function(packages) {
   return(out)
 }
 
+#' Fetch the active requesting function
+#'
+#' Called inside [capture_requests()]. If using the default requester, it checks
+#' each time it is called to see if any new packages have been attached, in case
+#' there are package requesters in them.
+#' @return A requesting function.
+#' @export
+#' @keywords internal
+#' @seealso [get_current_redactor()]
 get_current_requester <- function() {
   # First, check where we've cached the current one
   out <- getOption("httptest.requester")
