@@ -45,4 +45,5 @@ build-pkgdown:
 
 publish-pkgdown:
 	rm -rf ../nealrichardson.github.io/static/r/httptest/
+	mkdir ../nealrichardson.github.io/static/r/httptest/
 	cp -r docs/* ../nealrichardson.github.io/static/r/httptest/

@@ -1,5 +1,6 @@
 url: https://enpiar.com/r/httptest
 template:
+  bootstrap: 5
   params:
     ganalytics: UA-104182925-1
     docsearch:
