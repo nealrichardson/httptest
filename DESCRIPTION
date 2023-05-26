@@ -33,7 +33,6 @@ Imports:
     stats,
     utils
 Suggests:
-    covr,
     knitr,
     pkgload,
     rmarkdown,
@@ -45,3 +44,4 @@ Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/Needs/coverage: covr
