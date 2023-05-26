@@ -15,7 +15,7 @@ Description: Testing and documenting code that communicates with remote servers
     distributed without access to a live server.
 Version: 4.1.0.9000
 Authors@R: c(
-        person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com"),
+        person("Neal", "Richardson", role=c("aut", "cre"), email="neal.p.richardson@gmail.com", comment=c(ORCID="0009-0002-7992-3520")),
         person("Jonathan", "Keane", role="ctb", email="jkeane@gmail.com"),
         person("Maëlle", "Salmon", role="ctb", email="maelle.salmon@yahoo.se", comment=c(ORCID="0000-0002-2815-0399"))
     )
