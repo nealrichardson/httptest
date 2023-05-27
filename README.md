@@ -1,6 +1,6 @@
 # httptest: A Test Environment for HTTP Requests in R
 
-[![Build Status](https://github.com/nealrichardson/httptest/workflows/R-CMD-check/badge.svg)](https://github.com/nealrichardson/httptest/actions) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/master/graph/badge.svg)](https://app.codecov.io/gh/nealrichardson/httptest)
+[![Build Status](https://github.com/nealrichardson/httptest/workflows/R-CMD-check/badge.svg)](https://github.com/nealrichardson/httptest/actions) [![codecov](https://codecov.io/gh/nealrichardson/httptest/branch/main/graph/badge.svg)](https://app.codecov.io/gh/nealrichardson/httptest)
 [![cran](https://www.r-pkg.org/badges/version-last-release/httptest)](https://cran.r-project.org/package=httptest) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2136/badge)](https://bestpractices.coreinfrastructure.org/projects/2136)
 
 `httptest` makes it easy to write tests for code and packages that wrap web APIs.
@@ -10,7 +10,7 @@ Importantly, it provides multiple **contexts** that mock the network connection 
 
 Using these tools, you can test that code is making the intended requests and that it handles the expected responses correctly, all without depending on a connection to a remote API. The ability to save responses and load them offline also enables you to write package vignettes and other dynamic documents that can be distributed without access to a live server.
 
-This package bridges the gap between two others: (1) [testthat](https://testthat.r-lib.org/), which provides a useful ([and fun](https://github.com/r-lib/testthat/blob/master/R/test-that.R#L171)) framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](https://httr.r-lib.org/), which [makes working with HTTP in R easy](https://github.com/r-lib/httr/blob/master/R/httr.r#L1) but doesn't make it simple to test the code that uses it. `httptest` brings the fun and simplicity together.
+This package bridges the gap between two others: (1) [testthat](https://testthat.r-lib.org/), which provides a useful ([and fun](https://github.com/r-lib/testthat/blob/6666662844274e8fa1988c8e0cfecf0b13399ee1/R/testthat-package.R#L1)) framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](https://httr.r-lib.org/), which [makes working with HTTP in R easy](https://github.com/r-lib/httr/blob/a99126cceb2c2d54e446909417878c875a9ef8bc/R/httr.r#L1) but doesn't make it simple to test the code that uses it. `httptest` brings the fun and simplicity together.
 
 ## Installing
 
