@@ -1,6 +1,7 @@
 public({
   test_that("Outside of without_internet, requests work", {
     skip_if_disconnected()
+    skip_on_ci()
     expect_error(GET("http://httpbin.org/get"), NA)
   })
   test_that("without_internet throws errors on GET", {

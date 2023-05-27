@@ -20,6 +20,7 @@ public({
 
   test_that("with_mock_dir creates mock files directory", {
     skip_if_disconnected()
+    skip_on_ci()
     temporary_dir <- tempfile()
     current_mock_paths <- .mockPaths()
     with_mock_dir(temporary_dir, {

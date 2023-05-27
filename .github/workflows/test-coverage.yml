@@ -27,6 +27,9 @@ jobs:
           needs: coverage
 
       - name: Test coverage
+        env:
+          # Pretend we're not running in CI so that all tests run
+          CI: false
         run: |
           covr::codecov(
             quiet = FALSE,

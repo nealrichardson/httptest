@@ -106,6 +106,7 @@ public({
 
   test_that("expect_header works with actual network too", {
     skip_if_disconnected()
+    skip_on_ci()
     expect_success(expect_header(
       GET("http://httpbin.org/get",
         config = add_headers(Accept = "image/jpeg")

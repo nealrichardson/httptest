@@ -4,6 +4,7 @@ webp_file <- tempfile()
 
 test_that("We can record a series of requests (a few ways)", {
   skip_if_disconnected()
+  skip_on_ci()
   capture_requests(path = d, {
     # <<- assign these so that they're available in the next test_that too
     r1 <<- GET("http://httpbin.org/get")
@@ -47,6 +48,7 @@ test_that("We can record a series of requests (a few ways)", {
 
 test_that("We can then load the mocks it stores", {
   skip_if_disconnected()
+  skip_on_ci()
   # Look for mocks in our temp dir
   with_mock_path(d, {
     # Because the place we wrote out the file in our real request might not
@@ -91,6 +93,7 @@ test_that("We can then load the mocks it stores", {
 
 test_that("write_disk mocks can be reloaded even if the mock directory moves", {
   skip_if_disconnected()
+  skip_on_ci()
   # This is an edge case caught because `crunch` package puts fixtures in
   # `inst/`, so you record to one place but when you read them from the
   # installed package, it's a different directory.
