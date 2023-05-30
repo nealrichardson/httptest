@@ -1,3 +1,5 @@
+# httptest 4.2.0.9000
+
 # httptest 4.2.0
 
 * `with_mock_dir()` uses the requester set by `set_requester()` (#70, @maelle).
