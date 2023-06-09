@@ -148,8 +148,8 @@ public({
         "http://httpbin.org/post",
         'list(y = list(path = "',
         testthat::test_path("setup.R"),
-        '", type = "text/plain")) ',
-        "(httpbin.org/post-79b618-POST.json)"
+        '", type = "text/plain", name = NULL)) ',
+        "(httpbin.org/post-83f219-POST.json)"
       )
     })
 

@@ -1,5 +1,7 @@
 # httptest 4.2.0.9000
 
+* Update a test expectation due to the addition of a `name` field in `curl::form_file()` in version 5.0.
+
 # httptest 4.2.0
 
 * `with_mock_dir()` uses the requester set by `set_requester()` (#70, @maelle).
