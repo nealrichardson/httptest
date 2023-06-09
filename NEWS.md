@@ -1,4 +1,4 @@
-# httptest 4.2.0.9000
+# httptest 4.2.1
 
 * Update a test expectation due to the addition of a `name` field in `curl::form_file()` in version 5.0.
 
