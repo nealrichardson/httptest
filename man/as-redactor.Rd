@@ -7,7 +7,7 @@
 as.redactor(fmla)
 }
 \arguments{
-\item{expr}{Partial expression to turn into a function of \code{response}}
+\item{fmla}{Partial expression (a \code{formula}) to turn into a function}
 }
 \value{
 A \code{function}.

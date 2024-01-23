@@ -3,6 +3,7 @@
 \docType{package}
 \name{httptest}
 \alias{httptest}
+\alias{httptest-package}
 \title{\code{httptest}: A Test Environment for HTTP Requests}
 \description{
 If \pkg{httr} makes HTTP easy and \pkg{testthat} makes testing fun,
@@ -61,4 +62,23 @@ computers, use these recorded responses, allowing the document to regenerate
 without a network connection or API credentials. To record fresh API
 responses, delete the subfolder of cached responses and re-run. See
 \code{vignette("vignettes")} for more discussion and links to examples.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://enpiar.com/r/httptest/}
+  \item \url{https://github.com/nealrichardson/httptest}
+  \item Report bugs at \url{https://github.com/nealrichardson/httptest/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Neal Richardson \email{neal.p.richardson@gmail.com} (\href{https://orcid.org/0009-0002-7992-3520}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Jonathan Keane \email{jkeane@gmail.com} [contributor]
+  \item Maëlle Salmon \email{maelle.salmon@yahoo.se} (\href{https://orcid.org/0000-0002-2815-0399}{ORCID}) [contributor]
+}
+
 }

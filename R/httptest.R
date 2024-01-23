@@ -58,4 +58,4 @@
 #'
 #' @name httptest
 #' @docType package
-NULL
+"_PACKAGE"

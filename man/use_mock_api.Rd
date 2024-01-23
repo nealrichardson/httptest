@@ -17,7 +17,7 @@ automatic disabling of mocking when the context finishes.
 \details{
 Note that you in order to resume normal request behavior, you will need to
 call \code{\link[=stop_mocking]{stop_mocking()}} yourself---this function does not clean up after itself
-as 'with_mock_api` does.
+as \code{with_mock_api} does.
 }
 \seealso{
 \code{\link[=with_mock_api]{with_mock_api()}} \code{\link[=stop_mocking]{stop_mocking()}} \code{\link[=block_requests]{block_requests()}}
