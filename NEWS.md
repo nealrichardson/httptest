@@ -1,4 +1,6 @@
-# httptest 4.2.1.9000
+# httptest 4.2.2
+
+* A couple of fixes to the docs, in response to CRAN request
 
 # httptest 4.2.1
 
