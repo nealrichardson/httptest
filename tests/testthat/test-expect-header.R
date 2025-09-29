@@ -1,4 +1,9 @@
 public({
+  # Revert to testthat < 3.3.0 definition
+  expect_failure <- function(code) {
+    expect_condition(code, class = "expectation_failure")
+  }
+
   with_fake_http({
     test_that("expect_header with fake HTTP", {
       expect_GET(expect_success(expect_header(
