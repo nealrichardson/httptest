@@ -26,6 +26,7 @@ jobs:
           - {os: windows-latest,  r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'release', dev-testthat: true}
           - {os: ubuntu-latest,   r: 'oldrel-1'}
           - {os: ubuntu-latest,   r: 'oldrel-2'}
           - {os: ubuntu-latest,   r: 'oldrel-3'}
@@ -51,6 +52,11 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+
+      - name: Install dev version of testthat
+        if: matrix.config.dev-testthat
+        run: pak::pkg_install("r-lib/testthat")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
