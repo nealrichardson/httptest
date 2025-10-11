@@ -1,4 +1,7 @@
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, master]
+  pull_request:
 
 name: testthat-2e-3e
 
