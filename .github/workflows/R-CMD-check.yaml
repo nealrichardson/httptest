@@ -16,20 +16,21 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (R ${{ matrix.config.r }}, testthat ${{ matrix.config.testthat }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,    r: 'release'}
-          - {os: windows-latest,  r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
-          - {os: ubuntu-latest,   r: 'oldrel-2'}
-          - {os: ubuntu-latest,   r: 'oldrel-3'}
-          - {os: ubuntu-latest,   r: 'oldrel-4'}
+          - {os: macOS-latest,    r: 'release', testthat: 'release'}
+          - {os: windows-latest,  r: 'release', testthat: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', testthat: 'release', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release', testthat: 'release'}
+          - {os: ubuntu-latest,   r: 'release', testthat: 'dev'}
+          - {os: ubuntu-latest,   r: 'oldrel-1', testthat: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-2', testthat: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-3', testthat: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-4', testthat: 'release'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -51,6 +52,11 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+
+      - name: Install dev version of testthat
+        if: matrix.config.testthat == 'dev'
+        run: pak::pkg_install("r-lib/testthat")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
