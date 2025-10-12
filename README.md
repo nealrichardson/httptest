@@ -12,6 +12,8 @@ Using these tools, you can test that code is making the intended requests and th
 
 This package bridges the gap between two others: (1) [testthat](https://testthat.r-lib.org/), which provides a useful ([and fun](https://github.com/r-lib/testthat/blob/6666662844274e8fa1988c8e0cfecf0b13399ee1/R/testthat-package.R#L1)) framework for unit testing in R but doesn't come with tools for testing across web APIs; and (2) [httr](https://httr.r-lib.org/), which [makes working with HTTP in R easy](https://github.com/r-lib/httr/blob/a99126cceb2c2d54e446909417878c875a9ef8bc/R/httr.r#L1) but doesn't make it simple to test the code that uses it. `httptest` brings the fun and simplicity together.
 
+If you're using [httr2](https://httr2.r-lib.org/), see [httptest2](https://enpiar.com/httptest2).
+
 ## Installing
 
 `httptest` can be installed from CRAN with
