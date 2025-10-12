@@ -1,5 +1,7 @@
 # httptest 4.2.2.9000
 
+* Revise a couple of tests for compatibility with the upcoming release of `testthat` 3.3.0 (#89).
+
 # httptest 4.2.2
 
 * A couple of fixes to the docs, in response to CRAN request
