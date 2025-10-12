@@ -1,9 +1,4 @@
 public({
-  # Revert to testthat < 3.3.0 definition
-  expect_failure <- function(code) {
-    expect_condition(code, class = "expectation_failure")
-  }
-
   with_fake_http({
     test_that("expect_header with fake HTTP", {
       expect_GET(expect_success(expect_header(
@@ -12,30 +7,34 @@ public({
         ),
         "Accept: image/jpeg"
       )))
-      expect_GET(expect_failure(expect_warning(
-        expect_header(
-          GET("http://httpbin.org/",
-            config = add_headers(Accept = "image/png")
-          ),
-          "Accept: image/jpeg"
-        ),
-        "Accept: image/png"
-      )))
+      # Because expect_header() raises warnings for headers and then catches
+      # them, if the test expectation isn't met, the warning gets through.
+      # Suppress that here so we aren't confused by it.
+      suppressWarnings(
+        expect_GET(expect_failure(
+          expect_header(
+            GET("http://httpbin.org/",
+              config = add_headers(Accept = "image/png")
+            ),
+            "Accept: image/jpeg"
+        )))
+      )
       expect_POST(expect_success(expect_header(
         POST("http://httpbin.org/",
           config = add_headers(Accept = "image/jpeg")
         ),
         "Accept: image/jpeg"
       )))
-      expect_POST(expect_failure(expect_warning(
-        expect_header(
-          POST("http://httpbin.org/",
-            config = add_headers(Accept = "image/png")
-          ),
-          "Accept: image/jpeg"
-        ),
-        "Content-Type: Accept: image/png"
-      )))
+      suppressWarnings(
+        expect_POST(expect_failure(
+          expect_header(
+            POST("http://httpbin.org/",
+              config = add_headers(Accept = "image/png")
+            ),
+            "Accept: image/jpeg"
+          )
+        ))
+      )
     })
   })
 
