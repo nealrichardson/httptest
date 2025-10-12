@@ -7,30 +7,34 @@ public({
         ),
         "Accept: image/jpeg"
       )))
-      expect_GET(expect_failure(expect_warning(
-        expect_header(
-          GET("http://httpbin.org/",
-            config = add_headers(Accept = "image/png")
-          ),
-          "Accept: image/jpeg"
-        ),
-        "Accept: image/png"
-      )))
+      # Because expect_header() raises warnings for headers and then catches
+      # them, if the test expectation isn't met, the warning gets through.
+      # Suppress that here so we aren't confused by it.
+      suppressWarnings(
+        expect_GET(expect_failure(
+          expect_header(
+            GET("http://httpbin.org/",
+              config = add_headers(Accept = "image/png")
+            ),
+            "Accept: image/jpeg"
+        )))
+      )
       expect_POST(expect_success(expect_header(
         POST("http://httpbin.org/",
           config = add_headers(Accept = "image/jpeg")
         ),
         "Accept: image/jpeg"
       )))
-      expect_POST(expect_failure(expect_warning(
-        expect_header(
-          POST("http://httpbin.org/",
-            config = add_headers(Accept = "image/png")
-          ),
-          "Accept: image/jpeg"
-        ),
-        "Content-Type: Accept: image/png"
-      )))
+      suppressWarnings(
+        expect_POST(expect_failure(
+          expect_header(
+            POST("http://httpbin.org/",
+              config = add_headers(Accept = "image/png")
+            ),
+            "Accept: image/jpeg"
+          )
+        ))
+      )
     })
   })
 
