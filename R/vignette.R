@@ -78,7 +78,9 @@ start_vignette <- function(path, ...) {
 change_state <- function() {
   current_path <- .mockPaths()[1]
   path_segments <- unlist(strsplit(current_path, .Platform$file.sep))
-  current_number <- suppressWarnings(as.numeric(path_segments[length(path_segments)]))
+  current_number <- suppressWarnings(as.numeric(path_segments[length(
+    path_segments
+  )]))
   if (is.na(current_number)) {
     # This path doesn't come from start_vignette/change_state
     stop(current_path, " is not valid for change_state()")

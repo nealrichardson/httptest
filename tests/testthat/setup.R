@@ -13,8 +13,10 @@ capture_while_mocking <- function(..., path) {
     tracer <- quote({
       .mockPaths <- function() getOption("httptest.mock.paths")[-1]
     })
-    with_trace("find_mock_file",
-      where = with_mock_api, tracer = tracer,
+    with_trace(
+      "find_mock_file",
+      where = with_mock_api,
+      tracer = tracer,
       expr = capture_requests(...)
     )
   })
@@ -42,8 +44,10 @@ reset_redactors <- function() {
 
 install_testpkg <- function(pkg, lib = tempfile()) {
   dir.create(lib)
-  tools::Rcmd(c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
-    stdout = NULL, stderr = NULL
+  tools::Rcmd(
+    c("INSTALL", "testpkg", paste0("--library=", shQuote(lib))),
+    stdout = NULL,
+    stderr = NULL
   )
   return(lib)
 }
@@ -63,4 +67,6 @@ testthat_transition <- function(old, new) {
 }
 
 # assign to global to be used inside of `public()` calls
-third_edition <<- tryCatch(testthat::edition_get() == 3, error = function(e) FALSE)
+third_edition <<- tryCatch(testthat::edition_get() == 3, error = function(e) {
+  FALSE
+})

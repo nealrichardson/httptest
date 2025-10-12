@@ -13,8 +13,10 @@
 #' @seealso [testthat::skip()]
 #' @importFrom testthat skip skip_on_cran
 #' @export
-skip_if_disconnected <- function(message = paste("Offline: cannot reach", url),
-                                 url = "http://httpbin.org/") {
+skip_if_disconnected <- function(
+  message = paste("Offline: cannot reach", url),
+  url = "http://httpbin.org/"
+) {
   skip_on_cran()
   if (currently_offline(url)) {
     skip(message)

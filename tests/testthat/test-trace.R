@@ -15,7 +15,7 @@ public({
     httr = c('request_perform', 'body_config'),
     curl = c('form_file')
   )
-  
+
   .are_pkgs_traced <- function() {
     .process_fun <- function(fun, pkg) {
       inherits(getFromNamespace(fun, pkg), "functionWithTrace")
@@ -33,9 +33,8 @@ public({
   })
 
   test_that("curl/httr functions are properly untraced", {
-      expect_false(any(.are_pkgs_traced()))
+    expect_false(any(.are_pkgs_traced()))
   })
-
 })
 
 test_that("quietly muffles messages, conditional on httptest.debug", {
