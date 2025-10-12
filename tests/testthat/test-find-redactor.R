@@ -84,8 +84,10 @@ with_mock_api({
     with_redactor(
       NULL,
       capture_while_mocking(simplify = FALSE, path = newmocks2, {
-        a <- POST("http://example.com/login",
-          body = list(username = "password"), encode = "json"
+        a <- POST(
+          "http://example.com/login",
+          body = list(username = "password"),
+          encode = "json"
         )
       })
     )

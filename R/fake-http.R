@@ -61,11 +61,13 @@ with_fake_http <- function(expr) {
 #' @export
 #' @importFrom jsonlite toJSON
 #' @importFrom utils modifyList
-fake_response <- function(request,
-                          verb = "GET",
-                          status_code = 200,
-                          headers = list(),
-                          content = NULL) {
+fake_response <- function(
+  request,
+  verb = "GET",
+  status_code = 200,
+  headers = list(),
+  content = NULL
+) {
   if (is.character(request)) {
     # To-be-deprecated(?) behavior of passing in a URL. Fake a request.
     request <- structure(list(method = verb, url = request), class = "request")
@@ -78,8 +80,11 @@ fake_response <- function(request,
   } else if (!is.raw(content)) {
     if (!is.character(content)) {
       # JSON it
-      content <- toJSON(content,
-        auto_unbox = TRUE, null = "null", na = "null",
+      content <- toJSON(
+        content,
+        auto_unbox = TRUE,
+        null = "null",
+        na = "null",
         force = TRUE
       )
       base.headers <- list(`Content-Type` = "application/json")
@@ -89,19 +94,27 @@ fake_response <- function(request,
   }
   headers <- modifyList(base.headers, headers)
 
-  structure(list(
-    url = request$url,
-    status_code = status_code,
-    times = structure(c(rep(0, 5), nchar(request$url)),
-      .Names = c(
-        "redirect", "namelookup", "connect", "pretransfer",
-        "starttransfer", "total"
-      )
+  structure(
+    list(
+      url = request$url,
+      status_code = status_code,
+      times = structure(
+        c(rep(0, 5), nchar(request$url)),
+        .Names = c(
+          "redirect",
+          "namelookup",
+          "connect",
+          "pretransfer",
+          "starttransfer",
+          "total"
+        )
+      ),
+      request = request,
+      headers = headers,
+      content = content
     ),
-    request = request,
-    headers = headers,
-    content = content
-  ), class = "response")
+    class = "response"
+  )
 }
 
 fake_request <- function(req, handle, refresh) {
@@ -113,8 +126,10 @@ fake_request <- function(req, handle, refresh) {
     out <- paste(out, body)
   }
   message(out)
-  return(fake_response(req,
-    content = body, status_code = status_code,
+  return(fake_response(
+    req,
+    content = body,
+    status_code = status_code,
     headers = headers
   ))
 }

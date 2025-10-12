@@ -27,8 +27,10 @@ public({
     test_that("POST method reads from correct file", {
       b <- POST("api/object1")
       expect_identical(content(b), list(method = "POST"))
-      b2 <- POST("api/object1",
-        body = "", content_type_json(),
+      b2 <- POST(
+        "api/object1",
+        body = "",
+        content_type_json(),
         add_headers(
           Accept = "application/json",
           "Content-Type" = "application/json"
@@ -37,8 +39,10 @@ public({
       expect_identical(content(b2), list(method = "POST"))
     })
     test_that("Request body is appended to mock file path", {
-      p <- POST("api/object1",
-        body = '{"a":1}', content_type_json(),
+      p <- POST(
+        "api/object1",
+        body = '{"a":1}',
+        content_type_json(),
         add_headers(
           Accept = "application/json",
           "Content-Type" = "application/json"
@@ -46,8 +50,10 @@ public({
       )
       expect_identical(content(p), list(content = TRUE))
       expect_POST(
-        POST("api/object1",
-          body = '{"b":2}', content_type_json(),
+        POST(
+          "api/object1",
+          body = '{"b":2}',
+          content_type_json(),
           add_headers(
             Accept = "application/json",
             "Content-Type" = "application/json"
@@ -103,7 +109,8 @@ public({
 
     test_that("Mocking a GET with more function args (path, auth)", {
       expect_identical(
-        content(GET("http://example.com",
+        content(GET(
+          "http://example.com",
           path = "/get",
           add_headers("Content-Type" = "application/json"),
           authenticate("d", "d")
@@ -175,20 +182,24 @@ public({
     })
 
     test_that("Regular expressions in expect_VERB", {
-      expect_GET(GET("http://example.com/1234/abcd/"),
+      expect_GET(
+        GET("http://example.com/1234/abcd/"),
         "http://example.com/[0-9]{4}/[a-z]{4}/",
         fixed = FALSE
       )
-      expect_GET(GET("http://example.com/1234/abcd/"),
+      expect_GET(
+        GET("http://example.com/1234/abcd/"),
         "http://EXAMPLE.com/[0-9]{4}/[a-z]{4}/",
         fixed = FALSE,
         ignore.case = TRUE
       )
-      expect_POST(POST("http://example.com/1234/abcd/"),
+      expect_POST(
+        POST("http://example.com/1234/abcd/"),
         "http://example.com/[0-9]{4}/[a-z]{4}/",
         fixed = FALSE
       )
-      expect_DELETE(DELETE("http://example.com/1234/abcd/"),
+      expect_DELETE(
+        DELETE("http://example.com/1234/abcd/"),
         "http://example.com/[0-9]{4}/[a-z]{4}/",
         fixed = FALSE
       )
@@ -212,7 +223,6 @@ public({
       )
     })
   })
-
 })
 
 test_that("build_mock_url file path construction with character URL", {

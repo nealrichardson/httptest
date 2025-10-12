@@ -4,7 +4,11 @@ public({
     # The directory exists, so we'll read mocks from it
     dir.create(temporary_dir)
     # Put mocks in it
-    file.copy(testthat::test_path("httpbin.org"), temporary_dir, recursive = TRUE)
+    file.copy(
+      testthat::test_path("httpbin.org"),
+      temporary_dir,
+      recursive = TRUE
+    )
 
     current_mock_paths <- .mockPaths()
     with_mock_dir(temporary_dir, {
@@ -49,7 +53,7 @@ public({
   })
 
   test_that("with_mock_dir uses the set requester", {
-    set_requester(function (request) {
+    set_requester(function(request) {
       gsub_request(
         request,
         "http://httpbin.org/status/",

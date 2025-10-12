@@ -82,9 +82,7 @@ public({
 
     test_that("without_internet respects query params", {
       expect_GET(
-        GET("http://httpbin.org/get",
-          query = list(test = "a phrase", two = 3)
-        ),
+        GET("http://httpbin.org/get", query = list(test = "a phrase", two = 3)),
         "http://httpbin.org/get?test=a%20phrase&two=3"
       )
     })

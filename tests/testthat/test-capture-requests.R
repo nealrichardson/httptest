@@ -13,7 +13,8 @@ test_that("We can record a series of requests (a few ways)", {
     r4 <<- PUT("http://httpbin.org/put")
   })
   start_capturing(path = d)
-  r5 <<- GET("http://httpbin.org/response-headers",
+  r5 <<- GET(
+    "http://httpbin.org/response-headers",
     query = list(`Content-Type` = "application/json")
   )
   r6 <<- GET("http://httpbin.org/anything", config = write_disk(dl_file))
@@ -66,11 +67,18 @@ test_that("We can then load the mocks it stores", {
       m2 <- GET("http://httpbin.org")
       m3 <- GET("http://httpbin.org/status/418")
       m4 <- PUT("http://httpbin.org/put")
-      m5 <- GET("http://httpbin.org/response-headers",
+      m5 <- GET(
+        "http://httpbin.org/response-headers",
         query = list(`Content-Type` = "application/json")
       )
-      m6 <- GET("http://httpbin.org/anything", config = write_disk(mock_dl_file))
-      m7 <- GET("http://httpbin.org/image/webp", config = write_disk(mock_webp_file))
+      m6 <- GET(
+        "http://httpbin.org/anything",
+        config = write_disk(mock_dl_file)
+      )
+      m7 <- GET(
+        "http://httpbin.org/image/webp",
+        config = write_disk(mock_webp_file)
+      )
       m8 <- RETRY("GET", "http://httpbin.org/status/202")
     })
   })
@@ -104,7 +112,8 @@ test_that("write_disk mocks can be reloaded even if the mock directory moves", {
   }
   with_mock_path(d2, {
     with_mock_api({
-      m7b <- GET("http://httpbin.org/image/webp",
+      m7b <- GET(
+        "http://httpbin.org/image/webp",
         config = write_disk(tempfile())
       )
     })
@@ -122,7 +131,11 @@ with_mock_api({
     })
     expect_true(setequal(
       dir(d2, recursive = TRUE),
-      c("example.com/get.json", "api/object1.json", "httpbin.org/status/204.204")
+      c(
+        "example.com/get.json",
+        "api/object1.json",
+        "httpbin.org/status/204.204"
+      )
     ))
     expect_identical(
       readLines(file.path(d2, "example.com/get.json")),
@@ -137,7 +150,8 @@ with_mock_api({
       readLines(file.path(d2, "httpbin.org/status/204.204")),
       0
     )
-    with_mock_path(d2,
+    with_mock_path(
+      d2,
       {
         mocked <- GET("http://httpbin.org/status/204/")
         expect_null(content(mocked))
@@ -203,7 +217,8 @@ with_mock_api({
     with_mock_path(d5, {
       capture_while_mocking(
         {
-          POST("http://example.com/login",
+          POST(
+            "http://example.com/login",
             body = list(username = "password"),
             encode = "json"
           )
@@ -212,11 +227,13 @@ with_mock_api({
       )
       no_payload <- source(file.path(
         d5,
-        "example.com", "login-712027-POST.R"
+        "example.com",
+        "login-712027-POST.R"
       ))$value
       expect_null(no_payload$request)
       with_mock_api({
-        reloaded <- POST("http://example.com/login",
+        reloaded <- POST(
+          "http://example.com/login",
           body = list(username = "password"),
           encode = "json"
         )

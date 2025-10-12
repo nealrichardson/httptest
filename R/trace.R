@@ -10,7 +10,13 @@
 #' @return The result of `expr`
 #' @export
 #' @keywords internal
-with_trace <- function(x, where = topenv(parent.frame()), print = getOption("httptest.debug", FALSE), ..., expr) {
+with_trace <- function(
+  x,
+  where = topenv(parent.frame()),
+  print = getOption("httptest.debug", FALSE),
+  ...,
+  expr
+) {
   quietly(trace(x, print = print, where = where, ...))
   on.exit(safe_untrace(x, where = where))
   eval.parent(expr)
@@ -20,16 +26,26 @@ mock_perform <- function(mocker, ...) {
   tracer <- substitute_q(fetch_tracer, list(.mocker = mocker))
   # trace curl's form_file making the path normalization a no-op so that file
   # hashes are the same on different platforms
-  quietly(trace(curl::form_file, quote(
-    normalizePath <- function(path, ...) {
-      return(path)
-    }
-  ), where = httr::upload_file, print = getOption("httptest.debug", FALSE)))
+  quietly(trace(
+    curl::form_file,
+    quote(
+      normalizePath <- function(path, ...) {
+        return(path)
+      }
+    ),
+    where = httr::upload_file,
+    print = getOption("httptest.debug", FALSE)
+  ))
   # trace body_config to close the file connection that it creates when the
   # body inherits form_file
-  quietly(trace("body_config", exit = quote(
-    if (exists("con")) close.connection(con)
-  ), where = httr::PUT, print = getOption("httptest.debug", FALSE)))
+  quietly(trace(
+    "body_config",
+    exit = quote(
+      if (exists("con")) close.connection(con)
+    ),
+    where = httr::PUT,
+    print = getOption("httptest.debug", FALSE)
+  ))
 
   invisible(trace_httr("request_perform", tracer = tracer, ...))
 }
@@ -40,7 +56,11 @@ trace_httr <- function(..., print = getOption("httptest.debug", FALSE)) {
   quietly(trace(..., print = print, where = add_headers))
   # And if httr is attached and the function is exported, trace the
   # function as the user sees it
-  if ("httr" %in% names(sessionInfo()$otherPkgs) && ..1 %in% getNamespaceExports("httr")) {
+  if (
+    "httr" %in%
+      names(sessionInfo()$otherPkgs) &&
+      ..1 %in% getNamespaceExports("httr")
+  ) {
     try(quietly(trace(..., print = print, where = sys.frame())))
   }
 }
@@ -120,4 +140,6 @@ fetch_tracer <- quote({
 })
 
 # cf http://adv-r.had.co.nz/Computing-on-the-language.html#substitute
-substitute_q <- function(x, env) eval(substitute(substitute(y, env), list(y = x)))
+substitute_q <- function(x, env) {
+  eval(substitute(substitute(y, env), list(y = x)))
+}

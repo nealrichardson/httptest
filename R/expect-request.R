@@ -90,12 +90,14 @@ expect_no_request <- function(object, ...) {
 }
 
 #' @importFrom testthat expect_error
-expect_mock_request <- function(object,
-                                ...,
-                                fixed = TRUE,
-                                ignore.case = FALSE,
-                                perl = FALSE,
-                                useBytes = FALSE) {
+expect_mock_request <- function(
+  object,
+  ...,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  perl = FALSE,
+  useBytes = FALSE
+) {
   # PUT/POST/PATCH with no body may have trailing whitespace, so trim it
   expected <- sub(" +$", "", paste0(...))
   request_happened()(

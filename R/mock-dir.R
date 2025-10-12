@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-with_mock_dir <- function (dir, expr, simplify = TRUE, replace = TRUE) {
+with_mock_dir <- function(dir, expr, simplify = TRUE, replace = TRUE) {
   if (dir.exists("tests/testthat") && !(substr(dir, 1, 1) %in% c("/", "\\"))) {
     # If we're at the top level directory of the package,
     # assume any relative paths are meant to be inside tests/testthat.
@@ -28,7 +28,7 @@ with_mock_dir <- function (dir, expr, simplify = TRUE, replace = TRUE) {
       with_mock_api(expr)
     } else {
       # Record!
-      capture_requests(expr, simplify=simplify)
+      capture_requests(expr, simplify = simplify)
     }
   })
 }

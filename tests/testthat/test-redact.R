@@ -78,8 +78,10 @@ with_mock_api({
 
   # another redact_cookies with POST example.com/login
   capture_while_mocking(simplify = FALSE, path = d, {
-    login <- POST("http://example.com/login",
-      body = list(username = "password"), encode = "json"
+    login <- POST(
+      "http://example.com/login",
+      body = list(username = "password"),
+      encode = "json"
     )
   })
   test_that("redact_cookies: the response has the set-cookie in the response", {
@@ -110,8 +112,10 @@ with_mock_api({
   })
   test_that("And when loading that .R mock, the redacted value doesn't appear", {
     with_mock_path(d, {
-      loginb <- POST("http://example.com/login",
-        body = list(username = "password"), encode = "json"
+      loginb <- POST(
+        "http://example.com/login",
+        body = list(username = "password"),
+        encode = "json"
       )
     })
     expect_identical(
@@ -218,11 +222,13 @@ with_mock_api({
     expect_identical(content(a2), list(value = "OTHER/object1/"))
   })
 
-  loc <- GET("http://httpbin.org/response-headers",
+  loc <- GET(
+    "http://httpbin.org/response-headers",
     query = list(Location = "http://httpbin.org/status/201")
   )
   loc_sub <- gsub_response(
-    loc, "http://httpbin.org/status/201",
+    loc,
+    "http://httpbin.org/status/201",
     "http://httpbin.org/status/404"
   )
   test_that("gsub_response touches Location header", {
@@ -251,7 +257,8 @@ with_mock_api({
 
 with_fake_http({
   expect_PUT(
-    p <- PUT("http://httpbin.org/put",
+    p <- PUT(
+      "http://httpbin.org/put",
       body = list(x = "A string", string = "Something else")
     )
   )

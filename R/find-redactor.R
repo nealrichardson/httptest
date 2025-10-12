@@ -63,9 +63,20 @@ redactor_from_packages <- function(packages) {
 find_package_functions <- function(packages, file = "redact.R") {
   # Given package names, find any redactors put in inst/httptest/redact.R
   base_pkgs <- c(
-    "base", "compiler", "datasets", "graphics", "grDevices",
-    "grid", "methods", "parallel", "splines", "stats", "stats4",
-    "tcltk", "tools", "utils"
+    "base",
+    "compiler",
+    "datasets",
+    "graphics",
+    "grDevices",
+    "grid",
+    "methods",
+    "parallel",
+    "splines",
+    "stats",
+    "stats4",
+    "tcltk",
+    "tools",
+    "utils"
   )
   packages <- setdiff(packages, base_pkgs)
   funcs <- lapply(packages, get_package_function, file)
@@ -118,7 +129,9 @@ get_current_redactor <- function() {
       # new packages have been loaded
       current_packages <- get_attached_packages()
       # Also, always reevaluate the default redactor if pkgload is involved
-      if ("pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)) {
+      if (
+        "pkgload" %in% loadedNamespaces() || !identical(current_packages, pkgs)
+      ) {
         # Re-evaluate
         out <- default_redactor(current_packages)
         options(httptest.redactor = out)

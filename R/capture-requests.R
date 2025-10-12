@@ -92,7 +92,8 @@ start_capturing <- function(path = NULL, simplify = TRUE) {
       if (is.null(.resp)) {
         # returnValue() defaults to NULL if the traced function exits with
         # an error, so there's no response to record.
-        warning("Request errored; no captured response file saved",
+        warning(
+          "Request errored; no captured response file saved",
           call. = FALSE
         )
       } else {
@@ -153,9 +154,13 @@ save_response <- function(response, simplify = TRUE) {
     # so that it loads correctly but is also readable
     text_types <- c(
       "application/json",
-      "application/x-www-form-urlencoded", "application/xml",
-      "text/csv", "text/html", "text/plain",
-      "text/tab-separated-values", "text/xml"
+      "application/x-www-form-urlencoded",
+      "application/xml",
+      "text/csv",
+      "text/html",
+      "text/plain",
+      "text/tab-separated-values",
+      "text/xml"
     )
     if (ct %in% text_types) {
       # Squelch the "No encoding supplied: defaulting to UTF-8."
@@ -174,7 +179,8 @@ save_response <- function(response, simplify = TRUE) {
       downloaded_file <- paste0(dst_file, "-FILE")
       file.copy(response$content, downloaded_file)
       mock_file <- paste0(mock_file, "-FILE")
-      response$content <- substitute(structure(find_mock_file(mock_file),
+      response$content <- substitute(structure(
+        find_mock_file(mock_file),
         class = "path"
       ))
     }

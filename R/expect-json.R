@@ -15,22 +15,32 @@
 #' @seealso [testthat::expect_equivalent()]
 #' @importFrom testthat expect
 #' @export
-expect_json_equivalent <- function(object,
-                                   expected,
-                                   info = NULL,
-                                   label = "object",
-                                   expected.label = "expected") {
+expect_json_equivalent <- function(
+  object,
+  expected,
+  info = NULL,
+  label = "object",
+  expected.label = "expected"
+) {
   comp <- json_compare(object, expected, check.attributes = FALSE)
-  expect(comp$equal, sprintf(
-    "%s not JSON-equivalent to %s.\n%s",
-    label, expected.label, comp$message
-  ), info = info)
+  expect(
+    comp$equal,
+    sprintf(
+      "%s not JSON-equivalent to %s.\n%s",
+      label,
+      expected.label,
+      comp$message
+    ),
+    info = info
+  )
   invisible(object)
 }
 
 #' @importFrom testthat compare
 json_compare <- function(object, expected, check.attributes = FALSE) {
-  compare(object_sort(object), object_sort(expected),
+  compare(
+    object_sort(object),
+    object_sort(expected),
     check.attributes = check.attributes
   )
 }
