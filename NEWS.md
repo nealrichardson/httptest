@@ -1,4 +1,4 @@
-# httptest 4.2.2.9000
+# httptest 4.2.3
 
 * Revise a couple of tests for compatibility with the upcoming release of `testthat` 3.3.0 (#89).
 

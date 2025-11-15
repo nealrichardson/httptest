@@ -60,7 +60,7 @@ Sensitive or personal information is not limited to response cookies or headers.
 
 Redacting functions can help with this content as well. You can use redactors on any part of the response object, not just the headers and cookies. A redactor is just a function that takes a response as input and returns a response object, so anything is possible if you write a custom redactor.
 
-For example, in the [API for Pivotal Tracker](https://www.pivotaltracker.com/help/api), the agile project management tool, the Pivotal project id is built into many of its URLs. As a result, it would appear in mock file paths you record. The id is also often included in the response body.
+For example, in the API for Pivotal Tracker, the now-defunct agile project management tool, the Pivotal project id is built into many of its URLs. As a result, it would appear in mock file paths you record. The id is also often included in the response body.
 
 We'd rather not have that information leak in our test fixtures, so in the [pivotaltrackR](https://enpiar.com/r/pivotaltrackR/) package, which wraps this API, we need to tell `capture_requests` to scrub this id when we record mocks.
 
