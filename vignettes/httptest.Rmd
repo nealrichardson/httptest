@@ -24,17 +24,17 @@ The package includes three contexts, which are "with"-style functions that you w
 
 ## Example
 
-To illustrate the power of `with_mock_api`, let's try to add tests to an R package that wraps a prominent web API. The `twitteR` package is quite popular ([13k downloads per month](https://cranlogs.r-pkg.org/badges/twitteR), at the time of writing), but like most R packages, it doesn't have a test suite. Indeed, it is hard to test the querying of an API that requires OAuth authentication, and thus a user account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
+To illustrate the power of `with_mock_api`, let's try to add tests to an R package that wraps a (once) prominent web API. The `twitteR` package, at the time of writing at least, did not have a test suite. Indeed, it is hard to test the querying of an API that requires OAuth authentication, and thus a user account to use in testing. That's tricky to set up to run locally, and even more challenging to run on a continuous-integration service like Travis-CI. But `httptest` can help.
 
 First, we need to add `httptest` to our package test suite. Once you've configured your package to use `testthat` (`usethis::use_testthat()` is one way), run `httptest::use_httptest()`. This adds `httptest` to your package `DESCRIPTION` and makes sure it is loaded in your test setup code.
 
-Now we can start with our tests. From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real Twitter API, so we don't need a valid token—we just need a token to exist so the R code that looks for a token finds one:
+Now we can start with our tests. From some experimenting, it's clear that the package checks to see if you have an OAuth token set. We're not actually going to hit the real API, so we don't need a valid token—we just need a token to exist so the R code that looks for a token finds one:
 
 ```r
 use_oauth_token("foo")
 ```
 
-Let's write a test. Add "test-user.R" to your test directory and put a test for getting a user record, via the `getUser` function. According to the source code, this function should hit the "show user" Twitter API, documented [here](https://dev.twitter.com/rest/reference/get/users/show). But, we're going to prevent that request from actually happening by wrapping our test in the `with_mock_api`.
+Let's write a test. Add "test-user.R" to your test directory and put a test for getting a user record, via the `getUser` function. According to the source code, this function should hit the "show user" API. But, we're going to prevent that request from actually happening by wrapping our test in the `with_mock_api`.
 
 ```r
 context("Get a user")

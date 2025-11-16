@@ -2,8 +2,8 @@
 % Please edit documentation in R/httptest.R
 \docType{package}
 \name{httptest}
-\alias{httptest}
 \alias{httptest-package}
+\alias{httptest}
 \title{\code{httptest}: A Test Environment for HTTP Requests}
 \description{
 If \pkg{httr} makes HTTP easy and \pkg{testthat} makes testing fun,

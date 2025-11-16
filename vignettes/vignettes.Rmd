@@ -41,7 +41,7 @@ Note that these code chunks have `include=FALSE`. This prevents them from being 
 
 If all your vignette does is query an API to get data from it, `start_vignette()` is all you need. Your actions don't change the state of anything on the server, so every time you make the same request (at least within your current session), you get the same response.
 
-Sometimes, though, the purpose of your code is to alter server state: you are creating a database entry, sending a tweet, or other similar action. Suppose you are querying the Twitter API, and you first search for the `#rstats` hashtag, then you send a tweet with that hashtag, and finally you repeat your search. You'd expect the second search to contain the tweet you just sent.
+Sometimes, though, the purpose of your code is to alter server state: you are creating a database entry, sending a message, or other similar action. If you do a search query, then modify the database, and then search again, you'd expect the second search to contain the update you just sent.
 
 To make this work, before any code chunk that will alter server state, call `change_state()`:
 
@@ -49,13 +49,13 @@ To make this work, before any code chunk that will alter server state, call `cha
     change_state()
     ```
 
-When recording, this adds a new "layer" of recorded responses, and when reading previously recorded responses, it changes to the next layer.  
+When recording, this adds a new "layer" of recorded responses, and when reading previously recorded responses, it changes to the next layer.
 
 For a working example, see the `pivotaltrackR` vignette. It does a query, then creates a record on the server, modifies that record, and then deletes it. All of this is captured in the vignette data and is fully replayable.
 
 # Advanced topics
 
-Because you're recording API responses for replay offline, there are a few additional considerations. First, you'll want to make sure not to expose your personal credentials or other private details in the cached API responses. `httptest` provides the ability to "redact" responses you record, and by default, all standard authentication methods are redacted from recorded responses. It's probable that you don't need to do anything further to have clean responses, but it's worth verifying. Beyond credentials, there may be other attributes of API responses that you want to modify, such as finding-and-replacing record ids with a shorter or obfuscated value.,  
+Because you're recording API responses for replay offline, there are a few additional considerations. First, you'll want to make sure not to expose your personal credentials or other private details in the cached API responses. `httptest` provides the ability to "redact" responses you record, and by default, all standard authentication methods are redacted from recorded responses. It's probable that you don't need to do anything further to have clean responses, but it's worth verifying. Beyond credentials, there may be other attributes of API responses that you want to modify, such as finding-and-replacing record ids with a shorter or obfuscated value.,
 
 To modify these responses, you can provide a custom redacting function. A good way to do this that works for both your test suite and your vignettes is to put your custom function in `inst/httptest/redact.R` in your package, and it will be automatically used whenever your package is loaded. See more about redacting in `vignette("redacting")`.
 
