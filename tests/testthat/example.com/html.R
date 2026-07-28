@@ -35,7 +35,7 @@ structure(
               `x-processed-time` = "0.000486850738525",
               via = "1.1 vegur"
             ),
-            .Names = c(
+            names = c(
               "connection",
               "server",
               "date",
@@ -50,7 +50,7 @@ structure(
             class = c("insensitive", "list")
           )
         ),
-        .Names = c(
+        names = c(
           "status",
           "version",
           "headers"
@@ -74,7 +74,7 @@ structure(
     date = structure(1495915713, class = c("POSIXct", "POSIXt"), tzone = "GMT"),
     times = structure(
       c(0, 0.018544, 0.100954, 0.101057, 0.186309, 0.186663),
-      .Names = c(
+      names = c(
         "redirect",
         "namelookup",
         "connect",
@@ -89,7 +89,7 @@ structure(
         url = "http://httpbin.org/html",
         headers = structure(
           "application/json, text/xml, application/xml, */*",
-          .Names = "Accept"
+          names = "Accept"
         ),
         fields = NULL,
         options = structure(list(

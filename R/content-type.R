@@ -11,7 +11,7 @@ EXT_TO_CONTENT_TYPE <- list(
 
 CONTENT_TYPE_TO_EXT <- structure(
   as.list(names(EXT_TO_CONTENT_TYPE)),
-  .Names = unlist(EXT_TO_CONTENT_TYPE, use.names = FALSE)
+  names = unlist(EXT_TO_CONTENT_TYPE, use.names = FALSE)
 )
 
 get_content_type <- function(response) {

@@ -15,7 +15,7 @@ structure(
         `x-processed-time` = "0",
         via = "1.1 vegur"
       ),
-      .Names = c(
+      names = c(
         "content-length",
         "connection",
         "server",
@@ -47,7 +47,7 @@ structure(
               `x-processed-time` = "0",
               via = "1.1 vegur"
             ),
-            .Names = c(
+            names = c(
               "content-length",
               "connection",
               "server",
@@ -62,7 +62,7 @@ structure(
             class = c("insensitive", "list")
           )
         ),
-        .Names = c(
+        names = c(
           "status",
           "version",
           "headers"
@@ -85,7 +85,7 @@ structure(
         name = logical(0),
         value = logical(0)
       ),
-      .Names = c(
+      names = c(
         "domain",
         "flag",
         "path",
@@ -115,7 +115,7 @@ structure(
         0.100235,
         0.100262
       ),
-      .Names = c(
+      names = c(
         "redirect",
         "namelookup",
         "connect",
@@ -125,7 +125,7 @@ structure(
       )
     )
   ),
-  .Names = c(
+  names = c(
     "url",
     "status_code",
     "headers",
