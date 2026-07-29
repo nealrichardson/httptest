@@ -30,7 +30,8 @@ jobs:
       - name: Test coverage
         env:
           # Pretend we're not running in CI so that all tests run
-          CI: false
+          # CI: false
+          # TODO(#83): use webfakes instead of httpbin.org so the network tests actually work
         run: |
           covr::codecov(
             quiet = FALSE,
