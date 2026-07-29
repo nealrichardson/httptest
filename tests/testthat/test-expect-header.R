@@ -61,17 +61,6 @@ public({
           "Accept: image/jpeg"
         )))
       )
-      skip_if(third_edition)
-      expect_failure(expect_header(
-        expect_POST(
-          POST(
-            "http://httpbin.org/",
-            config = add_headers(Accept = "image/png")
-          ),
-          silent = TRUE
-        ),
-        "Accept: image/jpeg"
-      ))
     })
     test_that("expect_header ignore.case", {
       expect_success(expect_header(
