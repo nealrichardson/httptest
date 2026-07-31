@@ -1,5 +1,5 @@
 # httptest 4.2.4
-* Fix for upcoming CRAN deprecations (#95, #96)
+* Fix for upcoming CRAN deprecated arguments (#95, #96)
 
 # httptest 4.2.3
 
