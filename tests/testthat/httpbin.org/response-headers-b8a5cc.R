@@ -16,7 +16,7 @@ structure(
         `content-length` = "89",
         via = "1.1 vegur"
       ),
-      .Names = c(
+      names = c(
         "connection",
         "server",
         "date",
@@ -49,7 +49,7 @@ structure(
             `content-length` = "89",
             via = "1.1 vegur"
           ),
-          .Names = c(
+          names = c(
             "connection",
             "server",
             "date",
@@ -65,7 +65,7 @@ structure(
           class = c("insensitive", "list")
         )
       ),
-      .Names = c("status", "version", "headers")
+      names = c("status", "version", "headers")
     )),
     cookies = structure(
       list(
@@ -83,7 +83,7 @@ structure(
         name = logical(0),
         value = logical(0)
       ),
-      .Names = c(
+      names = c(
         "domain",
         "flag",
         "path",
@@ -108,7 +108,7 @@ structure(
         0.091662,
         0.091723
       ),
-      .Names = c(
+      names = c(
         "redirect",
         "namelookup",
         "connect",
@@ -118,7 +118,7 @@ structure(
       )
     )
   ),
-  .Names = c(
+  names = c(
     "url",
     "status_code",
     "headers",

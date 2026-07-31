@@ -1,3 +1,6 @@
+# httptest 4.2.4
+* Fix for upcoming CRAN deprecated arguments (#95, #96)
+
 # httptest 4.2.3
 
 * Revise a couple of tests for compatibility with the upcoming release of `testthat` 3.3.0 (#89).

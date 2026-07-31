@@ -100,7 +100,7 @@ fake_response <- function(
       status_code = status_code,
       times = structure(
         c(rep(0, 5), nchar(request$url)),
-        .Names = c(
+        names = c(
           "redirect",
           "namelookup",
           "connect",
